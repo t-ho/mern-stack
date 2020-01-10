@@ -1,12 +1,25 @@
 const express = require('express');
+const compression = require('compression');
+const helmet = require('helmet');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const routes = require('../routes');
 
+// App Setup
 const app = express();
 
-// App Setup
+// Enable logger
 app.use(morgan('dev'));
+
+// Compress all responses
+app.use(compression());
+
+// Secure app by setting various HTTP headers
+app.use(helmet());
+
+// Enable Cross-Origin-Resource-Sharing
+app.use(cors());
 
 // Support parsing of application/x-www-form-urlencoded post data
 app.use(bodyParser.urlencoded({ extended: true }));
