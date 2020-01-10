@@ -3,7 +3,17 @@ const createError = require('http-errors');
 
 const User = mongoose.model('User');
 
-const userCtrl = { signUp };
+const authCtrl = { signIn, signUp };
+
+function signIn(req, res, next) {
+  if (req.user && req.user._id) {
+    //Passport authenticated successfully
+    res.json({ token: req.user.generateJwtToken() });
+  } else {
+    // actually we never reach here
+    next(createError(401, 'Sign in failed'));
+  }
+}
 
 function signUp(req, res, next) {
   const { email, password } = req.body;
@@ -21,4 +31,4 @@ function signUp(req, res, next) {
     .catch(next);
 }
 
-module.exports = userCtrl;
+module.exports = authCtrl;

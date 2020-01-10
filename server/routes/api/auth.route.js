@@ -1,8 +1,15 @@
 const express = require('express');
-const userCtrl = require('../../controllers/auth.controller');
+const passport = require('passport');
+const authCtrl = require('../../controllers/auth.controller');
 
 const router = express.Router();
 
-router.post('/signup', userCtrl.signUp);
+router.post(
+  '/signin',
+  passport.authenticate('local', { session: false }),
+  authCtrl.signIn
+);
+
+router.post('/signup', authCtrl.signUp);
 
 module.exports = router;

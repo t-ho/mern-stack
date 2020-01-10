@@ -5,6 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const routes = require('../routes');
+const passport = require('./passport');
 
 // App Setup
 const app = express();
@@ -26,6 +27,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Support parsing of */* type post data
 app.use(bodyParser.json({ type: '*/*' }));
+
+app.use(passport.initialize());
 
 app.use(routes);
 
