@@ -1,5 +1,10 @@
 const http = require('http');
 const config = require('./config');
+
+// Load mongoose and models
+require('./config/mongoose');
+
+// Load express
 const app = require('./config/express');
 
 // Server Setup
