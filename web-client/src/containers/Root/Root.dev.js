@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import App from '../App/App';
 import DevTools from './DevTools';
@@ -6,10 +7,10 @@ import DevTools from './DevTools';
 const Root = ({ store }) => {
   return (
     <Provider store={store}>
-      <div>
+      <BrowserRouter>
         <App />
         <DevTools />
-      </div>
+      </BrowserRouter>
     </Provider>
   );
 };
