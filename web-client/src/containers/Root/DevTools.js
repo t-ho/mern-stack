@@ -9,7 +9,7 @@ const DevTools = createDevTools(
     changePositionKey="ctrl-q"
     defaultIsVisible={false}
   >
-    <LogMonitor theme="tomorrow" />
+    <LogMonitor />
   </DockMonitor>
 );
 

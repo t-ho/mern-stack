@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 
 const Header = ({ props }) => {
   return (
-    <div class="ui secondary pointing menu">
+    <div className="ui secondary pointing menu">
       <Link to="/" className="item">
         MERN
       </Link>
