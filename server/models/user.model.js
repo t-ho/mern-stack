@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const config = require('../config');
+const _ = require('lodash');
 
 // Define Schema
 const userSchema = new mongoose.Schema(
@@ -82,24 +83,32 @@ userSchema.pre('save', function(next) {
     .catch(next);
 });
 
+userSchema.methods.toJSON = function() {
+  return _.pick(this, [
+    'username',
+    'email',
+    'firstName',
+    'lastName',
+    'role',
+    'permissions'
+  ]);
+};
+
 userSchema.methods.comparePassword = function(candidatePassword) {
-  const user = this;
-  return bcrypt.compare(candidatePassword, user.hashedPassword);
+  return bcrypt.compare(candidatePassword, this.hashedPassword);
 };
 
 userSchema.methods.generateJwtToken = function() {
-  const user = this;
-  return jwt.sign({ sub: user._id }, config.jwt.secret, {
+  return jwt.sign({ sub: this._id }, config.jwt.secret, {
     algorithm: config.jwt.algorithm
   });
 };
 
 userSchema.methods.can = function(action) {
-  const user = this;
-  if (user.role === 'admin' || user.role === 'root') {
+  if (this.role === 'admin' || this.role === 'root') {
     return true;
   }
-  return user.permissions[action];
+  return this.permissions[action];
 };
 
 mongoose.model('User', userSchema);
