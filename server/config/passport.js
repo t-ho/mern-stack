@@ -22,13 +22,16 @@ const localStrategy = new LocalStrategy(
           return done(null, false, { message: 'Invalid username or email' });
         }
         user.comparePassword(password).then(isMatch => {
-          if (!isMatch)
+          if (!isMatch) {
             return done(null, false, { message: 'Incorrect password' });
+          }
+
           if (config.auth.verifyEmail) {
             if (user.status === 'unverified') {
               return done(null, false, { message: 'Unverified email' });
             }
           }
+
           user.hashedPassword = undefined;
           return done(null, user);
         });

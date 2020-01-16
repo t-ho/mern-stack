@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const config = require('../config');
 const _ = require('lodash');
+const uuidv4 = require('uuid/v4');
+const config = require('../config');
 
 // Define Schema
 const userSchema = new mongoose.Schema(
@@ -53,34 +54,15 @@ const userSchema = new mongoose.Schema(
       insertUsers: { type: Boolean, default: false },
       updateUsers: { type: Boolean, default: false },
       deleteUsers: { type: Boolean, default: false }
-    }
+    },
+    token: { type: String, index: true }, // Token for veryfication email or reset password purpose, NOT JWT token
+    tokenPurpose: { type: String, enum: ['verifyEmail'] }
   },
   { timestamps: true }
 );
 
-userSchema
-  .virtual('password')
-  .get(function() {
-    return undefined;
-  })
-  .set(function(password) {
-    this.hashedPassword = password;
-  });
-
 userSchema.virtual('fullName').get(function() {
   return `${this.firstName} ${this.lastName}`;
-});
-
-userSchema.pre('save', function(next) {
-  const user = this;
-  const saltRounds = 10;
-  bcrypt
-    .hash(user.hashedPassword, saltRounds)
-    .then(hash => {
-      user.hashedPassword = hash;
-      next();
-    })
-    .catch(next);
 });
 
 userSchema.methods.toJSON = function() {
@@ -94,6 +76,13 @@ userSchema.methods.toJSON = function() {
   ]);
 };
 
+userSchema.methods.setPassword = function(password) {
+  const saltRounds = 10;
+  return bcrypt.hash(password, saltRounds).then(hash => {
+    this.hashedPassword = hash;
+  });
+};
+
 userSchema.methods.comparePassword = function(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.hashedPassword);
 };
@@ -102,6 +91,16 @@ userSchema.methods.generateJwtToken = function() {
   return jwt.sign({ sub: this._id }, config.jwt.secret, {
     algorithm: config.jwt.algorithm
   });
+};
+
+userSchema.methods.setToken = function(purpose) {
+  this.token = uuidv4();
+  this.tokenPurpose = purpose;
+};
+
+userSchema.methods.clearToken = function() {
+  this.token = undefined;
+  this.tokenPurpose = undefined;
 };
 
 userSchema.methods.can = function(action) {

@@ -7,7 +7,7 @@ const config = require('../config');
 
 const User = mongoose.model('User');
 
-const authCtrl = { signIn, signUp };
+const authCtrl = { signIn, signUp, verifyEmail };
 
 const signUpSchema = Joi.object({
   username: Joi.string()
@@ -56,6 +56,7 @@ function signIn(req, res, next) {
 }
 
 function signUp(req, res, next) {
+  let newUser;
   signUpSchema
     .validateAsync(req.body)
     .then(payload => {
@@ -72,8 +73,13 @@ function signUp(req, res, next) {
           throw createError(422, 'Username already in use');
         }
       }
-      const newUser = new User(req.body);
+
+      newUser = new User(req.body);
+      return newUser.setPassword(req.body.password);
+    })
+    .then(() => {
       if (config.auth.verifyEmail) {
+        newUser.setToken('verifyEmail');
         newUser.status = 'unverified';
       }
       return newUser.save();
@@ -88,7 +94,7 @@ function signUp(req, res, next) {
           templateParams: {
             appTitle: config.title,
             firstName: user.firstName,
-            url: 'FIXME-verify-mail-url',
+            url: `${config.server.url}/api/auth/verify/${user.token}`,
             signature: config.email.signature
           }
         }).then(result => {
@@ -103,6 +109,30 @@ function signUp(req, res, next) {
         success: true,
         message: 'Your account has been created successfully'
       });
+    })
+    .catch(next);
+}
+
+function verifyEmail(req, res, next) {
+  if (!req.params.validationToken) {
+    return next(createError(422, 'No token provided'));
+  }
+
+  User.findOne({
+    token: req.params.validationToken,
+    tokenPurpose: 'verifyEmail'
+  })
+    .then(user => {
+      if (!user) {
+        throw createError(422, 'Token expired');
+      }
+      user.clearToken();
+      user.status = 'active';
+      return user.save();
+    })
+    .then(user => {
+      console.log(user);
+      res.status(200).json({ success: true, message: 'Email verified' });
     })
     .catch(next);
 }
