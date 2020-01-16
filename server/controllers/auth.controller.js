@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const createError = require('http-errors');
+const passport = require('passport');
 const Joi = require('@hapi/joi');
 
 const User = mongoose.model('User');
@@ -20,35 +21,56 @@ const signUpSchema = Joi.object({
   lastName: Joi.string()
 });
 
+const signInSchema = Joi.object({
+  username: Joi.string().pattern(/^[a-zA-Z0-9.\-_]{4,20}$/),
+  email: Joi.string().email(),
+  password: Joi.string().required()
+}).xor('username', 'email');
+
 function signIn(req, res, next) {
-  if (req.user && req.user._id) {
-    //Passport authenticated successfully
-    res.json({ token: req.user.generateJwtToken() });
-  } else {
-    // actually we never reach here
-    next(createError(401, 'Sign in failed'));
-  }
+  signInSchema
+    .validateAsync(req.body)
+    .then(payload => {
+      req.body = payload;
+
+      req.body.usernameOrEmail = req.body.username || req.body.email;
+
+      passport.authenticate('local', { session: false }, function(
+        err,
+        user,
+        info
+      ) {
+        if (err) {
+          return next(err);
+        }
+        if (!user) {
+          return next(createError(401, info.message));
+        }
+        // Login success
+        res.json({ token: user.generateJwtToken() });
+      })(req, res, next);
+    })
+    .catch(next);
 }
 
 function signUp(req, res, next) {
-  let userPayload;
   signUpSchema
     .validateAsync(req.body)
     .then(payload => {
-      userPayload = payload;
+      req.body = payload;
       return User.findOne({
-        $or: [{ email: userPayload.email }, { username: userPayload.username }]
+        $or: [{ email: payload.email }, { username: payload.username }]
       });
     })
     .then(existingUser => {
       if (existingUser) {
-        if (existingUser.email == userPayload.email) {
+        if (existingUser.email == req.body.email) {
           throw createError(422, 'Email already in use');
         } else {
           throw createError(422, 'Username already in use');
         }
       }
-      const newUser = new User(userPayload);
+      const newUser = new User(req.body);
       return newUser.save();
     })
     .then(user => {

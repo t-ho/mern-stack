@@ -9,13 +9,21 @@ const User = mongoose.model('User');
 
 // Create local strategy
 const localStrategy = new LocalStrategy(
-  { usernameField: 'email', passwordField: 'password' },
-  function(email, password, done) {
-    User.findOne({ email })
+  {
+    usernameField: 'usernameOrEmail',
+    passwordField: 'password'
+  },
+  function(usernameOrEmail, password, done) {
+    User.findOne({
+      $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }]
+    })
       .then(user => {
-        if (!user) return done(null, false);
+        if (!user) {
+          return done(null, false, { message: 'Invalid username or email' });
+        }
         user.comparePassword(password).then(isMatch => {
-          if (!isMatch) return done(null, false);
+          if (!isMatch)
+            return done(null, false, { message: 'Incorrect password' });
           user.hashedPassword = undefined;
           return done(null, user);
         });
