@@ -34,7 +34,7 @@ app.use(routes);
 
 // error handler
 app.use((err, req, res, next) => {
-  res.status(err.status || 500).send({ error: err.message });
+  res.status(err.status || 400).send({ error: err.message });
 
   // Only print stacktrace during development
   // by passing error to built-in error handler

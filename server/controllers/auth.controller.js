@@ -7,7 +7,13 @@ const config = require('../config');
 
 const User = mongoose.model('User');
 
-const authCtrl = { signIn, signUp, verifyEmail };
+const authCtrl = { signIn, signUp, verifyEmail, sendVerificationEmail };
+
+const sendVerificationEmailSchema = Joi.object({
+  email: Joi.string()
+    .required()
+    .email()
+});
 
 const signUpSchema = Joi.object({
   username: Joi.string()
@@ -86,18 +92,7 @@ function signUp(req, res, next) {
     })
     .then(user => {
       if (config.auth.verifyEmail) {
-        return sendMail({
-          to: user.email,
-          from: `${config.title} <${config.email.from}>`,
-          subject: `${config.title} - Verify your email`,
-          template: `${config.paths.root}/templates/signup-verify.email.html`,
-          templateParams: {
-            appTitle: config.title,
-            firstName: user.firstName,
-            url: `${config.server.url}/api/auth/verify/${user.token}`,
-            signature: config.email.signature
-          }
-        }).then(result => {
+        return sendVerificationEmailHelper(user).then(result => {
           res.status(201).json({
             success: true,
             message: 'A verification email has been sent to your email'
@@ -131,10 +126,57 @@ function verifyEmail(req, res, next) {
       return user.save();
     })
     .then(user => {
-      console.log(user);
       res.status(200).json({ success: true, message: 'Email verified' });
     })
     .catch(next);
+}
+
+function sendVerificationEmail(req, res, next) {
+  if (!config.auth.verifyEmail) {
+    return next(createError(404, 'Unknown request'));
+  }
+
+  sendVerificationEmailSchema
+    .validateAsync(req.body)
+    .then(payload => {
+      req.body = payload;
+      return User.findOne({ email: req.body.email });
+    })
+    .then(user => {
+      if (!user) {
+        throw createError(422, 'Email not associated with any acount');
+      }
+      if (user.status !== 'unverified') {
+        throw createError(422, 'Email already verified');
+      }
+      user.setToken('verifyEmail');
+      return user.save();
+    })
+    .then(user => {
+      return sendVerificationEmailHelper(user);
+    })
+    .then(result => {
+      res.status(200).json({
+        success: true,
+        message: 'A verification email has been sent to your email'
+      });
+    })
+    .catch(next);
+}
+
+function sendVerificationEmailHelper(user) {
+  return sendMail({
+    to: user.email,
+    from: `${config.title} <${config.email.from}>`,
+    subject: `${config.title} - Verify your email`,
+    template: `${config.paths.root}/templates/signup-verify.email.html`,
+    templateParams: {
+      appTitle: config.title,
+      firstName: user.firstName,
+      url: `${config.server.url}/api/auth/verify/${user.token}`,
+      signature: config.email.signature
+    }
+  });
 }
 
 module.exports = authCtrl;
