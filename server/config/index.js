@@ -2,6 +2,9 @@ const fspath = require('path');
 
 module.exports = {
   title: 'MERN',
+  auth: {
+    verifyEmail: true // Note: If true, please specify your mailgun API key
+  },
   email: {
     from: 'no-reply@mern.com', // FIXME
     to: '',

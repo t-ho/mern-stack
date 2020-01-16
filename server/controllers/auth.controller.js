@@ -48,8 +48,8 @@ function signIn(req, res, next) {
         if (!user) {
           return next(createError(401, info.message));
         }
-        // Login success
-        res.json({ token: user.generateJwtToken() });
+        // login success
+        res.json({ token: user.generateJwtToken(), user: user.toJSON() });
       })(req, res, next);
     })
     .catch(next);
@@ -73,26 +73,35 @@ function signUp(req, res, next) {
         }
       }
       const newUser = new User(req.body);
+      if (config.auth.verifyEmail) {
+        newUser.status = 'unverified';
+      }
       return newUser.save();
     })
     .then(user => {
-      return sendMail({
-        to: user.email,
-        from: `${config.title} <${config.email.from}>`,
-        subject: `${config.title} - Verify your email`,
-        template: `${config.paths.root}/templates/signup-verify.email.html`,
-        templateParams: {
-          appTitle: config.title,
-          firstName: user.firstName,
-          url: 'FIXME-verify-mail-url',
-          signature: config.email.signature
-        }
-      });
-    })
-    .then(result => {
+      if (config.auth.verifyEmail) {
+        return sendMail({
+          to: user.email,
+          from: `${config.title} <${config.email.from}>`,
+          subject: `${config.title} - Verify your email`,
+          template: `${config.paths.root}/templates/signup-verify.email.html`,
+          templateParams: {
+            appTitle: config.title,
+            firstName: user.firstName,
+            url: 'FIXME-verify-mail-url',
+            signature: config.email.signature
+          }
+        }).then(result => {
+          res.status(201).json({
+            success: true,
+            message: 'A verification email has been sent to your email'
+          });
+        });
+      }
+
       res.status(201).json({
         success: true,
-        message: 'A verification email has been sent to your email'
+        message: 'Your account has been created successfully'
       });
     })
     .catch(next);

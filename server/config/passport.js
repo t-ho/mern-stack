@@ -24,6 +24,11 @@ const localStrategy = new LocalStrategy(
         user.comparePassword(password).then(isMatch => {
           if (!isMatch)
             return done(null, false, { message: 'Incorrect password' });
+          if (config.auth.verifyEmail) {
+            if (user.status === 'unverified') {
+              return done(null, false, { message: 'Unverified email' });
+            }
+          }
           user.hashedPassword = undefined;
           return done(null, user);
         });
