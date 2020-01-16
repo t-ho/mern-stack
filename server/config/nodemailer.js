@@ -3,6 +3,7 @@ const fspath = require('path');
 const nodemailer = require('nodemailer');
 const nodemailerMailgun = require('nodemailer-mailgun-transport');
 const Handlebars = require('handlebars');
+const createError = require('http-errors');
 const _ = require('lodash');
 const config = require('./index');
 
@@ -70,7 +71,14 @@ const sendMail = function(options) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       transporter.sendMail(options, (err, res) => {
-        if (err) return reject(err);
+        if (err) {
+          if (err.message === 'Forbidden') {
+            reject(createError(500, '[Mailgun] Invalid API key'));
+          } else if (err.message.includes('Domain not found')) {
+            reject(createError(500, '[Mailgun] Invalid domain'));
+          }
+          return reject(err);
+        }
         resolve(res);
       });
     });
