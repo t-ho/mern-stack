@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ['active', 'deleted', 'unverified'],
-      default: 'unverified',
+      default: 'active',
       index: true
     },
     role: {

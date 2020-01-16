@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const createError = require('http-errors');
 const passport = require('passport');
 const Joi = require('@hapi/joi');
+const sendMail = require('../config/nodemailer');
+const config = require('../config');
 
 const User = mongoose.model('User');
 
@@ -74,9 +76,24 @@ function signUp(req, res, next) {
       return newUser.save();
     })
     .then(user => {
-      res
-        .status(201)
-        .json({ token: user.generateJwtToken(), user: user.toJSON() });
+      return sendMail({
+        to: user.email,
+        from: `${config.title} <${config.email.from}>`,
+        subject: `${config.title} - Verify your email`,
+        template: `${config.paths.root}/templates/signup-verify.email.html`,
+        templateParams: {
+          appTitle: config.title,
+          firstName: user.firstName,
+          url: 'FIXME-verify-mail-url',
+          signature: config.email.signature
+        }
+      });
+    })
+    .then(result => {
+      res.status(201).json({
+        success: true,
+        message: 'A verification email has been sent to your email'
+      });
     })
     .catch(next);
 }
