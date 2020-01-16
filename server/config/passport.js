@@ -27,7 +27,7 @@ const localStrategy = new LocalStrategy(
           }
 
           if (config.auth.verifyEmail) {
-            if (user.status === 'unverified') {
+            if (user.status === 'unverifiedEmail') {
               return done(null, false, { message: 'Unverified email' });
             }
           }

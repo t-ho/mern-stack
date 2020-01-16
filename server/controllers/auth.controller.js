@@ -86,7 +86,7 @@ function signUp(req, res, next) {
     .then(() => {
       if (config.auth.verifyEmail) {
         newUser.setToken('verifyEmail');
-        newUser.status = 'unverified';
+        newUser.status = 'unverifiedEmail';
       }
       return newUser.save();
     })
@@ -146,7 +146,7 @@ function sendVerificationEmail(req, res, next) {
       if (!user) {
         throw createError(422, 'Email not associated with any acount');
       }
-      if (user.status !== 'unverified') {
+      if (user.status !== 'unverifiedEmail') {
         throw createError(422, 'Email already verified');
       }
       user.setToken('verifyEmail');

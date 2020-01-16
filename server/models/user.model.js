@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema(
     lastName: { type: String, trim: true },
     status: {
       type: String,
-      enum: ['active', 'deleted', 'unverified'],
+      enum: ['active', 'unverifiedEmail'],
       default: 'active',
       index: true
     },
