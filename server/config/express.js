@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const createError = require('http-errors');
 const routes = require('../routes');
 const passport = require('./passport');
 
@@ -31,6 +32,9 @@ app.use(bodyParser.json({ type: '*/*' }));
 app.use(passport.initialize());
 
 app.use(routes);
+
+// catch 404 and forward to error handler
+app.use((req, res, next) => next(createError(404, 'Not Found')));
 
 // error handler
 app.use((err, req, res, next) => {
