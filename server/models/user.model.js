@@ -15,8 +15,8 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       required: [true, 'Username is required'],
       match: [
-        /^[a-zA-Z0-9.\-_]{4,20}$/,
-        'Must be between 4 to 20 characters and may contain only alphanumeric, hyphen, dot or underscore'
+        /^[a-zA-Z0-9.\-_]{4,30}$/,
+        'Must be between 4 to 30 characters and may contain only alphanumeric, hyphen, dot or underscore'
       ]
     },
     email: {
@@ -75,6 +75,7 @@ userSchema.virtual('fullName').get(function() {
  */
 userSchema.methods.toJSON = function() {
   return _.pick(this, [
+    '_id',
     'username',
     'email',
     'firstName',

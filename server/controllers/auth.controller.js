@@ -2,10 +2,61 @@ const mongoose = require('mongoose');
 const createError = require('http-errors');
 const passport = require('passport');
 const Joi = require('@hapi/joi');
+const _ = require('lodash');
 const sendMail = require('../config/nodemailer');
 const config = require('../config');
 
 const User = mongoose.model('User');
+
+/**
+ * @function getProfile
+ * Get profile controller
+ */
+module.exports.getProfile = (req, res, next) => {
+  if (req.user) {
+    res.status(200).send({ profile: req.user.toJSON() });
+  }
+};
+
+/**
+ * JOI schema for validating updateProfile payload
+ */
+const updateProfileSchema = Joi.object({
+  password: Joi.string().min(8),
+  firstName: Joi.string(),
+  lastName: Joi.string()
+});
+
+/**
+ * @function updateProfile
+ * Get profile controller
+ *
+ * @param {string} [password] The password to update
+ * @param {string} [firstName] The first name to update
+ * @param {string} [lastName] The last name to update
+ */
+module.exports.updateProfile = (req, res, next) => {
+  if (req.user) {
+    updateProfileSchema
+      .validateAsync(req.body, { allowUnknown: true, stripUnknown: true })
+      .then(payload => {
+        console.log('payload', payload);
+        req.body = payload;
+        const { password, ...others } = req.body;
+        _.merge(req.user, others);
+        if (password) {
+          return req.user.setPassword(password);
+        }
+      })
+      .then(() => {
+        return req.user.save();
+      })
+      .then(updatedUser => {
+        res.status(200).json({ updatedFields: _.keys(req.body) });
+      })
+      .catch(next);
+  }
+};
 
 /**
  * JOI schema for validating resetPassword payload
@@ -17,53 +68,6 @@ const resetPasswordSchema = Joi.object({
   newPassword: Joi.string()
     .required()
     .min(8)
-});
-
-/**
- * JOI schema for validating sendToken payload
- */
-const sendTokenSchema = Joi.object({
-  email: Joi.string()
-    .required()
-    .email(),
-  tokenPurpose: Joi.string()
-    .required()
-    .valid('verifyEmail', 'resetPassword')
-});
-
-/**
- * JOI schema for validating signIn payload
- */
-const signInSchema = Joi.object({
-  username: Joi.string().pattern(/^[a-zA-Z0-9.\-_]{4,20}$/),
-  email: Joi.string().email(),
-  password: Joi.string().required()
-}).xor('username', 'email');
-
-/**
- * JOI schema for validating signUp payload
- */
-const signUpSchema = Joi.object({
-  username: Joi.string()
-    .required()
-    .pattern(/^[a-zA-Z0-9.\-_]{4,20}$/),
-  email: Joi.string()
-    .required()
-    .email(),
-  password: Joi.string()
-    .required()
-    .min(8),
-  firstName: Joi.string(),
-  lastName: Joi.string()
-});
-
-/**
- * JOI schema for validating verifyEmail payload
- */
-const verifyEmailSchema = Joi.object({
-  email: Joi.string()
-    .required()
-    .email()
 });
 
 /**
@@ -110,7 +114,19 @@ module.exports.resetPassword = (req, res, next) => {
 };
 
 /**
- * @function
+ * JOI schema for validating sendToken payload
+ */
+const sendTokenSchema = Joi.object({
+  email: Joi.string()
+    .required()
+    .email(),
+  tokenPurpose: Joi.string()
+    .required()
+    .valid('verifyEmail', 'resetPassword')
+});
+
+/**
+ * @function sendToken
  * Send a token based the provided token purpose
  *
  * @param {string} req.body.email The email which will receive token
@@ -132,7 +148,16 @@ module.exports.sendToken = (req, res, next) => {
 };
 
 /**
- * @function
+ * JOI schema for validating signIn payload
+ */
+const signInSchema = Joi.object({
+  username: Joi.string().pattern(/^[a-zA-Z0-9.\-_]{4,20}$/),
+  email: Joi.string().email(),
+  password: Joi.string().required()
+}).xor('username', 'email');
+
+/**
+ * @function signIn
  * Sign in controller. Either email or username must be specified.
  *
  * @param {string} req.body.email The email to login
@@ -166,7 +191,24 @@ module.exports.signIn = (req, res, next) => {
 };
 
 /**
- * @function
+ * JOI schema for validating signUp payload
+ */
+const signUpSchema = Joi.object({
+  username: Joi.string()
+    .required()
+    .pattern(/^[a-zA-Z0-9.\-_]{4,30}$/),
+  email: Joi.string()
+    .required()
+    .email(),
+  password: Joi.string()
+    .required()
+    .min(8),
+  firstName: Joi.string(),
+  lastName: Joi.string()
+});
+
+/**
+ * @function signUp
  * Sign up controller
  *
  * @param {string} req.body.email The email to sign up
@@ -223,7 +265,16 @@ module.exports.signUp = (req, res, next) => {
 };
 
 /**
- * @function
+ * JOI schema for validating verifyEmail payload
+ */
+const verifyEmailSchema = Joi.object({
+  email: Joi.string()
+    .required()
+    .email()
+});
+
+/**
+ * @function verifyEmail
  * Verify email controller
  *
  * @param {string} req.params.token The verification email token

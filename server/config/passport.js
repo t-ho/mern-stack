@@ -32,7 +32,6 @@ const localStrategy = new LocalStrategy(
             }
           }
 
-          user.hashedPassword = undefined;
           return done(null, user);
         });
       })
@@ -49,8 +48,7 @@ const jwtStrategy = new JwtStrategy(
   function(jwtPayload, done) {
     User.findById(jwtPayload.sub)
       .then(user => {
-        if (!user) return done(null, false);
-        user.hashedPassword = undefined;
+        if (!user) return done(null, false, 'Invalid credentials');
         return done(null, user);
       })
       .catch(done);
