@@ -17,7 +17,8 @@ module.exports = {
   },
   jwt: {
     algorithm: 'HS512',
-    secret: '[Your-Secret-Token]' // FIXME:
+    secret: '[Your-Secret-Token]', // FIXME:
+    expiresIn: 60 * 24 * 60 * 60 // seconds
   },
   mongo: {
     uri: 'mongodb://localhost/mern' // FIXME:

@@ -115,8 +115,9 @@ userSchema.methods.comparePasswordAsync = function(candidatePassword) {
  * @returns {string} JWT token
  */
 userSchema.methods.generateJwtToken = function() {
-  return jwt.sign({ sub: this._id }, config.jwt.secret, {
-    algorithm: config.jwt.algorithm
+  return jwt.sign({ sub: this._id, userId: this._id }, config.jwt.secret, {
+    algorithm: config.jwt.algorithm,
+    expiresIn: config.jwt.expiresIn
   });
 };
 

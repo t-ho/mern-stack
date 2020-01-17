@@ -46,7 +46,7 @@ const jwtStrategy = new JwtStrategy(
     secretOrKey: config.jwt.secret
   },
   function(jwtPayload, done) {
-    User.findById(jwtPayload.sub)
+    User.findById(jwtPayload.userId)
       .then(user => {
         if (!user) return done(null, false, 'Invalid credentials');
         return done(null, user);
