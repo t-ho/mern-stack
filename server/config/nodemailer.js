@@ -24,12 +24,12 @@ const defaultOptions = {
 
 /**
  * Send an email.
- * @param {Object} options - The mail options
+ * @param {object} options - The mail options
  *
- * @param {String} [options.html] HTML payload of the email
- * @param {Srting} [options.text] Plain text payload of the email
- * @param {String} [options.template] File on disk to use to load the email template.
- * @param {Object} [options.templateParams] Object containing any dynamic parameters to be passed to the handlebars template specified in template
+ * @param {string} [options.template] File on disk to use to load the email template.
+ * @param {object} [options.templateParams] Object containing any dynamic parameters to be passed to the handlebars template specified in template
+ * @param {string} [options.html] HTML payload of the email
+ * @param {srting} [options.text] Plain text payload of the email
  * @param {string} [options.from] The from portion of the email
  * @param {string} [options.to] The to portion of the email
  * @param {string} [options.subject] The subject portion of the email

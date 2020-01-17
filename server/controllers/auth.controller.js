@@ -7,14 +7,42 @@ const config = require('../config');
 
 const User = mongoose.model('User');
 
-const authCtrl = { signIn, signUp, verifyEmail, sendVerificationEmail };
-
-const sendVerificationEmailSchema = Joi.object({
+/**
+ * JOI schema for validating resetPassword payload
+ */
+const resetPasswordSchema = Joi.object({
   email: Joi.string()
     .required()
-    .email()
+    .email(),
+  newPassword: Joi.string()
+    .required()
+    .min(8)
 });
 
+/**
+ * JOI schema for validating sendToken payload
+ */
+const sendTokenSchema = Joi.object({
+  email: Joi.string()
+    .required()
+    .email(),
+  tokenPurpose: Joi.string()
+    .required()
+    .valid('verifyEmail', 'resetPassword')
+});
+
+/**
+ * JOI schema for validating signIn payload
+ */
+const signInSchema = Joi.object({
+  username: Joi.string().pattern(/^[a-zA-Z0-9.\-_]{4,20}$/),
+  email: Joi.string().email(),
+  password: Joi.string().required()
+}).xor('username', 'email');
+
+/**
+ * JOI schema for validating signUp payload
+ */
 const signUpSchema = Joi.object({
   username: Joi.string()
     .required()
@@ -29,13 +57,89 @@ const signUpSchema = Joi.object({
   lastName: Joi.string()
 });
 
-const signInSchema = Joi.object({
-  username: Joi.string().pattern(/^[a-zA-Z0-9.\-_]{4,20}$/),
-  email: Joi.string().email(),
-  password: Joi.string().required()
-}).xor('username', 'email');
+/**
+ * JOI schema for validating verifyEmail payload
+ */
+const verifyEmailSchema = Joi.object({
+  email: Joi.string()
+    .required()
+    .email()
+});
 
-function signIn(req, res, next) {
+/**
+ * @function
+ * Reset password controller
+ *
+ * @param {string} req.params.token The reset password token
+ * @param {string} req.body.email The email
+ * @param {string} req.body.newPassword The new password
+ */
+module.exports.resetPassword = (req, res, next) => {
+  if (!req.params.token) {
+    return next(createError(422, 'No token provided'));
+  }
+
+  let existingUser;
+
+  resetPasswordSchema
+    .validateAsync(req.body)
+    .then(payload => {
+      req.body = payload;
+
+      return User.findOne({
+        email: req.body.email,
+        token: req.params.token,
+        tokenPurpose: 'resetPassword'
+      });
+    })
+    .then(user => {
+      existingUser = user;
+      if (!existingUser) {
+        throw createError(422, 'Token expired');
+      }
+      existingUser.clearToken();
+      return existingUser.setPassword(req.body.newPassword);
+    })
+    .then(() => {
+      return existingUser.save();
+    })
+    .then(user => {
+      res.status(200).json({ success: true, message: 'Password reset' });
+    })
+    .catch(next);
+};
+
+/**
+ * @function
+ * Send a token based the provided token purpose
+ *
+ * @param {string} req.body.email The email which will receive token
+ * @param {string} req.body.tokenPurpose The token purpose. It can be ['verifyEmail', 'resetPassword']
+ */
+module.exports.sendToken = (req, res, next) => {
+  sendTokenSchema
+    .validateAsync(req.body)
+    .then(payload => {
+      req.body = payload;
+      if (req.body.tokenPurpose === 'resetPassword') {
+        return sendPasswordResetToken(req, res, next);
+      }
+      if (req.body.tokenPurpose === 'verifyEmail') {
+        return sendVerificationEmailToken(req, res, next);
+      }
+    })
+    .catch(next);
+};
+
+/**
+ * @function
+ * Sign in controller. Either email or username must be specified.
+ *
+ * @param {string} req.body.email The email to login
+ * @param {string} req.body.username The username to login
+ * @param {string} req.body.password The password to login
+ */
+module.exports.signIn = (req, res, next) => {
   signInSchema
     .validateAsync(req.body)
     .then(payload => {
@@ -59,9 +163,19 @@ function signIn(req, res, next) {
       })(req, res, next);
     })
     .catch(next);
-}
+};
 
-function signUp(req, res, next) {
+/**
+ * @function
+ * Sign up controller
+ *
+ * @param {string} req.body.email The email to sign up
+ * @param {string} req.body.username The username to sign up
+ * @param {string} req.body.password The password to sign up
+ * @param {string} [req.body.firstName] The user's first name
+ * @param {string} [req.body.lastName] The user's last name
+ */
+module.exports.signUp = (req, res, next) => {
   let newUser;
   signUpSchema
     .validateAsync(req.body)
@@ -92,7 +206,7 @@ function signUp(req, res, next) {
     })
     .then(user => {
       if (config.auth.verifyEmail) {
-        return sendVerificationEmailHelper(user).then(result => {
+        return sendVerificationEmail(user).then(result => {
           res.status(201).json({
             success: true,
             message: 'A verification email has been sent to your email'
@@ -106,17 +220,31 @@ function signUp(req, res, next) {
       });
     })
     .catch(next);
-}
+};
 
-function verifyEmail(req, res, next) {
-  if (!req.params.validationToken) {
+/**
+ * @function
+ * Verify email controller
+ *
+ * @param {string} req.params.token The verification email token
+ * @param {string} req.body.email The email to verify
+ */
+module.exports.verifyEmail = (req, res, next) => {
+  if (!req.params.token) {
     return next(createError(422, 'No token provided'));
   }
 
-  User.findOne({
-    token: req.params.validationToken,
-    tokenPurpose: 'verifyEmail'
-  })
+  verifyEmailSchema
+    .validateAsync(req.body)
+    .then(payload => {
+      req.body = payload;
+
+      return User.findOne({
+        email: req.body.email,
+        token: req.params.token,
+        tokenPurpose: 'verifyEmail'
+      });
+    })
     .then(user => {
       if (!user) {
         throw createError(422, 'Token expired');
@@ -129,19 +257,62 @@ function verifyEmail(req, res, next) {
       res.status(200).json({ success: true, message: 'Email verified' });
     })
     .catch(next);
-}
+};
 
-function sendVerificationEmail(req, res, next) {
+/**
+ * @function sendPasswordResetToken
+ * Send password-reset token helper
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ */
+const sendPasswordResetToken = (req, res, next) => {
+  User.findOne({ email: req.body.email })
+    .then(user => {
+      if (!user) {
+        throw createError(422, 'Email not associated with any acount');
+      }
+      user.setToken(req.body.tokenPurpose);
+      return user.save();
+    })
+    .then(user => {
+      return sendEmailHelper(
+        user,
+        'Password reset',
+        'Password reset',
+        `Someone requested a new password for your ${config.appName} account.
+        If this was you, click button below to reset your password.
+        Otherwise, ignore this email.`,
+        'Reset Password',
+        `${config.server.url}:${config.server.port}/api/auth/reset-password/${user.token}`
+      );
+    })
+    .then(result => {
+      res.status(200).json({
+        success: true,
+        message: 'A password-reset email has been sent to your email'
+      });
+    })
+    .catch(next);
+};
+
+/**
+ * @function sendVerificationEmailToken
+ * Send verification email token
+ *
+ * Helper function
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ */
+const sendVerificationEmailToken = (req, res, next) => {
   if (!config.auth.verifyEmail) {
     return next(createError(404, 'Unknown request'));
   }
 
-  sendVerificationEmailSchema
-    .validateAsync(req.body)
-    .then(payload => {
-      req.body = payload;
-      return User.findOne({ email: req.body.email });
-    })
+  User.findOne({ email: req.body.email })
     .then(user => {
       if (!user) {
         throw createError(422, 'Email not associated with any acount');
@@ -149,11 +320,11 @@ function sendVerificationEmail(req, res, next) {
       if (user.status !== 'unverifiedEmail') {
         throw createError(422, 'Email already verified');
       }
-      user.setToken('verifyEmail');
+      user.setToken(req.body.tokenPurpose);
       return user.save();
     })
     .then(user => {
-      return sendVerificationEmailHelper(user);
+      return sendVerificationEmail(user);
     })
     .then(result => {
       res.status(200).json({
@@ -162,21 +333,55 @@ function sendVerificationEmail(req, res, next) {
       });
     })
     .catch(next);
-}
+};
 
-function sendVerificationEmailHelper(user) {
+/**
+ * @function sendVerificationEmail
+ * Send verification email
+ *
+ * Helper function
+ *
+ * @param {object} user The user object who receives the email
+ * @returns {Promise} Resolve with a sending result object
+ */
+const sendVerificationEmail = user => {
+  return sendEmailHelper(
+    user,
+    'Verify your email',
+    `Welcome to ${config.appName}`,
+    'Before you can start using your account, please verify it by following the link below:',
+    'Verify Email',
+    `${config.server.url}:${config.server.port}/api/auth/verify-email/${user.token}`
+  );
+};
+
+/**
+ * @function sendEmailHelper
+ * Send an email
+ *
+ * Helper function
+ *
+ * @param {object} user The user object who receives the email
+ * @param {string} subject The subject portion of the email
+ * @param {string} title The table title
+ * @param {string} content The content
+ * @param {string} buttonText Then button text
+ * @param {string} url The action url link
+ * @returns {Promise} Resolve with a sending result object
+ */
+const sendEmailHelper = (user, subject, title, content, buttonText, url) => {
   return sendMail({
     to: user.email,
-    from: `${config.title} <${config.email.from}>`,
-    subject: `${config.title} - Verify your email`,
-    template: `${config.paths.root}/templates/signup-verify.email.html`,
+    from: `${config.appName} <${config.email.from}>`,
+    subject: `${config.appName} - ${subject}`,
+    template: `${config.paths.root}/templates/email.html`,
     templateParams: {
-      appTitle: config.title,
+      title: title,
       firstName: user.firstName,
-      url: `${config.server.url}/api/auth/verify/${user.token}`,
+      content,
+      buttonText,
+      url,
       signature: config.email.signature
     }
   });
-}
-
-module.exports = authCtrl;
+};

@@ -1,8 +1,9 @@
 const fspath = require('path');
 
 module.exports = {
-  title: 'MERN',
+  appName: 'MERN',
   auth: {
+    // require verify email when signing up
     verifyEmail: true // Note: If true, please specify your mailgun API key
   },
   email: {
