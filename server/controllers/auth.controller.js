@@ -3,7 +3,7 @@ const createError = require('http-errors');
 const passport = require('passport');
 const Joi = require('@hapi/joi');
 const _ = require('lodash');
-const sendMail = require('../config/nodemailer');
+const sendMailAsync = require('../config/nodemailer');
 const config = require('../config');
 
 const User = mongoose.model('User');
@@ -45,7 +45,7 @@ module.exports.updateProfile = (req, res, next) => {
         const { password, ...others } = req.body;
         _.merge(req.user, others);
         if (password) {
-          return req.user.setPassword(password);
+          return req.user.setPasswordAsync(password);
         }
       })
       .then(() => {
@@ -102,7 +102,7 @@ module.exports.resetPassword = (req, res, next) => {
         throw createError(422, 'Token expired');
       }
       existingUser.clearToken();
-      return existingUser.setPassword(req.body.newPassword);
+      return existingUser.setPasswordAsync(req.body.newPassword);
     })
     .then(() => {
       return existingUser.save();
@@ -237,7 +237,7 @@ module.exports.signUp = (req, res, next) => {
       }
 
       newUser = new User(req.body);
-      return newUser.setPassword(req.body.password);
+      return newUser.setPasswordAsync(req.body.password);
     })
     .then(() => {
       if (config.auth.verifyEmail) {
@@ -248,7 +248,7 @@ module.exports.signUp = (req, res, next) => {
     })
     .then(user => {
       if (config.auth.verifyEmail) {
-        return sendVerificationEmail(user).then(result => {
+        return sendVerificationEmailAsync(user).then(result => {
           res.status(201).json({
             success: true,
             message: 'A verification email has been sent to your email'
@@ -328,7 +328,7 @@ const sendPasswordResetToken = (req, res, next) => {
       return user.save();
     })
     .then(user => {
-      return sendEmailHelper(
+      return sendEmailHelperAsync(
         user,
         'Password reset',
         'Password reset',
@@ -375,7 +375,7 @@ const sendVerificationEmailToken = (req, res, next) => {
       return user.save();
     })
     .then(user => {
-      return sendVerificationEmail(user);
+      return sendVerificationEmailAsync(user);
     })
     .then(result => {
       res.status(200).json({
@@ -395,8 +395,8 @@ const sendVerificationEmailToken = (req, res, next) => {
  * @param {object} user The user object who receives the email
  * @returns {Promise} Resolve with a sending result object
  */
-const sendVerificationEmail = user => {
-  return sendEmailHelper(
+const sendVerificationEmailAsync = user => {
+  return sendEmailHelperAsync(
     user,
     'Verify your email',
     `Welcome to ${config.appName}`,
@@ -420,8 +420,15 @@ const sendVerificationEmail = user => {
  * @param {string} url The action url link
  * @returns {Promise} Resolve with a sending result object
  */
-const sendEmailHelper = (user, subject, title, content, buttonText, url) => {
-  return sendMail({
+const sendEmailHelperAsync = (
+  user,
+  subject,
+  title,
+  content,
+  buttonText,
+  url
+) => {
+  return sendMailAsync({
     to: user.email,
     from: `${config.appName} <${config.email.from}>`,
     subject: `${config.appName} - ${subject}`,

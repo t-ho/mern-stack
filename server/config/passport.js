@@ -21,7 +21,7 @@ const localStrategy = new LocalStrategy(
         if (!user) {
           return done(null, false, { message: 'Invalid username or email' });
         }
-        user.comparePassword(password).then(isMatch => {
+        user.comparePasswordAsync(password).then(isMatch => {
           if (!isMatch) {
             return done(null, false, { message: 'Incorrect password' });
           }

@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
         'Invalid email'
       ]
     },
-    // Do NOT set directly, call user.setPassword(password)
+    // Do NOT set directly, call user.setPasswordAsync(password)
     hashedPassword: {
       type: String,
       required: true
@@ -93,7 +93,7 @@ userSchema.methods.toJSON = function() {
  *
  * @param {Promise} password Resolve with null value
  */
-userSchema.methods.setPassword = function(password) {
+userSchema.methods.setPasswordAsync = function(password) {
   const saltRounds = 10;
   return bcrypt.hash(password, saltRounds).then(hash => {
     this.hashedPassword = hash;
@@ -105,7 +105,7 @@ userSchema.methods.setPassword = function(password) {
  *
  * @returns {Promise} Resolve with a boolean value
  */
-userSchema.methods.comparePassword = function(candidatePassword) {
+userSchema.methods.comparePasswordAsync = function(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.hashedPassword);
 };
 

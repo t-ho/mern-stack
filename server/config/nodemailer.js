@@ -37,7 +37,7 @@ const defaultOptions = {
  * @param {string} [options.bcc] The bcc portion of the email
  * @return {Promise} A promise representing the status of the email being sent, resolve is called with the returned object from the nodemailer transporter
  */
-const sendMail = function(options) {
+const sendMailAsync = function(options) {
   if (_.isObject(options)) {
     options = _.merge({}, defaultOptions, options);
   } else {
@@ -85,4 +85,4 @@ const sendMail = function(options) {
   });
 };
 
-module.exports = sendMail;
+module.exports = sendMailAsync;
