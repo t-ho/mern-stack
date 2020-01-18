@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
 const _ = require('lodash');
+const createError = require('http-errors');
 
 const User = mongoose.model('User');
 
@@ -46,6 +47,41 @@ module.exports.getUsers = (req, res, next) => {
     .then(results => {
       const [users, usersCount] = results;
       res.status(200).json({ users, usersCount });
+    })
+    .catch(next);
+};
+
+/**
+ * @function preloadTargetUser
+ * Preload the target user object and assign it to res.locals.targetUser.
+ *
+ * @param {string} userId The target user ID
+ */
+module.exports.preloadTargetUser = (req, res, next, userId) => {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return next(createError(422, 'Invalid user ID'));
+  }
+
+  User.findById(userId)
+    .then(targetUser => {
+      if (!targetUser) {
+        throw createError(422, 'User ID does not exist');
+      }
+      res.locals.targetUser = targetUser;
+      next();
+    })
+    .catch(next);
+};
+
+/**
+ * @function deletedUser
+ * Delete the target user
+ */
+module.exports.deleteUser = (req, res, next) => {
+  res.locals.targetUser
+    .delete()
+    .then(deletedUser => {
+      res.sendStatus(204);
     })
     .catch(next);
 };
