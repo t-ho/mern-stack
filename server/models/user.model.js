@@ -78,6 +78,7 @@ userSchema.methods.toJSON = function() {
     '_id',
     'username',
     'email',
+    'status',
     'firstName',
     'lastName',
     'role',
@@ -150,7 +151,7 @@ userSchema.methods.can = function(action) {
   if (this.role === 'admin' || this.role === 'root') {
     return true;
   }
-  return this.permissions[action];
+  return !!this.permissions[action];
 };
 
 mongoose.model('User', userSchema);
