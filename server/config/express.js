@@ -7,12 +7,15 @@ const morgan = require('morgan');
 const createError = require('http-errors');
 const routes = require('../routes');
 const passport = require('./passport');
+const config = require('./index');
 
 // App Setup
 const app = express();
 
-// Enable logger
-app.use(morgan('dev'));
+if (config.env !== 'production') {
+  // Enable logger
+  app.use(morgan('dev'));
+}
 
 // Compress all responses
 app.use(compression());
@@ -33,7 +36,7 @@ app.use(passport.initialize());
 
 app.use(routes);
 
-// catch 404 and forward to error handler
+// catch 404 errors and forward to error handler
 app.use((req, res, next) => next(createError(404, 'Not Found')));
 
 // error handler
