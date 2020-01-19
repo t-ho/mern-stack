@@ -49,13 +49,21 @@ const userSchema = new mongoose.Schema(
       default: 'user',
       index: true
     },
-    // call user.can(action) to determine permission
+    // The permissions field will allow a normal user to perform
+    // admin-like actions.
+    // By default, root and admin can do any thing (permissions field is ignored).
+    // So, call user.can(action) to determine permission
+
+    // NOTE: readUsers, insertUsers, updateUsers and deleteUsers are not listed
+    // here which means that normal users DO NOT have any permissions on User
+    // Collection at all.
     permissions: {
-      debug: { type: Boolean, default: false },
-      readUsers: { type: Boolean, default: false },
-      insertUsers: { type: Boolean, default: false },
-      updateUsers: { type: Boolean, default: false },
-      deleteUsers: { type: Boolean, default: false }
+      debug: { type: Boolean, default: false }
+      // Example: permissions for Posts collection should be defined as below:
+      // readPosts: { type: Boolean, default: false },
+      // insertPosts: { type: Boolean, default: false },
+      // updatePosts: { type: Boolean, default: false },
+      // deletePosts: { type: Boolean, default: false }
     },
     // token for veryfication email or reset password purpose, NOT JWT token
     // Do NOT set directly, call user.setToken(tokenPurpose) user.clearToken()
@@ -141,7 +149,8 @@ userSchema.methods.clearToken = function() {
 };
 
 /**
- * Determine whether this user has permission to do given action
+ * Determine whether this user has a permission to do given action
+ * based on user role and user permissions
  *
  * @param {string} action The action such as debug, deleteUsers,...
  * @returns {boolean} True if this user has permission to perform the given action.

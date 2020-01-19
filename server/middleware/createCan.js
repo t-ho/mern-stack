@@ -13,17 +13,20 @@ const User = mongoose.model('User');
  * role of the current user and target user (res.locals.targetUser).
  *
  * RULES for updating and deleting users
- * * Root > admin > user (with updateUsers or deleteUsers permission) > user
+ * * Root > admin > user
  * * Users CANNOT perform actions(update or delete) on the other users
- * who have the same role or permissions.
+ * who have the same role.
+ * * Users CANNOT update or delete themselves.
  *
  * Example:
- * * Root users cannot delete other root users.
- * * Users with "updateUsers" permission cannot update others users who
- * also have "updateUsers" permission
+ * * Root users cannot update or delete other root users.
+ * * Admin users cannot update or delete root users.
  *
- * @param {string} action It could be [readUsers, insertUsers, updateUsers, deleteUsers, ...].
+ * @param {string} action It could be [readUsers, insertUsers, updateUsers, deleteUsers, readPosts...].
  * See User Schema for a full list of permissions
+ *
+ * NOTE: readUsers, insertUsers, updateUsers and deleteUsers are not listed in the
+ * User Schema meaning normal users DO NOT have any permissions on User Collection at all.
  */
 const createCan = action => {
   return (req, res, next) => {
@@ -52,12 +55,6 @@ const createCan = action => {
     if (req.user.role === 'root' && targetUser.role !== 'root') {
       canContinue = true;
     } else if (req.user.role === 'admin' && targetUser.role === 'user') {
-      canContinue = true;
-    } else if (
-      req.user.role === 'user' &&
-      targetUser.role === 'user' &&
-      !targetUser.can(action)
-    ) {
       canContinue = true;
     }
     if (canContinue) {
