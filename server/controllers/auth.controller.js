@@ -8,6 +8,25 @@ const config = require('../config');
 
 const User = mongoose.model('User');
 
+const EMAIL_ERROR_MESSAGES = {
+  'string.empty': 'Email cannot be empty.',
+  'string.email': 'Email is invalid.',
+  'any.required': 'Email is required.'
+};
+
+const PASSWORD_ERROR_MESSAGES = {
+  'string.empty': 'Password cannot be empty.',
+  'string.min': 'Password must be at least 8 characters.',
+  'any.required': 'Password is required.'
+};
+
+const USERNAME_ERROR_MESSAGE = {
+  'string.empty': 'Username cannot be empty.',
+  'string.pattern.base':
+    'Username must be between 4 to 30 characters and may contain only alphanumeric chacracters, hyphen, dot or underscore.',
+  'any.required': 'Username is required.'
+};
+
 /**
  * @function getProfile
  * Get profile controller
@@ -22,9 +41,11 @@ module.exports.getProfile = (req, res, next) => {
  * JOI schema for validating updateProfile payload
  */
 const updateProfileSchema = Joi.object({
-  password: Joi.string().min(8),
-  firstName: Joi.string(),
-  lastName: Joi.string()
+  password: Joi.string()
+    .min(8)
+    .messages(PASSWORD_ERROR_MESSAGES),
+  firstName: Joi.string().trim(),
+  lastName: Joi.string().trim()
 });
 
 /**
@@ -37,10 +58,12 @@ const updateProfileSchema = Joi.object({
  */
 module.exports.updateProfile = (req, res, next) => {
   if (req.user) {
+    if (_.isEmpty(req.body)) {
+      return res.status(200).json({ updatedFields: [] });
+    }
     updateProfileSchema
-      .validateAsync(req.body, { allowUnknown: true, stripUnknown: true })
+      .validateAsync(req.body, { stripUnknown: true })
       .then(payload => {
-        console.log('payload', payload);
         req.body = payload;
         const { password, ...others } = req.body;
         _.merge(req.user, others);
@@ -64,10 +87,12 @@ module.exports.updateProfile = (req, res, next) => {
 const resetPasswordSchema = Joi.object({
   email: Joi.string()
     .required()
-    .email(),
+    .email()
+    .messages(EMAIL_ERROR_MESSAGES),
   newPassword: Joi.string()
     .required()
     .min(8)
+    .messages(PASSWORD_ERROR_MESSAGES)
 });
 
 /**
@@ -119,7 +144,8 @@ module.exports.resetPassword = (req, res, next) => {
 const sendTokenSchema = Joi.object({
   email: Joi.string()
     .required()
-    .email(),
+    .email()
+    .messages(EMAIL_ERROR_MESSAGES),
   tokenPurpose: Joi.string()
     .required()
     .valid('verifyEmail', 'resetPassword')
@@ -151,10 +177,18 @@ module.exports.sendToken = (req, res, next) => {
  * JOI schema for validating signIn payload
  */
 const signInSchema = Joi.object({
-  username: Joi.string().pattern(/^[a-zA-Z0-9.\-_]{4,20}$/),
-  email: Joi.string().email(),
-  password: Joi.string().required()
-}).xor('username', 'email');
+  username: Joi.string()
+    .pattern(/^[a-zA-Z0-9.\-_]{4,30}$/)
+    .messages(USERNAME_ERROR_MESSAGE),
+  email: Joi.string()
+    .email()
+    .messages(EMAIL_ERROR_MESSAGES),
+  password: Joi.string()
+    .required()
+    .messages(PASSWORD_ERROR_MESSAGES)
+})
+  .xor('username', 'email')
+  .messages({ 'object.missing': 'Either username or email must be provided.' });
 
 /**
  * @function signIn
@@ -187,7 +221,10 @@ module.exports.signIn = (req, res, next) => {
         res.json({ token: user.generateJwtToken(), user: user.toJSON() });
       })(req, res, next);
     })
-    .catch(next);
+    .catch(err => {
+      console.log(err);
+      next(err);
+    });
 };
 
 /**
@@ -196,15 +233,18 @@ module.exports.signIn = (req, res, next) => {
 const signUpSchema = Joi.object({
   username: Joi.string()
     .required()
-    .pattern(/^[a-zA-Z0-9.\-_]{4,30}$/),
+    .pattern(/^[a-zA-Z0-9.\-_]{4,30}$/)
+    .messages(USERNAME_ERROR_MESSAGE),
   email: Joi.string()
     .required()
-    .email(),
+    .email()
+    .messages(EMAIL_ERROR_MESSAGES),
   password: Joi.string()
     .required()
-    .min(8),
-  firstName: Joi.string(),
-  lastName: Joi.string()
+    .min(8)
+    .messages(PASSWORD_ERROR_MESSAGES),
+  firstName: Joi.string().trim(),
+  lastName: Joi.string().trim()
 });
 
 /**
@@ -230,9 +270,9 @@ module.exports.signUp = (req, res, next) => {
     .then(existingUser => {
       if (existingUser) {
         if (existingUser.email == req.body.email) {
-          throw createError(422, 'Email already in use');
+          throw createError(422, 'Email is already in use');
         } else {
-          throw createError(422, 'Username already in use');
+          throw createError(422, 'Username is already in use');
         }
       }
 
@@ -271,6 +311,7 @@ const verifyEmailSchema = Joi.object({
   email: Joi.string()
     .required()
     .email()
+    .messages(EMAIL_ERROR_MESSAGES)
 });
 
 /**

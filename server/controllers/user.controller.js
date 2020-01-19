@@ -109,10 +109,11 @@ module.exports.updateUser = (req, res, next) => {
   updateUserSchema
     .validateAsync(req.body, { stripUnknown: true })
     .then(payload => {
+      req.body = payload;
       if (
         req.user.role === 'admin' &&
-        payload.role &&
-        payload.role !== 'user'
+        req.body.role &&
+        req.body.role !== 'user'
       ) {
         throw createError(401, 'Unauthorized action');
       }
@@ -120,7 +121,7 @@ module.exports.updateUser = (req, res, next) => {
       return res.locals.targetUser.save();
     })
     .then(updatedUser => {
-      res.sendStatus(204);
+      res.status(200).json({ updatedFields: _.keys(req.body) });
     })
     .catch(next);
 };

@@ -10,7 +10,7 @@ router.get(
   authCtrl.getProfile
 );
 
-router.post(
+router.put(
   '/profile',
   passport.authenticate('jwt', { session: false }),
   authCtrl.updateProfile
