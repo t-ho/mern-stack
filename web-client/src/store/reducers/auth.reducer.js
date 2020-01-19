@@ -12,8 +12,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case actionTypes.SIGN_UP_SUCCESS:
       return {
         ...state,
-        processing: false,
-        user: action.payload
+        processing: false
       };
     case actionTypes.SIGN_UP_FAIL:
       return {

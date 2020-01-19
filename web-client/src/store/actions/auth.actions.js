@@ -8,7 +8,7 @@ export const signUp = formValues => dispatch => {
       dispatch(signUpSuccess(response.data));
     },
     err => {
-      dispatch(signUpFail('Email is already existed'));
+      dispatch(signUpFail(err.response.data.error));
     }
   );
 };

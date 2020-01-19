@@ -3,7 +3,7 @@ import { Field, reduxForm, SubmissionError } from 'redux-form';
 import { connect } from 'react-redux';
 import { signUp } from '../../store/actions';
 import { getProcessing, getError } from '../../store/selectors';
-import { required, email, minLength } from '../../utils/formValidator';
+import { required, minLength, email } from '../../utils/formValidator';
 
 class SignUp extends React.Component {
   renderInput = field => {
@@ -28,16 +28,21 @@ class SignUp extends React.Component {
   onSubmit = formValues => {
     return this.props.signUp(formValues).then(() => {
       if (this.props.errorMessage) {
-        throw new SubmissionError({
-          email: this.props.errorMessage
-        });
+        throw new SubmissionError({ _error: this.props.errorMessage });
       }
       this.props.history.push('/signin');
     });
   };
 
   render() {
-    const { handleSubmit, pristine, reset, submitting, valid } = this.props;
+    const {
+      handleSubmit,
+      pristine,
+      reset,
+      submitting,
+      valid,
+      error
+    } = this.props;
     return (
       <div className="ui centered grid">
         <div className="eight wide column">
@@ -48,31 +53,21 @@ class SignUp extends React.Component {
               className="ui form error"
             >
               <Field
+                name="username"
+                label="Username"
+                type="text"
+                component={this.renderInput}
+              />
+              <Field
                 name="email"
                 label="Email"
                 type="text"
-                validate={[required, email]}
                 component={this.renderInput}
               />
               <Field
                 name="password"
                 label="Password"
                 type="password"
-                validate={[required, minLength(8)]}
-                component={this.renderInput}
-              />
-              <Field
-                name="firstName"
-                label="First Name"
-                type="text"
-                validate={required}
-                component={this.renderInput}
-              />
-              <Field
-                name="lastName"
-                label="Last Name"
-                type="text"
-                validate={required}
                 component={this.renderInput}
               />
               <button
@@ -90,6 +85,11 @@ class SignUp extends React.Component {
               >
                 Reset
               </button>
+              {error && (
+                <div className="ui error message">
+                  <div className="header">{error}</div>
+                </div>
+              )}
             </form>
           </div>
         </div>
@@ -105,6 +105,14 @@ const maptStateToProps = state => {
   };
 };
 
+const validate = values => {
+  const errors = {};
+  errors.username = required(values.username) || minLength(4)(values.username);
+  errors.email = required(values.email) || email(values.email);
+  errors.password = required(values.password) || minLength(8)(values.password);
+  return errors;
+};
+
 export default connect(maptStateToProps, { signUp })(
-  reduxForm({ form: 'signUp' })(SignUp)
+  reduxForm({ form: 'signUp', validate })(SignUp)
 );
