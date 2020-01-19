@@ -85,3 +85,42 @@ module.exports.deleteUser = (req, res, next) => {
     })
     .catch(next);
 };
+
+/**
+ * Joi schema for validating updateUser payload
+ */
+const updateUserSchema = Joi.object({
+  role: Joi.string().valid('admin', 'user'),
+  status: Joi.string().valid('active', 'unverifiedEmail'),
+  permissions: Joi.object()
+});
+
+/**
+ * @function updatedUser
+ * Update user controller.
+ *
+ * Only root can set role for others
+ *
+ * @param {string} [req.body.role] The role could be 'admin' or 'user'
+ * @param {status} [req.body.status] The status of user
+ * @param {object} [req.body.permissions] The permissions object
+ */
+module.exports.updateUser = (req, res, next) => {
+  updateUserSchema
+    .validateAsync(req.body, { stripUnknown: true })
+    .then(payload => {
+      if (
+        req.user.role === 'admin' &&
+        payload.role &&
+        payload.role !== 'user'
+      ) {
+        throw createError(401, 'Unauthorized action');
+      }
+      _.merge(res.locals.targetUser, req.body);
+      return res.locals.targetUser.save();
+    })
+    .then(updatedUser => {
+      res.sendStatus(204);
+    })
+    .catch(next);
+};

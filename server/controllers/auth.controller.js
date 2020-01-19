@@ -31,9 +31,9 @@ const updateProfileSchema = Joi.object({
  * @function updateProfile
  * Get profile controller
  *
- * @param {string} [password] The password to update
- * @param {string} [firstName] The first name to update
- * @param {string} [lastName] The last name to update
+ * @param {string} [req.body.password] The password to update
+ * @param {string} [req.body.firstName] The first name to update
+ * @param {string} [req.body.lastName] The last name to update
  */
 module.exports.updateProfile = (req, res, next) => {
   if (req.user) {
