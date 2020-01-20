@@ -188,20 +188,6 @@ Sample response
 /api/auth/verify-email/:token
 ```
 
-- **Resquest Body Payload**
-
-| Property Name | Type     | Required | Description |
-| ------------- | -------- | -------- | ----------- |
-| `email`       | _string_ | Yes      | Email       |
-
-Sample request body payload
-
-```
-{
-  "email": "test@test.com",
-}
-```
-
 - **Response Payload**
 
 | Property Name | Type      | Description |

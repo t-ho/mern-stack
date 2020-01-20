@@ -308,38 +308,20 @@ module.exports.signUp = (req, res, next) => {
 };
 
 /**
- * JOI schema for validating verifyEmail payload
- */
-const verifyEmailSchema = Joi.object({
-  email: Joi.string()
-    .required()
-    .email()
-    .messages(EMAIL_ERROR_MESSAGES)
-});
-
-/**
  * @function verifyEmail
  * Verify email controller
  *
  * @param {string} req.params.token The verification email token
- * @param {string} req.body.email The email to verify
  */
 module.exports.verifyEmail = (req, res, next) => {
   if (!req.params.token) {
     return next(createError(422, 'No token provided'));
   }
 
-  verifyEmailSchema
-    .validateAsync(req.body)
-    .then(payload => {
-      req.body = payload;
-
-      return User.findOne({
-        email: req.body.email,
-        token: req.params.token,
-        tokenPurpose: 'verifyEmail'
-      });
-    })
+  return User.findOne({
+    token: req.params.token,
+    tokenPurpose: 'verifyEmail'
+  })
     .then(user => {
       if (!user) {
         throw createError(422, 'Token expired');
@@ -446,7 +428,7 @@ const sendVerificationEmailAsync = user => {
     `Welcome to ${config.appName}`,
     'Before you can start using your account, please verify it by following the link below:',
     'Verify Email',
-    `${config.server.url}:${config.server.port}/api/auth/verify-email/${user.token}`
+    `${config.server.url}:3000/verify-email/${user.token}` // FIXME: fix port number
   );
 };
 
