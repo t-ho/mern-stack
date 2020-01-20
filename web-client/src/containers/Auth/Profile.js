@@ -10,4 +10,4 @@ const Profile = () => {
   );
 };
 
-export default requireRole(Profile, 'user');
+export default requireRole('user')(Profile);

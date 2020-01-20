@@ -10,4 +10,4 @@ const UserList = () => {
   );
 };
 
-export default requireRole(UserList, 'admin');
+export default requireRole('admin')(UserList);

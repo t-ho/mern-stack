@@ -23,7 +23,8 @@ const authReducer = (state = INITIAL_STATE, action) => {
         processing: false,
         token: action.payload.token,
         expiresAt: action.payload.expiresAt,
-        user: { ...action.payload.user }
+        user: { ...action.payload.user },
+        defaultPath: '/profile'
       };
     case actionTypes.SIGN_UP_SUCCESS:
       return {
@@ -43,7 +44,8 @@ const authReducer = (state = INITIAL_STATE, action) => {
         processing: false,
         token: null,
         user: {},
-        expiresAt: null
+        expiresAt: null,
+        defaultPath: '/'
       };
     }
     case actionTypes.SET_DEFAULT_URL: {

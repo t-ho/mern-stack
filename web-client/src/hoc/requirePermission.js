@@ -9,12 +9,13 @@ import { setBeforeSignInPath } from '../store/actions';
 
 /**
  * If the current user is admin or root, he/she is authorized by default.
- * If the current user is normal user, then check his/her permssions
+ * If the current user is normal user, then check his/her permssions.
+ * After checking, if he/she is not authorized, redirect to default path.
  *
  * @param {Component} WrappedComponent The component to be wrapped
  * @param {string} action The action (see state.auth.permissions)
  */
-const requirePermission = (WrappedComponent, action) => {
+const requirePermission = action => WrappedComponent => {
   class ComposedComponent extends React.Component {
     componentDidMount() {
       this.shouldNavigateAway();

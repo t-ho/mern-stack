@@ -72,7 +72,6 @@ const signInFail = payload => {
 };
 
 const redirectAfterSignIn = (dispatch, getState) => {
-  dispatch(setDefaultPath('/profile'));
   if (getState().auth.beforeSignInPath) {
     dispatch(replace(getState().auth.beforeSignInPath));
     dispatch(setBeforeSignInPath(null));
@@ -106,13 +105,6 @@ const tryLocalSignInStart = () => {
   };
 };
 
-export const setDefaultPath = path => {
-  return {
-    type: actionTypes.SET_DEFAULT_URL,
-    payload: path
-  };
-};
-
 export const setBeforeSignInPath = path => {
   return {
     type: actionTypes.SET_BEFORE_SIGNIN_PATH,
@@ -126,7 +118,6 @@ export const signOut = () => dispatch => {
   localStorage.removeItem('expiresAt');
   localStorage.removeItem('user');
   dispatch(signOutSuccess());
-  dispatch(setDefaultPath('/'));
 };
 
 const signOutStart = () => {

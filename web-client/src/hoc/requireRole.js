@@ -11,11 +11,12 @@ import { setBeforeSignInPath } from '../store/actions';
  * If role == "user", then user, admin and root are authorized
  * If role == "admin", then admin and root are authorized
  * If role == "root", then only root are authorized
+ * After checking, if he/she is not authorized, redirect to default path.
  *
  * @param {Component} WrappedComponent The component to be wrapped
  * @param {string} role The role. It could be ['user', 'admin', 'root']
  */
-const requireRole = (WrappedComponent, role) => {
+const requireRole = role => WrappedComponent => {
   class ComposedComponent extends React.Component {
     componentDidMount() {
       this.shouldNavigateAway();
