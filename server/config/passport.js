@@ -19,16 +19,18 @@ const localStrategy = new LocalStrategy(
     })
       .then(user => {
         if (!user) {
-          return done(null, false, { message: 'Invalid username or email' });
+          return done(null, false, {
+            message: 'Username or email does not exist.'
+          });
         }
         user.comparePasswordAsync(password).then(isMatch => {
           if (!isMatch) {
-            return done(null, false, { message: 'Incorrect password' });
+            return done(null, false, { message: 'Password is incorrect.' });
           }
 
           if (config.auth.verifyEmail) {
             if (user.status === 'unverifiedEmail') {
-              return done(null, false, { message: 'Unverified email' });
+              return done(null, false, { message: 'Email is not verified.' });
             }
           }
 
