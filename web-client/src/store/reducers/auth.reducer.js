@@ -1,16 +1,19 @@
 import * as actionTypes from '../actions/types';
+
 const INITIAL_STATE = {
   user: {},
   token: null,
   expiresAt: null,
   processing: false,
-  defaultRedirectUrl: '/',
+  defaultPath: '/', // Used as a default redirect path
+  beforeSignInPath: null, // Used to redirect users to the page they visited before logging in
   error: null
 };
 
 const authReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case actionTypes.SIGN_IN:
+    case actionTypes.TRY_LOCAL_SIGN_IN:
     case actionTypes.SIGN_OUT:
     case actionTypes.SIGN_UP:
       return { ...state, processing: true, error: null };
@@ -41,6 +44,20 @@ const authReducer = (state = INITIAL_STATE, action) => {
         token: null,
         user: {},
         expiresAt: null
+      };
+    }
+    case actionTypes.SET_DEFAULT_URL: {
+      return {
+        ...state,
+        user: { ...state.user },
+        defaultPath: action.payload
+      };
+    }
+    case actionTypes.SET_BEFORE_SIGNIN_PATH: {
+      return {
+        ...state,
+        user: { ...state.user },
+        beforeSignInPath: action.payload
       };
     }
     default:

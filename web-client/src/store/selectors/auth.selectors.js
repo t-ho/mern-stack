@@ -18,7 +18,7 @@ export const getIsSignedIn = createSelector(
   auth => auth.token !== null
 );
 
-export const getDefaultRedirectUrl = createSelector(
+export const getDefaultPath = createSelector(
   getAuthState,
-  auth => auth.defaultRedirectUrl
+  auth => auth.defaultPath
 );

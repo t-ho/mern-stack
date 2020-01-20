@@ -1,18 +1,27 @@
 import { createStore, applyMiddleware, compose } from 'redux';
+import { createBrowserHistory } from 'history';
 import reduxThunk from 'redux-thunk';
-import rootReducer from './reducers';
+import { routerMiddleware } from 'connected-react-router';
+import createRootReducer from './reducers';
 import DevTools from '../containers/Root/DevTools';
+
+export const history = createBrowserHistory();
 
 const configureStore = initialState => {
   const store = createStore(
-    rootReducer,
+    createRootReducer(history),
     initialState,
-    compose(applyMiddleware(reduxThunk), DevTools.instrument())
+    compose(
+      applyMiddleware(routerMiddleware(history), reduxThunk),
+      DevTools.instrument()
+    )
   );
 
   // Hot reload reducers (requires Webpack or Browserify HMR to be enabled)
   if (module.hot) {
-    module.hot.accept('./reducers', () => store.replaceReducer(rootReducer));
+    module.hot.accept('./reducers', () =>
+      store.replaceReducer(createRootReducer(history))
+    );
   }
 
   return store;

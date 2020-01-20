@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import {
   getCurrentUser,
   getIsSignedIn,
-  getDefaultRedirectUrl
+  getDefaultPath
 } from '../store/selectors';
+import { setBeforeSignInPath } from '../store/actions';
 
 /**
  * If the current user is admin or root, he/she is authorized by default.
@@ -24,8 +25,9 @@ const requirePermission = (WrappedComponent, action) => {
     }
 
     isAuthorized = () => {
-      const { currentUser, isSignedIn } = this.props;
+      const { currentUser, isSignedIn, currentPath } = this.props;
       if (!isSignedIn) {
+        this.setBeforeSignInPath(currentPath);
         return false;
       }
 
@@ -42,7 +44,7 @@ const requirePermission = (WrappedComponent, action) => {
 
     shouldNavigateAway = () => {
       if (!this.isAuthorized()) {
-        this.props.history.replace(this.props.redirectUrl);
+        this.props.history.replace(this.props.defaultPath);
       }
     };
 
@@ -55,11 +57,12 @@ const requirePermission = (WrappedComponent, action) => {
     return {
       currentUser: getCurrentUser(state),
       isSignedIn: getIsSignedIn(state),
-      redirectUrl: getDefaultRedirectUrl(state)
+      defaultPath: getDefaultPath(state),
+      currentPath: state.router.location.pathname
     };
   };
 
-  return connect(mapStateToProps)(ComposedComponent);
+  return connect(mapStateToProps, { setBeforeSignInPath })(ComposedComponent);
 };
 
 export default requirePermission;

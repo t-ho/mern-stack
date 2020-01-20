@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import {
   getCurrentUser,
   getIsSignedIn,
-  getDefaultRedirectUrl
+  getDefaultPath
 } from '../store/selectors';
+import { setBeforeSignInPath } from '../store/actions';
 
 /**
  * If role == "user", then user, admin and root are authorized
@@ -27,6 +28,7 @@ const requireRole = (WrappedComponent, role) => {
     isAuthorized = () => {
       const { currentUser, isSignedIn } = this.props;
       if (!isSignedIn) {
+        this.props.setBeforeSignInPath(this.props.currentPath);
         return false;
       }
 
@@ -50,7 +52,7 @@ const requireRole = (WrappedComponent, role) => {
 
     shouldNavigateAway = () => {
       if (!this.isAuthorized()) {
-        this.props.history.replace(this.props.redirectUrl);
+        this.props.history.replace(this.props.defaultPath);
       }
     };
 
@@ -63,11 +65,12 @@ const requireRole = (WrappedComponent, role) => {
     return {
       currentUser: getCurrentUser(state),
       isSignedIn: getIsSignedIn(state),
-      redirectUrl: getDefaultRedirectUrl(state)
+      defaultPath: getDefaultPath(state),
+      currentPath: state.router.location.pathname
     };
   };
 
-  return connect(mapStateToProps)(ComposedComponent);
+  return connect(mapStateToProps, { setBeforeSignInPath })(ComposedComponent);
 };
 
 export default requireRole;

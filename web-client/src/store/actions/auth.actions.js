@@ -1,3 +1,4 @@
+import { replace } from 'connected-react-router';
 import * as actionTypes from './types';
 import mernApi, { setAuthToken } from '../../apis/mern';
 
@@ -33,12 +34,12 @@ const signUpFail = payload => {
   };
 };
 
-export const signIn = formValues => dispatch => {
+export const signIn = formValues => (dispatch, getState) => {
   dispatch(signInStart());
   return mernApi.post('/auth/signin', formValues).then(
     response => {
       dispatch(signInSuccess(response.data));
-      dispatch(setDefaultRedirectUrl('/profile'));
+      redirectAfterSignIn(dispatch, getState);
       setAuthToken(response.data.token);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('expiresAt', response.data.expiresAt);
@@ -70,9 +71,51 @@ const signInFail = payload => {
   };
 };
 
-export const setDefaultRedirectUrl = path => {
+const redirectAfterSignIn = (dispatch, getState) => {
+  dispatch(setDefaultPath('/profile'));
+  if (getState().auth.beforeSignInPath) {
+    dispatch(replace(getState().auth.beforeSignInPath));
+    dispatch(setBeforeSignInPath(null));
+  } else {
+    dispatch(replace(getState().auth.defaultPath));
+  }
+};
+
+export const tryLocalSignIn = () => (dispatch, getState) => {
+  dispatch(tryLocalSignInStart());
+  try {
+    const token = localStorage.getItem('token');
+    const expiresAt = localStorage.getItem('expiresAt');
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!token || !expiresAt || !user) {
+      return dispatch(signOut);
+    }
+    if (expiresAt * 1000 <= Date.now()) {
+      return dispatch(signOut);
+    }
+    dispatch(signInSuccess({ token, expiresAt, user }));
+    redirectAfterSignIn(dispatch, getState);
+  } catch (err) {
+    dispatch(signOut);
+  }
+};
+
+const tryLocalSignInStart = () => {
   return {
-    type: actionTypes.SET_DEFAULT_REDIRECT_URL,
+    type: actionTypes.TRY_LOCAL_SIGN_IN
+  };
+};
+
+export const setDefaultPath = path => {
+  return {
+    type: actionTypes.SET_DEFAULT_URL,
+    payload: path
+  };
+};
+
+export const setBeforeSignInPath = path => {
+  return {
+    type: actionTypes.SET_BEFORE_SIGNIN_PATH,
     payload: path
   };
 };
@@ -83,7 +126,7 @@ export const signOut = () => dispatch => {
   localStorage.removeItem('expiresAt');
   localStorage.removeItem('user');
   dispatch(signOutSuccess());
-  dispatch(setDefaultRedirectUrl('/'));
+  dispatch(setDefaultPath('/'));
 };
 
 const signOutStart = () => {

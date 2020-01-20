@@ -1,16 +1,16 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { ConnectedRouter } from 'connected-react-router';
 import App from '../App/App';
 import DevTools from './DevTools';
 
-const Root = ({ store }) => {
+const Root = ({ store, history }) => {
   return (
     <Provider store={store}>
-      <BrowserRouter>
+      <ConnectedRouter history={history}>
         <App />
         <DevTools />
-      </BrowserRouter>
+      </ConnectedRouter>
     </Provider>
   );
 };
