@@ -14,6 +14,6 @@ export const getError = createSelector(getAuthState, auth => {
 export const getCurrentUser = createSelector(getAuthState, auth => auth.user);
 
 export const getIsSignedIn = createSelector(
-  getCurrentUser,
-  currentUser => currentUser.token !== null
+  getAuthState,
+  auth => auth.token !== null
 );
