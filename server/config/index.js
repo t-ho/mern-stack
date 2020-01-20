@@ -8,7 +8,7 @@ module.exports = {
   appName: 'MERN',
   auth: {
     // require verify email when signing up
-    verifyEmail: true // Note: If true, please specify your mailgun API key
+    verifyEmail: false // Note: If true, please specify your mailgun API key
   },
   email: {
     from: 'no-reply@mern.com', // FIXME
