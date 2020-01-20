@@ -38,6 +38,7 @@ export const signIn = formValues => dispatch => {
   return mernApi.post('/auth/signin', formValues).then(
     response => {
       dispatch(signInSuccess(response.data));
+      dispatch(setDefaultRedirectUrl('/profile'));
       setAuthToken(response.data.token);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('expiresAt', response.data.expiresAt);
@@ -66,5 +67,12 @@ const signInFail = payload => {
   return {
     type: actionTypes.SIGN_IN_FAIL,
     payload
+  };
+};
+
+export const setDefaultRedirectUrl = path => {
+  return {
+    type: actionTypes.SET_DEFAULT_REDIRECT_URL,
+    payload: path
   };
 };

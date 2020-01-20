@@ -7,14 +7,13 @@ import {
 } from '../store/selectors';
 
 /**
- * If role == "user", then user, admin and root are authorized
- * If role == "admin", then admin and root are authorized
- * If role == "root", then only root are authorized
+ * If the current user is admin or root, he/she is authorized by default.
+ * If the current user is normal user, then check his/her permssions
  *
  * @param {Component} WrappedComponent The component to be wrapped
- * @param {string} role The role. It could be ['user', 'admin', 'root']
+ * @param {string} action The action (see state.auth.permissions)
  */
-const requireRole = (WrappedComponent, role) => {
+const requirePermission = (WrappedComponent, action) => {
   class ComposedComponent extends React.Component {
     componentDidMount() {
       this.shouldNavigateAway();
@@ -30,19 +29,12 @@ const requireRole = (WrappedComponent, role) => {
         return false;
       }
 
-      if (role === 'user') {
-        // user, admin and root is allowed
+      if (currentUser.role === 'root' || currentUser.role === 'admin') {
         return true;
-      } else if (role === 'admin') {
-        // admin and root is allowed
-        if (currentUser.role === 'admin' || currentUser.role === 'root') {
-          return true;
-        }
-      } else if (role === 'root') {
-        // only root is allowed
-        if (currentUser.role === 'root') {
-          return true;
-        }
+      }
+
+      if (currentUser.pemissions[action]) {
+        return true;
       }
 
       return false;
@@ -70,4 +62,4 @@ const requireRole = (WrappedComponent, role) => {
   return connect(mapStateToProps)(ComposedComponent);
 };
 
-export default requireRole;
+export default requirePermission;

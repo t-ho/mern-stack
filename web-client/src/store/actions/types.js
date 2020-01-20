@@ -5,3 +5,5 @@ export const SIGN_UP_FAIL = '[Auth] Sign Up Fail';
 export const SIGN_IN = '[Auth] Sign In';
 export const SIGN_IN_SUCCESS = '[Auth] Sign In Success';
 export const SIGN_IN_FAIL = '[Auth] Sign In Fail';
+
+export const SET_DEFAULT_REDIRECT_URL = '[Auth] Set Default Redirect Url';
