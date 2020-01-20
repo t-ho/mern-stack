@@ -76,3 +76,24 @@ export const setDefaultRedirectUrl = path => {
     payload: path
   };
 };
+
+export const signOut = () => dispatch => {
+  dispatch(signOutStart());
+  localStorage.removeItem('token');
+  localStorage.removeItem('expiresAt');
+  localStorage.removeItem('user');
+  dispatch(signOutSuccess());
+  dispatch(setDefaultRedirectUrl('/'));
+};
+
+const signOutStart = () => {
+  return {
+    type: actionTypes.SIGN_OUT
+  };
+};
+
+const signOutSuccess = () => {
+  return {
+    type: actionTypes.SIGN_OUT_SUCCESS
+  };
+};

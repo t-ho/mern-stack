@@ -2,6 +2,7 @@ import * as actionTypes from '../actions/types';
 const INITIAL_STATE = {
   user: {},
   token: null,
+  expiresAt: null,
   processing: false,
   defaultRedirectUrl: '/',
   error: null
@@ -10,6 +11,7 @@ const INITIAL_STATE = {
 const authReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case actionTypes.SIGN_IN:
+    case actionTypes.SIGN_OUT:
     case actionTypes.SIGN_UP:
       return { ...state, processing: true, error: null };
     case actionTypes.SIGN_IN_SUCCESS:
@@ -32,6 +34,15 @@ const authReducer = (state = INITIAL_STATE, action) => {
         processing: false,
         error: action.payload
       };
+    case actionTypes.SIGN_OUT_SUCCESS: {
+      return {
+        ...state,
+        processing: false,
+        token: null,
+        user: {},
+        expiresAt: null
+      };
+    }
     default:
       return state;
   }
