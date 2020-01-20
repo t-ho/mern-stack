@@ -1,6 +1,8 @@
 import React from 'react';
 import { Field, reduxForm, SubmissionError } from 'redux-form';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
+import requireAnonymous from '../../hoc/requireAnonymous';
 import { signUp } from '../../store/actions';
 import { getProcessing, getError } from '../../store/selectors';
 import { required, minLength, email } from '../../utils/formValidator';
@@ -121,6 +123,8 @@ const validate = values => {
   return errors;
 };
 
-export default connect(maptStateToProps, { signUp })(
-  reduxForm({ form: 'signUp', validate })(SignUp)
-);
+export default compose(
+  requireAnonymous(),
+  connect(maptStateToProps, { signUp }),
+  reduxForm({ form: 'signUp', validate })
+)(SignUp);
