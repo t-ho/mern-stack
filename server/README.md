@@ -109,16 +109,18 @@ Sample request body payload
 
 - **Response Payload**
 
-| Property Name | Type     | Description |
-| ------------- | -------- | ----------- |
-| `token`       | _string_ | JWT token   |
-| `user`        | _object_ | User info   |
+| Property Name | Type     | Description               |
+| ------------- | -------- | ------------------------- |
+| `token`       | _string_ | JWT token                 |
+| `expiresAt`   | _string_ | Expires at time (seconds) |
+| `user`        | _object_ | User info                 |
 
 Sample response
 
 ```
 {
   "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZTI0ZDQyY2Y3ZGRkZjAxMmNkNDk2YjIiLCJ1c2VySWQiOiI1ZTI0ZDQyY2Y3ZGRkZjAxMmNkNDk2YjIiLCJpYXQiOjE1Nzk0NzI1OTMsImV4cCI6MTU4NDY1NjU5M30.nlrURWeYjMr9cBXa-QhWCQVyKw2tPsQjnUyPaXnitMv9PxcOUjZJzn4U-mN4o_Eg8d9IqTP2_WJjmiAU5QydPA",
+  expiresAt: 1584656593,
   "user": {
     "_id": "5e24d42cf7dddf012cd496b2",
     "username": "tester",

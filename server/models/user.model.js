@@ -121,13 +121,20 @@ userSchema.methods.comparePasswordAsync = function(candidatePassword) {
 /**
  * Generate JWT token for authentication
  *
- * @returns {string} JWT token
+ * @returns {object} An object contains JWT token and expiresAt (seconds) property
  */
 userSchema.methods.generateJwtToken = function() {
-  return jwt.sign({ sub: this._id, userId: this._id }, config.jwt.secret, {
-    algorithm: config.jwt.algorithm,
-    expiresIn: config.jwt.expiresIn
-  });
+  const iat = Math.floor(Date.now() / 1000);
+  const expiresAt = iat + config.jwt.expiresIn;
+  const token = jwt.sign(
+    { sub: this._id, userId: this._id },
+    config.jwt.secret,
+    {
+      algorithm: config.jwt.algorithm,
+      expiresIn: config.jwt.expiresIn // seconds
+    }
+  );
+  return { token, expiresAt };
 };
 
 /**

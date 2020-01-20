@@ -220,7 +220,8 @@ module.exports.signIn = (req, res, next) => {
           return next(createError(401, info.message));
         }
         // login success
-        res.json({ token: user.generateJwtToken(), user: user.toJSON() });
+        jwtTokenObj = user.generateJwtToken();
+        res.json({ ...jwtTokenObj, user: user.toJSON() });
       })(req, res, next);
     })
     .catch(err => {
