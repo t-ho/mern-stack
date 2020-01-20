@@ -81,7 +81,7 @@ module.exports.deleteUser = (req, res, next) => {
   res.locals.targetUser
     .delete()
     .then(deletedUser => {
-      res.sendStatus(204);
+      res.status(200).json({ success: true, message: 'User deleted' });
     })
     .catch(next);
 };
@@ -121,7 +121,7 @@ module.exports.updateUser = (req, res, next) => {
       return res.locals.targetUser.save();
     })
     .then(updatedUser => {
-      res.status(200).json({ updatedFields: _.keys(req.body) });
+      res.status(200).json({ success: true, updatedFields: _.keys(req.body) });
     })
     .catch(next);
 };

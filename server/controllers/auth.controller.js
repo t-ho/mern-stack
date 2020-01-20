@@ -75,7 +75,9 @@ module.exports.updateProfile = (req, res, next) => {
         return req.user.save();
       })
       .then(updatedUser => {
-        res.status(200).json({ updatedFields: _.keys(req.body) });
+        res
+          .status(200)
+          .json({ success: true, updatedFields: _.keys(req.body) });
       })
       .catch(next);
   }
@@ -89,7 +91,7 @@ const resetPasswordSchema = Joi.object({
     .required()
     .email()
     .messages(EMAIL_ERROR_MESSAGES),
-  newPassword: Joi.string()
+  password: Joi.string()
     .required()
     .min(8)
     .messages(PASSWORD_ERROR_MESSAGES)
@@ -101,7 +103,7 @@ const resetPasswordSchema = Joi.object({
  *
  * @param {string} req.params.token The reset password token
  * @param {string} req.body.email The email
- * @param {string} req.body.newPassword The new password
+ * @param {string} req.body.password The new password
  */
 module.exports.resetPassword = (req, res, next) => {
   if (!req.params.token) {
@@ -127,7 +129,7 @@ module.exports.resetPassword = (req, res, next) => {
         throw createError(422, 'Token expired');
       }
       existingUser.clearToken();
-      return existingUser.setPasswordAsync(req.body.newPassword);
+      return existingUser.setPasswordAsync(req.body.password);
     })
     .then(() => {
       return existingUser.save();
