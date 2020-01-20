@@ -35,7 +35,7 @@ class SignIn extends React.Component {
       if (this.props.errorMessage) {
         throw new SubmissionError({ _error: this.props.errorMessage });
       }
-      this.props.history.push('/');
+      this.props.history.push('/profile');
     });
   };
 

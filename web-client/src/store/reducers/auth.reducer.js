@@ -3,6 +3,7 @@ const INITIAL_STATE = {
   user: {},
   token: null,
   processing: false,
+  defaultRedirectUrl: '/',
   error: null
 };
 
