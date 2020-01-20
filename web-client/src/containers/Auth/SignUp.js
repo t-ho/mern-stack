@@ -14,7 +14,12 @@ class SignUp extends React.Component {
       <>
         <div className={className}>
           <label>{field.label}</label>
-          <input {...field.input} type={field.type} autoComplete="off" />
+          <input
+            {...field.input}
+            type={field.type}
+            autoComplete="off"
+            placeholder={field.placeholder}
+          />
         </div>
         {field.meta.touched && field.meta.error && (
           <div className="ui error message">
@@ -55,18 +60,21 @@ class SignUp extends React.Component {
               <Field
                 name="username"
                 label="Username"
+                placeholder="Enter your username"
                 type="text"
                 component={this.renderInput}
               />
               <Field
                 name="email"
                 label="Email"
+                placeholder="Enter your email"
                 type="text"
                 component={this.renderInput}
               />
               <Field
                 name="password"
                 label="Password"
+                placeholder="Enter your password"
                 type="password"
                 component={this.renderInput}
               />
