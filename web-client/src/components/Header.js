@@ -8,13 +8,18 @@ export class Header extends React.Component {
   renderAuthButtons = () => {
     if (this.props.isSignedIn) {
       return (
-        <button
-          style={{ cursor: 'pointer' }}
-          onClick={this.props.signOut}
-          className="item"
-        >
-          Sign Out
-        </button>
+        <>
+          <NavLink to="/users" className="item">
+            Manage Users
+          </NavLink>
+          <button
+            style={{ cursor: 'pointer' }}
+            onClick={this.props.signOut}
+            className="item"
+          >
+            Sign Out
+          </button>
+        </>
       );
     } else {
       return (

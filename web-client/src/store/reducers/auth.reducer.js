@@ -16,6 +16,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case actionTypes.TRY_LOCAL_SIGN_IN:
     case actionTypes.SIGN_OUT:
     case actionTypes.SIGN_UP:
+    case actionTypes.VERIFY_EMAIL:
       return { ...state, processing: true, error: null };
     case actionTypes.SIGN_IN_SUCCESS:
       return {
@@ -27,12 +28,14 @@ const authReducer = (state = INITIAL_STATE, action) => {
         defaultPath: '/profile'
       };
     case actionTypes.SIGN_UP_SUCCESS:
+    case actionTypes.VERIFY_EMAIL_SUCCESS:
       return {
         ...state,
         processing: false
       };
     case actionTypes.SIGN_IN_FAIL:
     case actionTypes.SIGN_UP_FAIL:
+    case actionTypes.VERIFY_EMAIL_FAIL:
       return {
         ...state,
         processing: false,

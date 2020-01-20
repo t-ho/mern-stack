@@ -117,5 +117,5 @@ const validate = values => {
 export default compose(
   requireAnonymous(),
   connect(maptStateToProps, { signIn }),
-  reduxForm({ form: 'signUp', validate })
+  reduxForm({ form: 'signIn', validate })
 )(SignIn);

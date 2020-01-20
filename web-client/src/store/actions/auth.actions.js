@@ -6,7 +6,7 @@ export const signUp = formValues => dispatch => {
   dispatch(signUpStart());
   return mernApi.post('/auth/signup', formValues).then(
     response => {
-      dispatch(signUpSuccess(response.data));
+      dispatch(signUpSuccess());
     },
     err => {
       dispatch(signUpFail(err.response.data.error));
@@ -20,10 +20,9 @@ const signUpStart = () => {
   };
 };
 
-const signUpSuccess = payload => {
+const signUpSuccess = () => {
   return {
-    type: actionTypes.SIGN_UP_SUCCESS,
-    payload
+    type: actionTypes.SIGN_UP_SUCCESS
   };
 };
 
@@ -129,5 +128,36 @@ const signOutStart = () => {
 const signOutSuccess = () => {
   return {
     type: actionTypes.SIGN_OUT_SUCCESS
+  };
+};
+
+export const verifyEmail = token => dispatch => {
+  dispatch(verifyEmailStart());
+  return mernApi.post(`/auth/verify-email/${token}`).then(
+    response => {
+      dispatch(verifyEmailSuccess());
+    },
+    err => {
+      dispatch(verifyEmailFail(err.response.data.error));
+    }
+  );
+};
+
+const verifyEmailStart = () => {
+  return {
+    type: actionTypes.VERIFY_EMAIL
+  };
+};
+
+const verifyEmailSuccess = () => {
+  return {
+    type: actionTypes.VERIFY_EMAIL_SUCCESS
+  };
+};
+
+const verifyEmailFail = payload => {
+  return {
+    type: actionTypes.VERIFY_EMAIL_FAIL,
+    payload
   };
 };

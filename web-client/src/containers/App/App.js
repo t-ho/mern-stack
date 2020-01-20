@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Header from '../../components/Header';
 import SignIn from '../Auth/SignIn';
 import SignUp from '../Auth/SignUp';
+import VerifyEmail from '../Auth/VerifyEmail';
 import Profile from '../Auth/Profile';
 import UserList from '../Users/UserList';
 import { tryLocalSignIn } from '../../store/actions';
@@ -20,6 +21,7 @@ class App extends React.Component {
         <Switch>
           <Route path="/signin" component={SignIn} />
           <Route path="/signup" component={SignUp} />
+          <Route path="/verify-email/:token" component={VerifyEmail} />
           <Route path="/profile" component={Profile} />
           <Route path="/users" component={UserList} />
           <Route path="/" component={SignIn} />
