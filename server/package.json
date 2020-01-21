@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/t-ho/mern#readme",
   "dependencies": {
-    "@hapi/joi": "^17.0.2",
+    "@hapi/joi": "^17.1.0",
     "bcrypt": "^3.0.7",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
@@ -33,7 +33,7 @@
     "helmet": "^3.21.2",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
-    "mongoose": "^5.8.6",
+    "mongoose": "^5.8.9",
     "morgan": "^1.9.1",
     "nodemailer": "^6.4.2",
     "nodemailer-mailgun-transport": "^2.0.0",
@@ -41,10 +41,10 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "uuid": "^3.3.3"
+    "uuid": "^3.4.0"
   },
   "devDependencies": {
-    "husky": "^4.0.5",
+    "husky": "^4.0.10",
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1"
   },
