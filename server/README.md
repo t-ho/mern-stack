@@ -120,7 +120,7 @@ Sample response
 ```
 {
   "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZTI0ZDQyY2Y3ZGRkZjAxMmNkNDk2YjIiLCJ1c2VySWQiOiI1ZTI0ZDQyY2Y3ZGRkZjAxMmNkNDk2YjIiLCJpYXQiOjE1Nzk0NzI1OTMsImV4cCI6MTU4NDY1NjU5M30.nlrURWeYjMr9cBXa-QhWCQVyKw2tPsQjnUyPaXnitMv9PxcOUjZJzn4U-mN4o_Eg8d9IqTP2_WJjmiAU5QydPA",
-  expiresAt: 1584656593,
+  "expiresAt": 1584656593,
   "user": {
     "_id": "5e24d42cf7dddf012cd496b2",
     "username": "tester",
@@ -400,6 +400,14 @@ Authorization: Bearer {JWT Token}
 ```
 /api/users
 ```
+
+- **Resquest Query**
+
+| Property Name | Type     | Required | Description                                        |
+| ------------- | -------- | -------- | -------------------------------------------------- |
+| `limit`       | _number_ | No       | Limit number                                       |
+| `skip`        | _number_ | No       | Offset number                                      |
+| `sort`        | _string_ | No       | Sort criteria (example: "createAt" or "-createAt") |
 
 - **Response Payload**
 
