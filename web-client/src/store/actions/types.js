@@ -17,3 +17,14 @@ export const SET_BEFORE_SIGNIN_PATH = '[Auth] Set Before SignIn Path';
 export const VERIFY_EMAIL = '[Auth] Verify Email';
 export const VERIFY_EMAIL_SUCCESS = '[Auth] Verify Email Success';
 export const VERIFY_EMAIL_FAIL = '[Auth] Verify Email Fail';
+
+export const REQUEST_VERIFICATION_EMAIL = '[Auth] Request Verification Email';
+export const REQUEST_VERIFICATION_EMAIL_SUCCESS =
+  '[Auth] Request Verification Email Success';
+export const REQUEST_VERIFICATION_EMAIL_FAIL =
+  '[Auth] Request Verification Email Fail';
+
+export const REQUEST_PASSWORD_RESET = '[Auth] Request Password Reset';
+export const REQUEST_PASSWORD_RESET_SUCCESS =
+  '[Auth] Request Password Reset Success';
+export const REQUEST_PASSWORD_RESET_FAIL = '[Auth] Request Password Reset Fail';

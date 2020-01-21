@@ -17,11 +17,12 @@ class SignIn extends React.Component {
       <div className="ui centered grid">
         <div className="eight wide column">
           <div className="ui segment">
-            <h2 className="ui header">
+            <h1 className="ui header">Verify Email</h1>
+            <h4 className="ui header">
               {errorMessage
                 ? errorMessage
                 : 'Email has been verified successfully.'}
-            </h2>
+            </h4>
           </div>
         </div>
       </div>

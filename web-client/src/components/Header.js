@@ -1,17 +1,20 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getIsSignedIn } from '../store/selectors';
+import { getIsSignedIn, getCurrentUser } from '../store/selectors';
 import { signOut } from '../store/actions';
 
 export class Header extends React.Component {
   renderAuthButtons = () => {
-    if (this.props.isSignedIn) {
+    const { isSignedIn, currentUser } = this.props;
+    if (isSignedIn) {
       return (
         <>
-          <NavLink to="/users" className="item">
-            Manage Users
-          </NavLink>
+          {(currentUser.role === 'root' || currentUser.role === 'admin') && (
+            <NavLink to="/users" className="item">
+              Manage Users
+            </NavLink>
+          )}
           <button
             style={{ cursor: 'pointer' }}
             onClick={this.props.signOut}
@@ -48,7 +51,10 @@ export class Header extends React.Component {
 }
 
 const mapStateToProps = state => {
-  return { isSignedIn: getIsSignedIn(state) };
+  return {
+    isSignedIn: getIsSignedIn(state),
+    currentUser: getCurrentUser(state)
+  };
 };
 
 export default connect(mapStateToProps, { signOut })(Header);

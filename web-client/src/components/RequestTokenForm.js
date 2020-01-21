@@ -2,12 +2,10 @@ import React from 'react';
 import { Field, reduxForm, SubmissionError } from 'redux-form';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import requireAnonymous from '../../hoc/requireAnonymous';
-import { signUp } from '../../store/actions';
-import { getProcessing, getError } from '../../store/selectors';
-import { required, minLength, email } from '../../utils/formValidator';
+import { getError } from '../store/selectors';
+import { email, required } from '../utils/formValidator';
 
-class SignUp extends React.Component {
+class RequestTokenForm extends React.Component {
   renderInput = field => {
     const className = `field ${
       field.meta.error && field.meta.touched ? 'error' : ''
@@ -33,11 +31,11 @@ class SignUp extends React.Component {
   };
 
   onSubmit = formValues => {
-    return this.props.signUp(formValues).then(() => {
+    formValues.tokenPurpose = this.props.tokenPurpose;
+    return this.props.onSubmit(formValues).then(() => {
       if (this.props.errorMessage) {
         throw new SubmissionError({ _error: this.props.errorMessage });
       }
-      this.props.history.push('/signin');
     });
   };
 
@@ -48,36 +46,23 @@ class SignUp extends React.Component {
       reset,
       submitting,
       valid,
-      error
+      error,
+      title
     } = this.props;
     return (
       <div className="ui centered grid">
         <div className="eight wide column">
           <div className="ui segment">
-            <h1 className="ui header">Sign Up</h1>
+            <h1 className="ui header">{title}</h1>
             <form
               onSubmit={handleSubmit(this.onSubmit)}
               className="ui form error"
             >
               <Field
-                name="username"
-                label="Username"
-                placeholder="Enter your username"
-                type="text"
-                component={this.renderInput}
-              />
-              <Field
                 name="email"
                 label="Email"
                 placeholder="Enter your email"
                 type="text"
-                component={this.renderInput}
-              />
-              <Field
-                name="password"
-                label="Password"
-                placeholder="Enter your password"
-                type="password"
                 component={this.renderInput}
               />
               {error && (
@@ -90,7 +75,7 @@ class SignUp extends React.Component {
                 className="ui button primary"
                 type="submit"
               >
-                Sign Up
+                Submit
               </button>
               <button
                 disabled={pristine || submitting}
@@ -110,21 +95,17 @@ class SignUp extends React.Component {
 
 const maptStateToProps = state => {
   return {
-    isProcessing: getProcessing(state),
     errorMessage: getError(state)
   };
 };
 
 const validate = values => {
   const errors = {};
-  errors.username = required(values.username) || minLength(4)(values.username);
   errors.email = required(values.email) || email(values.email);
-  errors.password = required(values.password) || minLength(8)(values.password);
   return errors;
 };
 
 export default compose(
-  requireAnonymous(),
-  connect(maptStateToProps, { signUp }),
-  reduxForm({ form: 'signUp', validate })
-)(SignUp);
+  connect(maptStateToProps),
+  reduxForm({ form: 'requestToken', validate })
+)(RequestTokenForm);

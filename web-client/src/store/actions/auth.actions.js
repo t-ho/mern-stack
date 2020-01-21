@@ -161,3 +161,67 @@ const verifyEmailFail = payload => {
     payload
   };
 };
+
+export const requestVerificationEmail = formValues => (dispatch, getState) => {
+  dispatch(requestVerificationEmailStart());
+  return mernApi.post('/auth/send-token', formValues).then(
+    response => {
+      dispatch(requestVerificationEmailSuccess());
+      dispatch(replace(getState().auth.defaultPath));
+    },
+    err => {
+      dispatch(requestVerificationEmailFail(err.response.data.error));
+    }
+  );
+};
+
+const requestVerificationEmailStart = () => {
+  return {
+    type: actionTypes.REQUEST_VERIFICATION_EMAIL
+  };
+};
+
+const requestVerificationEmailSuccess = () => {
+  return {
+    type: actionTypes.REQUEST_VERIFICATION_EMAIL_SUCCESS
+  };
+};
+
+const requestVerificationEmailFail = payload => {
+  return {
+    type: actionTypes.REQUEST_VERIFICATION_EMAIL_FAIL,
+    payload
+  };
+};
+
+export const requestPasswordReset = formValues => (dispatch, getState) => {
+  dispatch(requestPasswordResetStart());
+  return mernApi.post('/auth/send-token', formValues).then(
+    response => {
+      dispatch(requestPasswordResetSuccess());
+      dispatch(replace(getState().auth.defaultPath));
+    },
+    err => {
+      dispatch(requestPasswordResetFail(err.response.data.error));
+    }
+  );
+};
+
+const requestPasswordResetStart = () => {
+  return {
+    type: actionTypes.REQUEST_PASSWORD_RESET
+  };
+};
+
+const requestPasswordResetSuccess = () => {
+  return {
+    type: actionTypes.REQUEST_PASSWORD_RESET_SUCCESS
+  };
+};
+
+const requestPasswordResetFail = payload => {
+  return {
+    type: actionTypes.REQUEST_PASSWORD_RESET_FAIL,
+    payload
+  };
+};

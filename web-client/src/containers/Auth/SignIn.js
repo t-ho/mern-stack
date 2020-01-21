@@ -2,6 +2,7 @@ import React from 'react';
 import { Field, reduxForm, SubmissionError } from 'redux-form';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import { Link } from 'react-router-dom';
 import requireAnonymous from '../../hoc/requireAnonymous';
 import { signIn } from '../../store/actions';
 import { getProcessing, getError } from '../../store/selectors';
@@ -72,6 +73,15 @@ class SignIn extends React.Component {
                 type="password"
                 component={this.renderInput}
               />
+              <div className="field">
+                Forgot your password?{' '}
+                <Link to="/request-password-reset">Click here</Link>
+              </div>
+              {error && (
+                <div className="ui error message">
+                  <div className="header">{error}</div>
+                </div>
+              )}
               <button
                 disabled={pristine || submitting || !valid}
                 className="ui button primary"
@@ -87,11 +97,6 @@ class SignIn extends React.Component {
               >
                 Reset
               </button>
-              {error && (
-                <div className="ui error message">
-                  <div className="header">{error}</div>
-                </div>
-              )}
             </form>
           </div>
         </div>

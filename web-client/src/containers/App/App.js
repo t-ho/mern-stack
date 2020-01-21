@@ -8,6 +8,8 @@ import VerifyEmail from '../Auth/VerifyEmail';
 import Profile from '../Auth/Profile';
 import UserList from '../Users/UserList';
 import { tryLocalSignIn } from '../../store/actions';
+import RequestVerificationEmail from '../Auth/RequestVerificationEmail';
+import RequestPasswordReset from '../Auth/RequestPasswordReset';
 
 class App extends React.Component {
   componentDidMount() {
@@ -22,6 +24,15 @@ class App extends React.Component {
           <Route path="/signin" component={SignIn} />
           <Route path="/signup" component={SignUp} />
           <Route path="/verify-email/:token" component={VerifyEmail} />
+          <Route
+            path="/request-verification-email"
+            component={RequestVerificationEmail}
+          />
+          <Route
+            path="/request-password-reset"
+            component={RequestPasswordReset}
+          ></Route>
+
           <Route path="/profile" component={Profile} />
           <Route path="/users" component={UserList} />
           <Route path="/" component={SignIn} />
