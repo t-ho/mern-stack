@@ -2,10 +2,16 @@ import React from 'react';
 import { Field, reduxForm, SubmissionError } from 'redux-form';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { getError } from '../store/selectors';
-import { email, required } from '../utils/formValidator';
+import requireAnonymous from '../../hoc/requireAnonymous';
+import { resetPassword } from '../../store/actions';
+import { getProcessing, getError } from '../../store/selectors';
+import { email, minLength, required } from '../../utils/formValidator';
 
-class RequestTokenForm extends React.Component {
+class ResetPassword extends React.Component {
+  componentDidMount() {
+    this.resetToken = this.props.match.params.token;
+  }
+
   renderInput = field => {
     const className = `field ${
       field.meta.error && field.meta.touched ? 'error' : ''
@@ -31,8 +37,7 @@ class RequestTokenForm extends React.Component {
   };
 
   onSubmit = formValues => {
-    formValues.tokenPurpose = this.props.tokenPurpose;
-    return this.props.onSubmit(formValues).then(() => {
+    return this.props.resetPassword(formValues, this.resetToken).then(() => {
       // FIXME: Should show successful message
       if (this.props.errorMessage) {
         throw new SubmissionError({ _error: this.props.errorMessage });
@@ -47,14 +52,13 @@ class RequestTokenForm extends React.Component {
       reset,
       submitting,
       valid,
-      error,
-      title
+      error
     } = this.props;
     return (
       <div className="ui centered grid">
         <div className="eight wide column">
           <div className="ui segment">
-            <h1 className="ui header">{title}</h1>
+            <h1 className="ui header">Reset Your Password</h1>
             <form
               onSubmit={handleSubmit(this.onSubmit)}
               className="ui form error"
@@ -64,6 +68,13 @@ class RequestTokenForm extends React.Component {
                 label="Email"
                 placeholder="Enter your email"
                 type="text"
+                component={this.renderInput}
+              />
+              <Field
+                name="password"
+                label="Password"
+                placeholder="Enter your new password"
+                type="password"
                 component={this.renderInput}
               />
               {error && (
@@ -84,7 +95,7 @@ class RequestTokenForm extends React.Component {
                 className="ui button"
                 type="button"
               >
-                Reset
+                Clear
               </button>
             </form>
           </div>
@@ -96,6 +107,7 @@ class RequestTokenForm extends React.Component {
 
 const maptStateToProps = state => {
   return {
+    isProcessing: getProcessing(state),
     errorMessage: getError(state)
   };
 };
@@ -103,10 +115,12 @@ const maptStateToProps = state => {
 const validate = values => {
   const errors = {};
   errors.email = required(values.email) || email(values.email);
+  errors.password = required(values.password) || minLength(8)(values.password);
   return errors;
 };
 
 export default compose(
-  connect(maptStateToProps),
-  reduxForm({ form: 'requestToken', validate })
-)(RequestTokenForm);
+  requireAnonymous(),
+  connect(maptStateToProps, { resetPassword }),
+  reduxForm({ form: 'resetPassword', validate })
+)(ResetPassword);

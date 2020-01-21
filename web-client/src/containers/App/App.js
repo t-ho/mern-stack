@@ -10,6 +10,7 @@ import UserList from '../Users/UserList';
 import { tryLocalSignIn } from '../../store/actions';
 import RequestVerificationEmail from '../Auth/RequestVerificationEmail';
 import RequestPasswordReset from '../Auth/RequestPasswordReset';
+import ResetPassword from '../Auth/ResetPassword';
 
 class App extends React.Component {
   componentDidMount() {
@@ -32,7 +33,10 @@ class App extends React.Component {
             path="/request-password-reset"
             component={RequestPasswordReset}
           ></Route>
-
+          <Route
+            path="/reset-password/:token"
+            component={ResetPassword}
+          ></Route>
           <Route path="/profile" component={Profile} />
           <Route path="/users" component={UserList} />
           <Route path="/" component={SignIn} />

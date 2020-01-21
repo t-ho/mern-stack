@@ -225,3 +225,34 @@ const requestPasswordResetFail = payload => {
     payload
   };
 };
+
+export const resetPassword = (formValues, token) => (dispatch, getState) => {
+  dispatch(resetPasswordStart());
+  return mernApi.post(`/auth/reset-password/${token}`, formValues).then(
+    response => {
+      dispatch(resetPasswordSuccess());
+      dispatch(replace(getState().auth.defaultPath));
+    },
+    err => dispatch(resetPasswordFail(err.response.data.error))
+  );
+};
+
+const resetPasswordStart = () => {
+  return {
+    type: actionTypes.RESET_PASSWORD
+  };
+};
+
+const resetPasswordSuccess = payload => {
+  return {
+    type: actionTypes.RESET_PASSWORD_SUCCESS,
+    payload
+  };
+};
+
+const resetPasswordFail = payload => {
+  return {
+    type: actionTypes.RESET_PASSWORD_FAIL,
+    payload
+  };
+};
