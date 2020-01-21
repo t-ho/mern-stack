@@ -77,6 +77,12 @@ class SignIn extends React.Component {
                 Forgot your password?{' '}
                 <Link to="/request-password-reset">Click here</Link>
               </div>
+              {this.props.errorMessage === 'Email is not verified.' && (
+                <div className="field">
+                  Have not received verification email?{' '}
+                  <Link to="/request-verification-email">Click here</Link>
+                </div>
+              )}
               {error && (
                 <div className="ui error message">
                   <div className="header">{error}</div>

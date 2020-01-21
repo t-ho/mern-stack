@@ -2,7 +2,7 @@ import React from 'react';
 import { Field, reduxForm, SubmissionError } from 'redux-form';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { getError } from '../store/selectors';
+import { getError, getProcessed } from '../store/selectors';
 import { email, required } from '../utils/formValidator';
 
 class RequestTokenForm extends React.Component {
@@ -33,7 +33,6 @@ class RequestTokenForm extends React.Component {
   onSubmit = formValues => {
     formValues.tokenPurpose = this.props.tokenPurpose;
     return this.props.onSubmit(formValues).then(() => {
-      // FIXME: Should show successful message
       if (this.props.errorMessage) {
         throw new SubmissionError({ _error: this.props.errorMessage });
       }
@@ -48,45 +47,53 @@ class RequestTokenForm extends React.Component {
       submitting,
       valid,
       error,
-      title
+      title,
+      isProcessed,
+      errorMessage
     } = this.props;
     return (
       <div className="ui centered grid">
         <div className="eight wide column">
           <div className="ui segment">
             <h1 className="ui header">{title}</h1>
-            <form
-              onSubmit={handleSubmit(this.onSubmit)}
-              className="ui form error"
-            >
-              <Field
-                name="email"
-                label="Email"
-                placeholder="Enter your email"
-                type="text"
-                component={this.renderInput}
-              />
-              {error && (
-                <div className="ui error message">
-                  <div className="header">{error}</div>
-                </div>
-              )}
-              <button
-                disabled={pristine || submitting || !valid}
-                className="ui button primary"
-                type="submit"
+            {(isProcessed && errorMessage) || !isProcessed ? (
+              <form
+                onSubmit={handleSubmit(this.onSubmit)}
+                className="ui form error"
               >
-                Submit
-              </button>
-              <button
-                disabled={pristine || submitting}
-                onClick={reset}
-                className="ui button"
-                type="button"
-              >
-                Reset
-              </button>
-            </form>
+                <Field
+                  name="email"
+                  label="Email"
+                  placeholder="Enter your email"
+                  type="text"
+                  component={this.renderInput}
+                />
+                {error && (
+                  <div className="ui error message">
+                    <div className="header">{error}</div>
+                  </div>
+                )}
+                <button
+                  disabled={pristine || submitting || !valid}
+                  className="ui button primary"
+                  type="submit"
+                >
+                  Submit
+                </button>
+                <button
+                  disabled={pristine || submitting}
+                  onClick={reset}
+                  className="ui button"
+                  type="button"
+                >
+                  Reset
+                </button>
+              </form>
+            ) : (
+              <h4 className="ui header">
+                An email has been sent to your email address.
+              </h4>
+            )}
           </div>
         </div>
       </div>
@@ -96,7 +103,8 @@ class RequestTokenForm extends React.Component {
 
 const maptStateToProps = state => {
   return {
-    errorMessage: getError(state)
+    errorMessage: getError(state),
+    isProcessed: getProcessed(state)
   };
 };
 

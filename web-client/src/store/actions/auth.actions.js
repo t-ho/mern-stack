@@ -114,12 +114,11 @@ const verifyEmailFail = payload => {
   };
 };
 
-export const requestVerificationEmail = formValues => (dispatch, getState) => {
+export const requestVerificationEmail = formValues => dispatch => {
   dispatch({ type: actionTypes.REQUEST_VERIFICATION_EMAIL });
   return mernApi.post('/auth/send-token', formValues).then(
     response => {
       dispatch({ type: actionTypes.REQUEST_VERIFICATION_EMAIL_SUCCESS });
-      dispatch(replace(getState().auth.defaultPath));
     },
     err => {
       dispatch(requestVerificationEmailFail(err.response.data.error));
@@ -134,12 +133,11 @@ const requestVerificationEmailFail = payload => {
   };
 };
 
-export const requestPasswordReset = formValues => (dispatch, getState) => {
+export const requestPasswordReset = formValues => dispatch => {
   dispatch({ type: actionTypes.REQUEST_PASSWORD_RESET });
   return mernApi.post('/auth/send-token', formValues).then(
     response => {
       dispatch({ type: actionTypes.REQUEST_PASSWORD_RESET_SUCCESS });
-      dispatch(replace(getState().auth.defaultPath));
     },
     err => {
       dispatch(requestPasswordResetFail(err.response.data.error));
@@ -154,12 +152,11 @@ const requestPasswordResetFail = payload => {
   };
 };
 
-export const resetPassword = (formValues, token) => (dispatch, getState) => {
+export const resetPassword = (formValues, token) => dispatch => {
   dispatch({ type: actionTypes.RESET_PASSWORD });
   return mernApi.post(`/auth/reset-password/${token}`, formValues).then(
     response => {
       dispatch({ type: actionTypes.RESET_PASSWORD_SUCCESS });
-      dispatch(replace(getState().auth.defaultPath));
     },
     err => dispatch(resetPasswordFail(err.response.data.error))
   );

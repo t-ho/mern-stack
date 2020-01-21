@@ -5,7 +5,7 @@ const INITIAL_STATE = {
   token: null,
   expiresAt: null,
   processing: false,
-  proccessed: false,
+  processed: false,
   error: null,
   defaultPath: '/', // Used as a default redirect path
   beforeSignInPath: null // Used to redirect users to the page they visited before logging in
@@ -20,7 +20,8 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case actionTypes.VERIFY_EMAIL:
     case actionTypes.REQUEST_VERIFICATION_EMAIL:
     case actionTypes.REQUEST_PASSWORD_RESET:
-      return { ...state, processing: true, error: null };
+    case actionTypes.RESET_PASSWORD:
+      return { ...state, processed: false, processing: true, error: null };
     case actionTypes.SIGN_IN_SUCCESS:
       return {
         ...state,
@@ -35,6 +36,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case actionTypes.VERIFY_EMAIL_SUCCESS:
     case actionTypes.REQUEST_VERIFICATION_EMAIL_SUCCESS:
     case actionTypes.REQUEST_PASSWORD_RESET_SUCCESS:
+    case actionTypes.RESET_PASSWORD_SUCCESS:
       return {
         ...state,
         processing: false,
@@ -45,6 +47,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case actionTypes.VERIFY_EMAIL_FAIL:
     case actionTypes.REQUEST_VERIFICATION_EMAIL_FAIL:
     case actionTypes.REQUEST_PASSWORD_RESET_FAIL:
+    case actionTypes.RESET_PASSWORD_FAIL:
       return {
         ...state,
         processing: false,
@@ -78,7 +81,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         processing: false,
-        proccessed: false,
+        processed: false,
         error: null
       };
     default:

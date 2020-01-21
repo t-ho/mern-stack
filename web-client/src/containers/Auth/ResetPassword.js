@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import requireAnonymous from '../../hoc/requireAnonymous';
 import { resetPassword, unloadAuthPage } from '../../store/actions';
-import { getProcessing, getError } from '../../store/selectors';
+import { getError, getProcessed } from '../../store/selectors';
 import { email, minLength, required } from '../../utils/formValidator';
 
 class ResetPassword extends React.Component {
@@ -38,7 +38,6 @@ class ResetPassword extends React.Component {
 
   onSubmit = formValues => {
     return this.props.resetPassword(formValues, this.resetToken).then(() => {
-      // FIXME: Should show successful message
       if (this.props.errorMessage) {
         throw new SubmissionError({ _error: this.props.errorMessage });
       }
@@ -52,52 +51,60 @@ class ResetPassword extends React.Component {
       reset,
       submitting,
       valid,
-      error
+      error,
+      errorMessage,
+      isProcessed
     } = this.props;
     return (
       <div className="ui centered grid">
         <div className="eight wide column">
           <div className="ui segment">
             <h1 className="ui header">Reset Your Password</h1>
-            <form
-              onSubmit={handleSubmit(this.onSubmit)}
-              className="ui form error"
-            >
-              <Field
-                name="email"
-                label="Email"
-                placeholder="Enter your email"
-                type="text"
-                component={this.renderInput}
-              />
-              <Field
-                name="password"
-                label="Password"
-                placeholder="Enter your new password"
-                type="password"
-                component={this.renderInput}
-              />
-              {error && (
-                <div className="ui error message">
-                  <div className="header">{error}</div>
-                </div>
-              )}
-              <button
-                disabled={pristine || submitting || !valid}
-                className="ui button primary"
-                type="submit"
+            {(isProcessed && errorMessage) || !isProcessed ? (
+              <form
+                onSubmit={handleSubmit(this.onSubmit)}
+                className="ui form error"
               >
-                Submit
-              </button>
-              <button
-                disabled={pristine || submitting}
-                onClick={reset}
-                className="ui button"
-                type="button"
-              >
-                Clear
-              </button>
-            </form>
+                <Field
+                  name="email"
+                  label="Email"
+                  placeholder="Enter your email"
+                  type="text"
+                  component={this.renderInput}
+                />
+                <Field
+                  name="password"
+                  label="Password"
+                  placeholder="Enter your new password"
+                  type="password"
+                  component={this.renderInput}
+                />
+                {error && (
+                  <div className="ui error message">
+                    <div className="header">{error}</div>
+                  </div>
+                )}
+                <button
+                  disabled={pristine || submitting || !valid}
+                  className="ui button primary"
+                  type="submit"
+                >
+                  Submit
+                </button>
+                <button
+                  disabled={pristine || submitting}
+                  onClick={reset}
+                  className="ui button"
+                  type="button"
+                >
+                  Clear
+                </button>
+              </form>
+            ) : (
+              <h4 className="ui header">
+                Your password has been reset successfully.
+              </h4>
+            )}
           </div>
         </div>
       </div>
@@ -111,7 +118,7 @@ class ResetPassword extends React.Component {
 
 const maptStateToProps = state => {
   return {
-    isProcessing: getProcessing(state),
+    isProcessed: getProcessed(state),
     errorMessage: getError(state)
   };
 };
