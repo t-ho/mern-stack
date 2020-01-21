@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import requireAnonymous from '../../hoc/requireAnonymous';
-import { verifyEmail } from '../../store/actions';
+import { verifyEmail, unloadAuthPage } from '../../store/actions';
 import { getError } from '../../store/selectors';
 
 class SignIn extends React.Component {
@@ -28,6 +28,10 @@ class SignIn extends React.Component {
       </div>
     );
   }
+
+  componentWillUnmount() {
+    this.props.unloadAuthPage();
+  }
 }
 
 const maptStateToProps = state => {
@@ -38,5 +42,5 @@ const maptStateToProps = state => {
 
 export default compose(
   requireAnonymous(),
-  connect(maptStateToProps, { verifyEmail })
+  connect(maptStateToProps, { verifyEmail, unloadAuthPage })
 )(SignIn);

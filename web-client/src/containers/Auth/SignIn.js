@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { Link } from 'react-router-dom';
 import requireAnonymous from '../../hoc/requireAnonymous';
-import { signIn } from '../../store/actions';
+import { signIn, unloadAuthPage } from '../../store/actions';
 import { getProcessing, getError } from '../../store/selectors';
 import { email, minLength, required } from '../../utils/formValidator';
 
@@ -103,6 +103,10 @@ class SignIn extends React.Component {
       </div>
     );
   }
+
+  componentWillUnmount() {
+    this.props.unloadAuthPage();
+  }
 }
 
 const maptStateToProps = state => {
@@ -121,6 +125,6 @@ const validate = values => {
 
 export default compose(
   requireAnonymous(),
-  connect(maptStateToProps, { signIn }),
+  connect(maptStateToProps, { signIn, unloadAuthPage }),
   reduxForm({ form: 'signIn', validate })
 )(SignIn);

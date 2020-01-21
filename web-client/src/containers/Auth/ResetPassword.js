@@ -3,7 +3,7 @@ import { Field, reduxForm, SubmissionError } from 'redux-form';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import requireAnonymous from '../../hoc/requireAnonymous';
-import { resetPassword } from '../../store/actions';
+import { resetPassword, unloadAuthPage } from '../../store/actions';
 import { getProcessing, getError } from '../../store/selectors';
 import { email, minLength, required } from '../../utils/formValidator';
 
@@ -103,6 +103,10 @@ class ResetPassword extends React.Component {
       </div>
     );
   }
+
+  componentWillUnmount() {
+    this.props.unloadAuthPage();
+  }
 }
 
 const maptStateToProps = state => {
@@ -121,6 +125,6 @@ const validate = values => {
 
 export default compose(
   requireAnonymous(),
-  connect(maptStateToProps, { resetPassword }),
+  connect(maptStateToProps, { resetPassword, unloadAuthPage }),
   reduxForm({ form: 'resetPassword', validate })
 )(ResetPassword);

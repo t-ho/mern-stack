@@ -7,6 +7,11 @@ export const getProcessing = createSelector(
   auth => auth.processing
 );
 
+export const getProcessed = createSelector(
+  getAuthState,
+  auth => auth.processed
+);
+
 export const getError = createSelector(getAuthState, auth => {
   return auth.error;
 });

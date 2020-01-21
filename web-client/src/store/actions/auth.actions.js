@@ -171,3 +171,9 @@ const resetPasswordFail = payload => {
     payload
   };
 };
+
+export const unloadAuthPage = () => {
+  return {
+    type: actionTypes.UNLOAD_AUTH_PAGE
+  };
+};

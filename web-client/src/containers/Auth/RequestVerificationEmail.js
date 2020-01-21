@@ -1,7 +1,7 @@
 import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { requestVerificationEmail } from '../../store/actions';
+import { requestVerificationEmail, unloadAuthPage } from '../../store/actions';
 import requireAnonymous from '../../hoc/requireAnonymous';
 import RequestTokenForm from '../../components/RequestTokenForm';
 
@@ -15,9 +15,13 @@ class RequestVerificationEmail extends React.Component {
       />
     );
   }
+
+  componentWillUnmount() {
+    this.props.unloadAuthPage();
+  }
 }
 
 export default compose(
   requireAnonymous(),
-  connect(null, { requestVerificationEmail })
+  connect(null, { requestVerificationEmail, unloadAuthPage })
 )(RequestVerificationEmail);

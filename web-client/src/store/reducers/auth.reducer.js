@@ -5,9 +5,10 @@ const INITIAL_STATE = {
   token: null,
   expiresAt: null,
   processing: false,
+  proccessed: false,
+  error: null,
   defaultPath: '/', // Used as a default redirect path
-  beforeSignInPath: null, // Used to redirect users to the page they visited before logging in
-  error: null
+  beforeSignInPath: null // Used to redirect users to the page they visited before logging in
 };
 
 const authReducer = (state = INITIAL_STATE, action) => {
@@ -24,6 +25,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         processing: false,
+        processed: true,
         token: action.payload.token,
         expiresAt: action.payload.expiresAt,
         user: { ...action.payload.user },
@@ -35,7 +37,8 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case actionTypes.REQUEST_PASSWORD_RESET_SUCCESS:
       return {
         ...state,
-        processing: false
+        processing: false,
+        processed: true
       };
     case actionTypes.SIGN_IN_FAIL:
     case actionTypes.SIGN_UP_FAIL:
@@ -45,12 +48,14 @@ const authReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         processing: false,
+        processed: true,
         error: action.payload
       };
     case actionTypes.SIGN_OUT_SUCCESS: {
       return {
         ...state,
         processing: false,
+        processed: true,
         token: null,
         user: {},
         expiresAt: null,
@@ -60,17 +65,22 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case actionTypes.SET_DEFAULT_URL: {
       return {
         ...state,
-        user: { ...state.user },
         defaultPath: action.payload
       };
     }
     case actionTypes.SET_BEFORE_SIGNIN_PATH: {
       return {
         ...state,
-        user: { ...state.user },
         beforeSignInPath: action.payload
       };
     }
+    case actionTypes.UNLOAD_AUTH_PAGE:
+      return {
+        ...state,
+        processing: false,
+        proccessed: false,
+        error: null
+      };
     default:
       return state;
   }

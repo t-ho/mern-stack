@@ -32,3 +32,5 @@ export const REQUEST_PASSWORD_RESET_FAIL = '[Auth] Request Password Reset Fail';
 export const RESET_PASSWORD = '[Auth] Reset Password';
 export const RESET_PASSWORD_SUCCESS = '[Auth] Reset Password Success';
 export const RESET_PASSWORD_FAIL = '[Auth] Reset Password Fail';
+
+export const UNLOAD_AUTH_PAGE = '[Auth] Unload Auth Page';
