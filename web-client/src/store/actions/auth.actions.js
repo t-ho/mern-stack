@@ -3,27 +3,15 @@ import * as actionTypes from './types';
 import mernApi, { setAuthToken } from '../../apis/mern';
 
 export const signUp = formValues => dispatch => {
-  dispatch(signUpStart());
+  dispatch({ type: actionTypes.SIGN_UP });
   return mernApi.post('/auth/signup', formValues).then(
     response => {
-      dispatch(signUpSuccess());
+      dispatch({ type: actionTypes.SIGN_UP_SUCCESS });
     },
     err => {
       dispatch(signUpFail(err.response.data.error));
     }
   );
-};
-
-const signUpStart = () => {
-  return {
-    type: actionTypes.SIGN_UP
-  };
-};
-
-const signUpSuccess = () => {
-  return {
-    type: actionTypes.SIGN_UP_SUCCESS
-  };
 };
 
 const signUpFail = payload => {
@@ -34,7 +22,7 @@ const signUpFail = payload => {
 };
 
 export const signIn = formValues => (dispatch, getState) => {
-  dispatch(signInStart());
+  dispatch({ type: actionTypes.SIGN_IN });
   return mernApi.post('/auth/signin', formValues).then(
     response => {
       dispatch(signInSuccess(response.data));
@@ -48,12 +36,6 @@ export const signIn = formValues => (dispatch, getState) => {
       dispatch(signInFail(err.response.data.error));
     }
   );
-};
-
-const signInStart = () => {
-  return {
-    type: actionTypes.SIGN_IN
-  };
 };
 
 const signInSuccess = payload => {
@@ -80,7 +62,7 @@ const redirectAfterSignIn = (dispatch, getState) => {
 };
 
 export const tryLocalSignIn = () => (dispatch, getState) => {
-  dispatch(tryLocalSignInStart());
+  dispatch({ type: actionTypes.TRY_LOCAL_SIGN_IN });
   try {
     const token = localStorage.getItem('token');
     const expiresAt = localStorage.getItem('expiresAt');
@@ -98,12 +80,6 @@ export const tryLocalSignIn = () => (dispatch, getState) => {
   }
 };
 
-const tryLocalSignInStart = () => {
-  return {
-    type: actionTypes.TRY_LOCAL_SIGN_IN
-  };
-};
-
 export const setBeforeSignInPath = path => {
   return {
     type: actionTypes.SET_BEFORE_SIGNIN_PATH,
@@ -112,47 +88,23 @@ export const setBeforeSignInPath = path => {
 };
 
 export const signOut = () => dispatch => {
-  dispatch(signOutStart());
+  dispatch({ type: actionTypes.SIGN_OUT });
   localStorage.removeItem('token');
   localStorage.removeItem('expiresAt');
   localStorage.removeItem('user');
-  dispatch(signOutSuccess());
-};
-
-const signOutStart = () => {
-  return {
-    type: actionTypes.SIGN_OUT
-  };
-};
-
-const signOutSuccess = () => {
-  return {
-    type: actionTypes.SIGN_OUT_SUCCESS
-  };
+  dispatch({ type: actionTypes.SIGN_OUT_SUCCESS });
 };
 
 export const verifyEmail = token => dispatch => {
-  dispatch(verifyEmailStart());
+  dispatch({ type: actionTypes.VERIFY_EMAIL });
   return mernApi.post(`/auth/verify-email/${token}`).then(
     response => {
-      dispatch(verifyEmailSuccess());
+      dispatch({ type: actionTypes.VERIFY_EMAIL_SUCCESS });
     },
     err => {
       dispatch(verifyEmailFail(err.response.data.error));
     }
   );
-};
-
-const verifyEmailStart = () => {
-  return {
-    type: actionTypes.VERIFY_EMAIL
-  };
-};
-
-const verifyEmailSuccess = () => {
-  return {
-    type: actionTypes.VERIFY_EMAIL_SUCCESS
-  };
 };
 
 const verifyEmailFail = payload => {
@@ -163,28 +115,16 @@ const verifyEmailFail = payload => {
 };
 
 export const requestVerificationEmail = formValues => (dispatch, getState) => {
-  dispatch(requestVerificationEmailStart());
+  dispatch({ type: actionTypes.REQUEST_VERIFICATION_EMAIL });
   return mernApi.post('/auth/send-token', formValues).then(
     response => {
-      dispatch(requestVerificationEmailSuccess());
+      dispatch({ type: actionTypes.REQUEST_VERIFICATION_EMAIL_SUCCESS });
       dispatch(replace(getState().auth.defaultPath));
     },
     err => {
       dispatch(requestVerificationEmailFail(err.response.data.error));
     }
   );
-};
-
-const requestVerificationEmailStart = () => {
-  return {
-    type: actionTypes.REQUEST_VERIFICATION_EMAIL
-  };
-};
-
-const requestVerificationEmailSuccess = () => {
-  return {
-    type: actionTypes.REQUEST_VERIFICATION_EMAIL_SUCCESS
-  };
 };
 
 const requestVerificationEmailFail = payload => {
@@ -195,28 +135,16 @@ const requestVerificationEmailFail = payload => {
 };
 
 export const requestPasswordReset = formValues => (dispatch, getState) => {
-  dispatch(requestPasswordResetStart());
+  dispatch({ type: actionTypes.REQUEST_PASSWORD_RESET });
   return mernApi.post('/auth/send-token', formValues).then(
     response => {
-      dispatch(requestPasswordResetSuccess());
+      dispatch({ type: actionTypes.REQUEST_PASSWORD_RESET_SUCCESS });
       dispatch(replace(getState().auth.defaultPath));
     },
     err => {
       dispatch(requestPasswordResetFail(err.response.data.error));
     }
   );
-};
-
-const requestPasswordResetStart = () => {
-  return {
-    type: actionTypes.REQUEST_PASSWORD_RESET
-  };
-};
-
-const requestPasswordResetSuccess = () => {
-  return {
-    type: actionTypes.REQUEST_PASSWORD_RESET_SUCCESS
-  };
 };
 
 const requestPasswordResetFail = payload => {
@@ -227,27 +155,14 @@ const requestPasswordResetFail = payload => {
 };
 
 export const resetPassword = (formValues, token) => (dispatch, getState) => {
-  dispatch(resetPasswordStart());
+  dispatch({ type: actionTypes.RESET_PASSWORD });
   return mernApi.post(`/auth/reset-password/${token}`, formValues).then(
     response => {
-      dispatch(resetPasswordSuccess());
+      dispatch({ type: actionTypes.RESET_PASSWORD_SUCCESS });
       dispatch(replace(getState().auth.defaultPath));
     },
     err => dispatch(resetPasswordFail(err.response.data.error))
   );
-};
-
-const resetPasswordStart = () => {
-  return {
-    type: actionTypes.RESET_PASSWORD
-  };
-};
-
-const resetPasswordSuccess = payload => {
-  return {
-    type: actionTypes.RESET_PASSWORD_SUCCESS,
-    payload
-  };
 };
 
 const resetPasswordFail = payload => {
