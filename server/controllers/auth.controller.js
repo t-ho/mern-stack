@@ -362,7 +362,7 @@ const sendPasswordResetToken = (req, res, next) => {
         If this was you, click button below to reset your password.
         Otherwise, ignore this email.`,
         'Reset Password',
-        `${config.server.url}:${config.server.port}/api/auth/reset-password/${user.token}`
+        `${config.server.url}:3000/reset-password/${user.token}` // FIXME: Fix port number
       );
     })
     .then(result => {
