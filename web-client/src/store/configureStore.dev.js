@@ -1,20 +1,20 @@
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension/logOnly';
 import { createBrowserHistory } from 'history';
 import reduxThunk from 'redux-thunk';
 import { routerMiddleware } from 'connected-react-router';
 import createRootReducer from './reducers';
-import DevTools from '../containers/Root/DevTools';
 
+const composeEnhancer = composeWithDevTools({
+  actionsBlacklist: ['@@redux-form']
+});
 export const history = createBrowserHistory();
 
 const configureStore = initialState => {
   const store = createStore(
     createRootReducer(history),
     initialState,
-    compose(
-      applyMiddleware(routerMiddleware(history), reduxThunk),
-      DevTools.instrument()
-    )
+    composeEnhancer(applyMiddleware(routerMiddleware(history), reduxThunk))
   );
 
   // Hot reload reducers (requires Webpack or Browserify HMR to be enabled)
