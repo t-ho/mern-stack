@@ -335,7 +335,7 @@ Authorization: Bearer {JWT Token}
 - **Endpoint**
 
 ```
-/api/auth/profile
+/api/profiles
 ```
 
 - **Response payload**
@@ -363,6 +363,37 @@ Sample response
 }
 ```
 
+### Get User Public Profile
+
+- **Method:** `GET`
+- **Content-Type:** `application/json`
+
+- **Endpoint**
+
+```
+/api/profiles/:userId
+```
+
+- **Response payload**
+
+| Property Name | Type     | Description              |
+| ------------- | -------- | ------------------------ |
+| `profile`     | _object_ | User profile JSON object |
+
+Sample response
+
+```
+{
+  "profile": {
+    "_id": "5e24d42cf7dddf012cd496b2",
+    "username": "tester",
+    "firstName": "Sarah",
+    "lastName": "Connor",
+    "createdAt": "2020-01-19T22:11:56.779Z"
+  }
+}
+```
+
 ### Update User Profile
 
 - **Method:** `PUT`
@@ -376,7 +407,7 @@ Authorization: Bearer {JWT Token}
 - **Endpoint**
 
 ```
-/api/auth/profile
+/api/profiles
 ```
 
 - **Resquest Body Payload**

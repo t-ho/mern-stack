@@ -2,87 +2,11 @@ const mongoose = require('mongoose');
 const createError = require('http-errors');
 const passport = require('passport');
 const Joi = require('@hapi/joi');
-const _ = require('lodash');
 const sendMailAsync = require('../config/nodemailer');
 const config = require('../config');
+const constants = require('./constants');
 
 const User = mongoose.model('User');
-
-const EMAIL_ERROR_MESSAGES = {
-  'string.empty': 'Email cannot be empty.',
-  'string.email': 'Email is invalid.',
-  'any.required': 'Email is required.'
-};
-
-const PASSWORD_ERROR_MESSAGES = {
-  'string.empty': 'Password cannot be empty.',
-  'string.min': 'Password must be at least 8 characters.',
-  'any.required': 'Password is required.'
-};
-
-const USERNAME_ERROR_MESSAGE = {
-  'string.empty': 'Username cannot be empty.',
-  'string.pattern.base':
-    'Username must be between 4 to 30 characters and may contain only alphanumeric chacracters, hyphen, dot or underscore.',
-  'any.required': 'Username is required.'
-};
-
-/**
- * @function getProfile
- * Get profile controller
- *
- */
-module.exports.getProfile = (req, res, next) => {
-  if (req.user) {
-    res.status(200).send({ profile: req.user.toJSON() });
-  }
-};
-
-/**
- * JOI schema for validating updateProfile payload
- */
-const updateProfileSchema = Joi.object({
-  password: Joi.string()
-    .min(8)
-    .messages(PASSWORD_ERROR_MESSAGES),
-  firstName: Joi.string().trim(),
-  lastName: Joi.string().trim()
-});
-
-/**
- * @function updateProfile
- * Get profile controller
- *
- * @param {string} [req.body.password] The password to update
- * @param {string} [req.body.firstName] The first name to update
- * @param {string} [req.body.lastName] The last name to update
- */
-module.exports.updateProfile = (req, res, next) => {
-  if (req.user) {
-    if (_.isEmpty(req.body)) {
-      return res.status(200).json({ updatedFields: [] });
-    }
-    updateProfileSchema
-      .validateAsync(req.body, { stripUnknown: true })
-      .then(payload => {
-        req.body = payload;
-        const { password, ...others } = req.body;
-        _.merge(req.user, others);
-        if (password) {
-          return req.user.setPasswordAsync(password);
-        }
-      })
-      .then(() => {
-        return req.user.save();
-      })
-      .then(updatedUser => {
-        res
-          .status(200)
-          .json({ success: true, updatedFields: _.keys(req.body) });
-      })
-      .catch(next);
-  }
-};
 
 /**
  * JOI schema for validating resetPassword payload
@@ -91,11 +15,11 @@ const resetPasswordSchema = Joi.object({
   email: Joi.string()
     .required()
     .email()
-    .messages(EMAIL_ERROR_MESSAGES),
+    .messages(constants.EMAIL_ERROR_MESSAGES),
   password: Joi.string()
     .required()
     .min(8)
-    .messages(PASSWORD_ERROR_MESSAGES)
+    .messages(constants.PASSWORD_ERROR_MESSAGES)
 });
 
 /**
@@ -148,7 +72,7 @@ const sendTokenSchema = Joi.object({
   email: Joi.string()
     .required()
     .email()
-    .messages(EMAIL_ERROR_MESSAGES),
+    .messages(constants.EMAIL_ERROR_MESSAGES),
   tokenPurpose: Joi.string()
     .required()
     .valid('verifyEmail', 'resetPassword')
@@ -194,13 +118,13 @@ module.exports.refreshToken = (req, res, next) => {
 const signInSchema = Joi.object({
   username: Joi.string()
     .pattern(/^[a-zA-Z0-9.\-_]{4,30}$/)
-    .messages(USERNAME_ERROR_MESSAGE),
+    .messages(constants.USERNAME_ERROR_MESSAGE),
   email: Joi.string()
     .email()
-    .messages(EMAIL_ERROR_MESSAGES),
+    .messages(constants.EMAIL_ERROR_MESSAGES),
   password: Joi.string()
     .required()
-    .messages(PASSWORD_ERROR_MESSAGES)
+    .messages(constants.PASSWORD_ERROR_MESSAGES)
 })
   .xor('username', 'email')
   .messages({ 'object.missing': 'Either username or email must be provided.' });
@@ -250,15 +174,15 @@ const signUpSchema = Joi.object({
   username: Joi.string()
     .required()
     .pattern(/^[a-zA-Z0-9.\-_]{4,30}$/)
-    .messages(USERNAME_ERROR_MESSAGE),
+    .messages(constants.USERNAME_ERROR_MESSAGE),
   email: Joi.string()
     .required()
     .email()
-    .messages(EMAIL_ERROR_MESSAGES),
+    .messages(constants.EMAIL_ERROR_MESSAGES),
   password: Joi.string()
     .required()
     .min(8)
-    .messages(PASSWORD_ERROR_MESSAGES),
+    .messages(constants.PASSWORD_ERROR_MESSAGES),
   firstName: Joi.string().trim(),
   lastName: Joi.string().trim()
 });

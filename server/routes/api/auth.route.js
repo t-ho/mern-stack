@@ -4,18 +4,6 @@ const authCtrl = require('../../controllers/auth.controller');
 
 const router = express.Router();
 
-router.get(
-  '/profile',
-  passport.authenticate('jwt', { session: false }),
-  authCtrl.getProfile
-);
-
-router.put(
-  '/profile',
-  passport.authenticate('jwt', { session: false }),
-  authCtrl.updateProfile
-);
-
 router.post(
   '/refresh-token',
   passport.authenticate('jwt', { session: false }),

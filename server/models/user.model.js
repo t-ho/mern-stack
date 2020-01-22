@@ -102,6 +102,19 @@ userSchema.methods.toJSON = function() {
 };
 
 /**
+ * @returns {object} The user public profile
+ */
+userSchema.methods.toPublicProfileJson = function() {
+  return _.pick(this, [
+    '_id',
+    'username',
+    'firstName',
+    'lastName',
+    'createdAt'
+  ]);
+};
+
+/**
  * Set password to this user.
  * The password will be hashed and assigned to hashedPassword field
  *
