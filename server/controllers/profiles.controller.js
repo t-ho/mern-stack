@@ -13,7 +13,7 @@ const User = mongoose.model('User');
  */
 module.exports.getProfile = (req, res, next) => {
   if (req.user) {
-    res.status(200).send({ profile: req.user.toJSON() });
+    res.status(200).send({ profile: req.user.toProfileJson() });
   }
 };
 
@@ -70,7 +70,6 @@ module.exports.updateProfile = (req, res, next) => {
  * @param {string} req.params.userId The user ID
  */
 module.exports.getPublicProfile = (req, res, next) => {
-  console.log(req.params.userId);
   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
     return next(createError(422, 'Invalid user ID'));
   }

@@ -108,7 +108,7 @@ module.exports.sendToken = (req, res, next) => {
 module.exports.refreshToken = (req, res, next) => {
   if (req.user) {
     jwtTokenObj = req.user.generateJwtToken();
-    res.json({ ...jwtTokenObj, user: req.user.toJSON() });
+    res.json(jwtTokenObj);
   }
 };
 
@@ -158,7 +158,7 @@ module.exports.signIn = (req, res, next) => {
         }
         // login success
         jwtTokenObj = user.generateJwtToken();
-        res.json({ ...jwtTokenObj, user: user.toJSON() });
+        res.json({ ...jwtTokenObj, user: user.toProfileJson() });
       })(req, res, next);
     })
     .catch(err => {

@@ -77,7 +77,9 @@ module.exports.getUsers = (req, res, next) => {
     })
     .then(results => {
       const [users, usersCount] = results;
-      res.status(200).json({ users, usersCount });
+      res
+        .status(200)
+        .json({ users: users.map(user => user.toProfileJson()), usersCount });
     })
     .catch(next);
 };

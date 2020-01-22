@@ -86,9 +86,9 @@ userSchema.virtual('fullName').get(function() {
 });
 
 /**
- * @returns {object} The user object without sensitive info such as hashed password
+ * @returns {object} The user profile object without sensitive info such as hashed password
  */
-userSchema.methods.toJSON = function() {
+userSchema.methods.toProfileJson = function() {
   return _.pick(this, [
     '_id',
     'username',
@@ -97,12 +97,14 @@ userSchema.methods.toJSON = function() {
     'firstName',
     'lastName',
     'role',
-    'permissions'
+    'permissions',
+    'createdAt',
+    'updatedAt'
   ]);
 };
 
 /**
- * @returns {object} The user public profile
+ * @returns {object} The user public profile object
  */
 userSchema.methods.toPublicProfileJson = function() {
   return _.pick(this, [

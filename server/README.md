@@ -500,10 +500,12 @@ Sample response
       "status": "active",
       "firstName": "Sarah",
       "lastName": "Connor",
-      "role": "admin",
+      "role": "root",
       "permissions": {
         "debug": false
-      }
+      },
+      "createdAt": "2020-01-19T22:11:56.779Z",
+      "updatedAt": "2020-01-19T23:18:47.897Z"
     },
     {
       "_id": "5e24db1d560ba309f0b0b5a8",
@@ -515,7 +517,9 @@ Sample response
       "role": "user",
       "permissions": {
         "debug": false
-      }
+      },
+      "createdAt": "2020-01-20T20:44:44.634Z",
+      "updatedAt": "2020-01-22T01:28:03.783Z"
     }
   ],
   "usersCount": 2
