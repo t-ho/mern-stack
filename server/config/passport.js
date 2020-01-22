@@ -34,6 +34,12 @@ const localStrategy = new LocalStrategy(
             }
           }
 
+          if (user.status === 'disabled') {
+            return done(null, false, {
+              message: 'Your account is disabled.'
+            });
+          }
+
           return done(null, user);
         });
       })
@@ -50,7 +56,12 @@ const jwtStrategy = new JwtStrategy(
   function(jwtPayload, done) {
     User.findById(jwtPayload.userId)
       .then(user => {
-        if (!user) return done(null, false, 'Invalid credentials');
+        if (!user) {
+          return done(null, false, 'Invalid credentials');
+        }
+        if (user.status === 'disabled') {
+          return done(null, false, 'Disabled account');
+        }
         return done(null, user);
       })
       .catch(done);

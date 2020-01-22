@@ -22,7 +22,7 @@ const getUserSchema = Joi.object({
   email: Joi.string().email(),
   firstName: Joi.string().trim(),
   lastName: Joi.string().trim(),
-  status: Joi.string().valid('active', 'unverifiedEmail'),
+  status: Joi.string().valid('active', 'disabled', 'unverifiedEmail'),
   role: Joi.string().valid('root', 'admin', 'user'),
   permissions: Joi.string().trim()
 });
@@ -122,7 +122,7 @@ module.exports.deleteUser = (req, res, next) => {
  */
 const updateUserSchema = Joi.object({
   role: Joi.string().valid('admin', 'user'),
-  status: Joi.string().valid('active', 'unverifiedEmail'),
+  status: Joi.string().valid('active', 'disabled', 'unverifiedEmail'),
   permissions: Joi.object()
 });
 
