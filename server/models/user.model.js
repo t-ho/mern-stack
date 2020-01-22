@@ -35,6 +35,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    // subId will be regenerated (new ObjectId()) when call user.setPasswordAsync(password)
+    // hence, we can invalidate all existing JWT tokens.
+    subId: {
+      type: String,
+      unique: true
+    },
     firstName: { type: String, trim: true },
     lastName: { type: String, trim: true },
     status: {
@@ -106,6 +112,7 @@ userSchema.methods.toJSON = function() {
 userSchema.methods.setPasswordAsync = function(password) {
   const saltRounds = 10;
   return bcrypt.hash(password, saltRounds).then(hash => {
+    this.subId = new mongoose.Types.ObjectId().toHexString();
     this.hashedPassword = hash;
   });
 };
@@ -128,7 +135,7 @@ userSchema.methods.generateJwtToken = function() {
   const iat = Math.floor(Date.now() / 1000);
   const expiresAt = iat + config.jwt.expiresIn;
   const token = jwt.sign(
-    { sub: this._id, userId: this._id, iat },
+    { sub: this.subId, userId: this._id, iat },
     config.jwt.secret,
     {
       algorithm: config.jwt.algorithm,

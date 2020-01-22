@@ -28,40 +28,38 @@ const User = mongoose.model('User');
  * NOTE: readUsers, insertUsers, updateUsers and deleteUsers are not listed in the
  * User Schema meaning normal users DO NOT have any permissions on User Collection at all.
  */
-const createCan = action => {
-  return (req, res, next) => {
-    res.locals.action = action;
+const createCan = action => (req, res, next) => {
+  res.locals.action = action;
 
-    if (!req.user || (req.user && !req.user.can(action))) {
-      return next(createError(401, 'Unauthorized action'));
-    }
+  if (!req.user || (req.user && !req.user.can(action))) {
+    return next(createError(401, 'Unauthorized action'));
+  }
 
-    if (action !== 'updateUsers' && action !== 'deleteUsers') {
-      return next();
-    }
+  if (action !== 'updateUsers' && action !== 'deleteUsers') {
+    return next();
+  }
 
-    // Now action === 'updateUsers' or action === 'deleteUsers'
-    const targetUser = res.locals.targetUser;
-    let canContinue = false;
-    if (!targetUser || (targetUser && !(targetUser instanceof User))) {
-      return next(
-        createError(
-          500,
-          `res.locals.targetUser must be set as an instance of User Model.
+  // Now action === 'updateUsers' or action === 'deleteUsers'
+  const targetUser = res.locals.targetUser;
+  let canContinue = false;
+  if (!targetUser || (targetUser && !(targetUser instanceof User))) {
+    return next(
+      createError(
+        500,
+        `res.locals.$targetUser must be set as an instance of User Model.
           It must be done before calling this middleware`
-        )
-      );
-    }
-    if (req.user.role === 'root' && targetUser.role !== 'root') {
-      canContinue = true;
-    } else if (req.user.role === 'admin' && targetUser.role === 'user') {
-      canContinue = true;
-    }
-    if (canContinue) {
-      return next();
-    }
-    next(createError(401, 'Unauthorized action'));
-  };
+      )
+    );
+  }
+  if (req.user.role === 'root' && targetUser.role !== 'root') {
+    canContinue = true;
+  } else if (req.user.role === 'admin' && targetUser.role === 'user') {
+    canContinue = true;
+  }
+  if (canContinue) {
+    return next();
+  }
+  next(createError(401, 'Unauthorized action'));
 };
 
 module.exports = createCan;

@@ -34,7 +34,7 @@ const localStrategy = new LocalStrategy(
             }
           }
 
-          if (user.status === 'disabled') {
+          if (user.status !== 'active') {
             return done(null, false, {
               message: 'Your account is disabled.'
             });
@@ -59,9 +59,15 @@ const jwtStrategy = new JwtStrategy(
         if (!user) {
           return done(null, false, 'Invalid credentials');
         }
-        if (user.status === 'disabled') {
-          return done(null, false, 'Disabled account');
+
+        if (user.status !== 'active') {
+          return done(null, false, 'Disabled or unverified account');
         }
+
+        if (user.subId !== jwtPayload.sub) {
+          return done(null, false, 'Invalid credentials');
+        }
+
         return done(null, user);
       })
       .catch(done);
