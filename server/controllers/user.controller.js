@@ -17,7 +17,14 @@ const getUserSchema = Joi.object({
     .default(30),
   skip: Joi.number()
     .integer()
-    .default(0)
+    .default(0),
+  username: Joi.string().trim(),
+  email: Joi.string().email(),
+  firstName: Joi.string().trim(),
+  lastName: Joi.string().trim(),
+  status: Joi.string().valid('active', 'unverifiedEmail'),
+  role: Joi.string().valid('root', 'admin', 'user'),
+  permissions: Joi.string().trim()
 });
 
 /**
@@ -29,19 +36,43 @@ const getUserSchema = Joi.object({
  * unless the path name is prefixed with "-" which will be treated as descending.
  * @param {number} [req.query.limit] The limit number (default: 30)
  * @param {number} [req.query.skip] The skip number (default: 0)
+ * @param {string} [req.query.username] The username
+ * @param {string} [req.query.email] The email
+ * @param {string} [req.query.firstName] The first name
+ * @param {string} [req.query.lastName] The last name
+ * @param {string} [req.query.status] The user status
+ * @param {string} [req.query.role] The user role
+ * @param {string} [req.query.permissions] The user permissions
  */
 module.exports.getUsers = (req, res, next) => {
   getUserSchema
     .validateAsync(req.query)
     .then(payload => {
       req.query = payload;
+      const query = _.pick(req.query, [
+        'username',
+        'email',
+        'firstName',
+        'lastName',
+        'status',
+        'role'
+      ]);
+      if (req.query.permissions) {
+        // Include root and admin
+        query.$or = [
+          {
+            [`permissions.${req.query.permissions}`]: true
+          },
+          { role: { $in: ['root', 'admin'] } }
+        ];
+      }
       return Promise.all([
-        User.find({})
+        User.find(query)
           .sort(req.query.sort)
           .limit(req.query.limit)
           .skip(req.query.skip)
           .exec(),
-        User.find({}).countDocuments()
+        User.find(query).countDocuments()
       ]);
     })
     .then(results => {

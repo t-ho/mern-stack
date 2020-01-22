@@ -403,11 +403,20 @@ Authorization: Bearer {JWT Token}
 
 - **Resquest Query**
 
-| Property Name | Type     | Required | Description                                        |
-| ------------- | -------- | -------- | -------------------------------------------------- |
-| `limit`       | _number_ | No       | Limit number                                       |
-| `skip`        | _number_ | No       | Offset number                                      |
-| `sort`        | _string_ | No       | Sort criteria (example: "createAt" or "-createAt") |
+| Property Name | Type     | Required | Description                                              |
+| ------------- | -------- | -------- | -------------------------------------------------------- |
+| `limit`       | _number_ | No       | Limit number (Default: 30)                               |
+| `skip`        | _number_ | No       | Offset number (Default: 0)                               |
+| `sort`        | _string_ | No       | Sort criteria (example: "createdAt" or "-createdAt")     |
+| `username`    | _string_ | No       | Username                                                 |
+| `email`       | _string_ | No       | Email                                                    |
+| `firstName`   | _string_ | No       | First name                                               |
+| `lastName`    | _string_ | No       | Last name                                                |
+| `status`      | _string_ | No       | Status. It could be ['active', 'unverifiedEmail']        |
+| `role`        | _string_ | No       | User role. It could be ['root', 'admin', 'user']         |
+| `permissions` | _string_ | No       | User permissions. (example: 'readPosts' or 'editPosts'). |
+
+Note: When permissions is specified (without role), it will include admin and root users in the response.
 
 - **Response Payload**
 

@@ -52,7 +52,8 @@ const userSchema = new mongoose.Schema(
     // The permissions field will allow a normal user to perform
     // admin-like actions.
     // By default, root and admin can do any thing (permissions field is ignored).
-    // So, call user.can(action) to determine permission
+    // So, call user.can(action) to determine permission on Collections.
+    // The rules for updating and deleting users are implemented in createCan middleware.
 
     // NOTE: readUsers, insertUsers, updateUsers and deleteUsers are not listed
     // here which means that normal users DO NOT have any permissions on User
@@ -127,7 +128,7 @@ userSchema.methods.generateJwtToken = function() {
   const iat = Math.floor(Date.now() / 1000);
   const expiresAt = iat + config.jwt.expiresIn;
   const token = jwt.sign(
-    { sub: this._id, userId: this._id },
+    { sub: this._id, userId: this._id, iat },
     config.jwt.secret,
     {
       algorithm: config.jwt.algorithm,
