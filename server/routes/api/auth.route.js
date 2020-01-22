@@ -16,6 +16,12 @@ router.put(
   authCtrl.updateProfile
 );
 
+router.post(
+  '/refresh-token',
+  passport.authenticate('jwt', { session: false }),
+  authCtrl.refreshToken
+);
+
 router.post('/reset-password/:token', authCtrl.resetPassword);
 
 router.post('/send-token', authCtrl.sendToken);

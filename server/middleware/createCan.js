@@ -46,7 +46,7 @@ const createCan = action => (req, res, next) => {
     return next(
       createError(
         500,
-        `res.locals.$targetUser must be set as an instance of User Model.
+        `res.locals.targetUser must be set as an instance of User Model.
           It must be done before calling this middleware`
       )
     );

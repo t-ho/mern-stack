@@ -112,7 +112,7 @@ Sample request body payload
 | Property Name | Type     | Description               |
 | ------------- | -------- | ------------------------- |
 | `token`       | _string_ | JWT token                 |
-| `expiresAt`   | _string_ | Expires at time (seconds) |
+| `expiresAt`   | _number_ | Expires at time (seconds) |
 | `user`        | _object_ | User info                 |
 
 Sample response
@@ -287,6 +287,38 @@ Sample response
 {
   "success": true,
   "message": "Password reset"
+}
+```
+
+### Refresh JWT Token
+
+- **Method:** `POST`
+- **Content-Type:** `application/json`
+- **Authentication Header**
+
+```
+Authorization: Bearer {JWT Token}
+```
+
+- **Endpoint**
+
+```
+/api/auth/refresh-token
+```
+
+- **Response payload**
+
+| Property Name | Type     | Description               |
+| ------------- | -------- | ------------------------- |
+| `token`       | _string_ | New JWT token             |
+| `expiresAt`   | _number_ | Expires at time (seconds) |
+
+Sample response
+
+```
+{
+  "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZTI3ZTQ4OTY2OGEyYjQxZWUxNmY3NDIiLCJ1c2VySWQiOiI1ZTI0ZjhkM2M1ZGZmZjFmYzk1NDQ3ZDUiLCJpYXQiOjE1Nzk2NzY1OTgsImV4cCI6MTU4NDg2MDU5OH0.7DjINccJtzowF0Nf2DnMoBtKpWEzRKLqcpzzIByHuwnqXRHKduYHGfOgf1ak9t2qLHQzPwMw-FxOGtZGVvAucA",
+  "expiresAt": 1584860598,
 }
 ```
 

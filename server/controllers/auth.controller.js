@@ -30,6 +30,7 @@ const USERNAME_ERROR_MESSAGE = {
 /**
  * @function getProfile
  * Get profile controller
+ *
  */
 module.exports.getProfile = (req, res, next) => {
   if (req.user) {
@@ -98,7 +99,7 @@ const resetPasswordSchema = Joi.object({
 });
 
 /**
- * @function
+ * @function resetPassword
  * Reset password controller
  *
  * @param {string} req.params.token The reset password token
@@ -155,7 +156,7 @@ const sendTokenSchema = Joi.object({
 
 /**
  * @function sendToken
- * Send a token based the provided token purpose
+ * Send a token based on the provided token purpose
  *
  * @param {string} req.body.email The email which will receive token
  * @param {string} req.body.tokenPurpose The token purpose. It can be ['verifyEmail', 'resetPassword']
@@ -173,6 +174,18 @@ module.exports.sendToken = (req, res, next) => {
       }
     })
     .catch(next);
+};
+
+/**
+ * @function refreshToken
+ * Refresh JWT token
+ *
+ */
+module.exports.refreshToken = (req, res, next) => {
+  if (req.user) {
+    jwtTokenObj = req.user.generateJwtToken();
+    res.json({ ...jwtTokenObj, user: req.user.toJSON() });
+  }
 };
 
 /**
