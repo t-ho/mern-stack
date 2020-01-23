@@ -4,6 +4,7 @@ import { createBrowserHistory } from 'history';
 import reduxThunk from 'redux-thunk';
 import { routerMiddleware } from 'connected-react-router';
 import createRootReducer from './reducers';
+import mernApi from './apis/mern';
 
 const composeEnhancer = composeWithDevTools({
   actionsBlacklist: ['@@redux-form']
@@ -14,7 +15,12 @@ const configureStore = initialState => {
   const store = createStore(
     createRootReducer(history),
     initialState,
-    composeEnhancer(applyMiddleware(routerMiddleware(history), reduxThunk))
+    composeEnhancer(
+      applyMiddleware(
+        routerMiddleware(history),
+        reduxThunk.withExtraArgument({ mernApi })
+      )
+    )
   );
 
   // Hot reload reducers (requires Webpack or Browserify HMR to be enabled)
