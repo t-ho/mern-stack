@@ -5,7 +5,7 @@ import {
   getIsSignedIn,
   getDefaultPath
 } from '../store/selectors';
-import { setBeforeSignInPath } from '../store/actions';
+import { setAttemptedPath } from '../store/actions';
 
 /**
  * If the current user is admin or root, he/she is authorized by default.
@@ -28,7 +28,7 @@ const requirePermission = action => WrappedComponent => {
     isAuthorized = () => {
       const { currentUser, isSignedIn, currentPath } = this.props;
       if (!isSignedIn) {
-        this.setBeforeSignInPath(currentPath);
+        this.setAttemptedPath(currentPath);
         return false;
       }
 
@@ -63,7 +63,7 @@ const requirePermission = action => WrappedComponent => {
     };
   };
 
-  return connect(mapStateToProps, { setBeforeSignInPath })(ComposedComponent);
+  return connect(mapStateToProps, { setAttemptedPath })(ComposedComponent);
 };
 
 export default requirePermission;

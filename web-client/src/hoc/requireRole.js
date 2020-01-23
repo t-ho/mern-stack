@@ -5,7 +5,7 @@ import {
   getIsSignedIn,
   getDefaultPath
 } from '../store/selectors';
-import { setBeforeSignInPath } from '../store/actions';
+import { setAttemptedPath } from '../store/actions';
 
 /**
  * If role == "user", then user, admin and root are authorized
@@ -29,7 +29,7 @@ const requireRole = role => WrappedComponent => {
     isAuthorized = () => {
       const { currentUser, isSignedIn } = this.props;
       if (!isSignedIn) {
-        this.props.setBeforeSignInPath(this.props.currentPath);
+        this.props.setAttemptedPath(this.props.currentPath);
         return false;
       }
 
@@ -71,7 +71,7 @@ const requireRole = role => WrappedComponent => {
     };
   };
 
-  return connect(mapStateToProps, { setBeforeSignInPath })(ComposedComponent);
+  return connect(mapStateToProps, { setAttemptedPath })(ComposedComponent);
 };
 
 export default requireRole;

@@ -8,7 +8,7 @@ const INITIAL_STATE = {
   processed: false,
   error: null,
   defaultPath: '/', // Used as a default redirect path
-  beforeSignInPath: null // Used to redirect users to the page they visited before logging in
+  attemptedPath: null // Used to redirect users to the page they visited before logging in
 };
 
 const authReducer = (state = INITIAL_STATE, action) => {
@@ -81,10 +81,10 @@ const authReducer = (state = INITIAL_STATE, action) => {
         ...state,
         defaultPath: action.payload
       };
-    case actionTypes.SET_BEFORE_SIGNIN_PATH:
+    case actionTypes.SET_ATTEMPTED_PATH:
       return {
         ...state,
-        beforeSignInPath: action.payload
+        attemptedPath: action.payload
       };
     case actionTypes.UNLOAD_AUTH_PAGE:
       return {

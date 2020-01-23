@@ -14,7 +14,7 @@ export const SIGN_OUT = '[Auth] Sign Out';
 export const SIGN_OUT_SUCCESS = '[Auth] Sign Out Success';
 
 export const SET_DEFAULT_URL = '[Auth] Set Default Path';
-export const SET_BEFORE_SIGNIN_PATH = '[Auth] Set Before SignIn Path';
+export const SET_ATTEMPTED_PATH = '[Auth] Set Attempted Path';
 
 export const VERIFY_EMAIL = '[Auth] Verify Email';
 export const VERIFY_EMAIL_SUCCESS = '[Auth] Verify Email Success';

@@ -50,9 +50,9 @@ const signInFail = payload => {
 };
 
 const redirectAfterSignIn = (dispatch, getState) => {
-  if (getState().auth.beforeSignInPath) {
-    dispatch(replace(getState().auth.beforeSignInPath));
-    dispatch(setBeforeSignInPath(null));
+  if (getState().auth.attemptedPath) {
+    dispatch(replace(getState().auth.attemptedPath));
+    dispatch(setAttemptedPath(null));
   } else {
     dispatch(replace(getState().auth.defaultPath));
   }
@@ -114,9 +114,9 @@ const tryLocalSignInFail = payload => dispatch => {
   dispatch({ type: actionTypes.TRY_LOCAL_SIGN_IN_FAIL, payload });
 };
 
-export const setBeforeSignInPath = path => {
+export const setAttemptedPath = path => {
   return {
-    type: actionTypes.SET_BEFORE_SIGNIN_PATH,
+    type: actionTypes.SET_ATTEMPTED_PATH,
     payload: path
   };
 };
