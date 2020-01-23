@@ -1,6 +1,6 @@
 import { replace } from 'connected-react-router';
 import * as actionTypes from './types';
-import mernApi, { setAuthToken } from '../../apis/mern';
+import mernApi from '../../apis/mern';
 
 export const signUp = formValues => dispatch => {
   dispatch({ type: actionTypes.SIGN_UP });
@@ -27,10 +27,7 @@ export const signIn = formValues => (dispatch, getState) => {
     response => {
       dispatch(signInSuccess(response.data));
       redirectAfterSignIn(dispatch, getState);
-      setAuthToken(response.data.token);
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('expiresAt', response.data.expiresAt);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      setAuthInfo(response.data);
     },
     err => {
       dispatch(signInFail(err.response.data.error));
@@ -68,16 +65,53 @@ export const tryLocalSignIn = () => (dispatch, getState) => {
     const expiresAt = localStorage.getItem('expiresAt');
     const user = JSON.parse(localStorage.getItem('user'));
     if (!token || !expiresAt || !user) {
-      return dispatch(signOut);
+      dispatch(tryLocalSignInFail('No local storage'));
+      return Promise.resolve();
     }
-    if (expiresAt * 1000 <= Date.now()) {
-      return dispatch(signOut);
+    const now = Math.floor(Date.now() / 1000);
+    if (expiresAt <= now) {
+      dispatch(tryLocalSignInFail('Token is expired'));
+      return Promise.resolve();
     }
-    dispatch(signInSuccess({ token, expiresAt, user }));
-    redirectAfterSignIn(dispatch, getState);
+    // if token age > 30 days, then refresh token
+    if (expiresAt <= now + 30 * 24 * 60 * 60) {
+      mernApi.setAuthToken(token);
+      return mernApi.post('auth/refresh-token').then(
+        response => {
+          dispatch(
+            tryLocalSignInSuccess({
+              token: response.data.token,
+              expiresAt: response.data.expiresAt,
+              user
+            })
+          );
+          redirectAfterSignIn(dispatch, getState);
+        },
+        err => {
+          dispatch(tryLocalSignInFail(err.response.data.error));
+        }
+      );
+    } else {
+      dispatch(tryLocalSignInSuccess({ token, expiresAt, user }));
+      redirectAfterSignIn(dispatch, getState);
+      return Promise.resolve();
+    }
   } catch (err) {
-    dispatch(signOut);
+    dispatch(tryLocalSignInFail(err));
   }
+};
+
+const tryLocalSignInSuccess = payload => dispatch => {
+  setAuthInfo(payload);
+  dispatch({
+    type: actionTypes.TRY_LOCAL_SIGN_IN_SUCCESS,
+    payload
+  });
+};
+
+const tryLocalSignInFail = payload => dispatch => {
+  clearAuthInfo();
+  dispatch({ type: actionTypes.TRY_LOCAL_SIGN_IN_FAIL, payload });
 };
 
 export const setBeforeSignInPath = path => {
@@ -87,11 +121,23 @@ export const setBeforeSignInPath = path => {
   };
 };
 
-export const signOut = () => dispatch => {
-  dispatch({ type: actionTypes.SIGN_OUT });
+const setAuthInfo = ({ token, expiresAt, user }) => {
+  mernApi.setAuthToken(token);
+  localStorage.setItem('token', token);
+  localStorage.setItem('expiresAt', expiresAt);
+  localStorage.setItem('user', JSON.stringify(user));
+};
+
+const clearAuthInfo = () => {
+  mernApi.setAuthToken('');
   localStorage.removeItem('token');
   localStorage.removeItem('expiresAt');
   localStorage.removeItem('user');
+};
+
+export const signOut = () => dispatch => {
+  dispatch({ type: actionTypes.SIGN_OUT });
+  clearAuthInfo();
   dispatch({ type: actionTypes.SIGN_OUT_SUCCESS });
 };
 

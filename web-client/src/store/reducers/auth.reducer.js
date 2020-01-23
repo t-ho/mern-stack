@@ -23,6 +23,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case actionTypes.RESET_PASSWORD:
       return { ...state, processed: false, processing: true, error: null };
     case actionTypes.SIGN_IN_SUCCESS:
+    case actionTypes.TRY_LOCAL_SIGN_IN_SUCCESS:
       return {
         ...state,
         processing: false,
@@ -54,7 +55,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
         processed: true,
         error: action.payload
       };
-    case actionTypes.SIGN_OUT_SUCCESS: {
+    case actionTypes.SIGN_OUT_SUCCESS:
       return {
         ...state,
         processing: false,
@@ -64,19 +65,27 @@ const authReducer = (state = INITIAL_STATE, action) => {
         expiresAt: null,
         defaultPath: '/'
       };
-    }
-    case actionTypes.SET_DEFAULT_URL: {
+    case actionTypes.TRY_LOCAL_SIGN_IN_FAIL:
+      return {
+        ...state,
+        processing: false,
+        processed: true,
+        token: null,
+        user: {},
+        expiresAt: null,
+        defaultPath: '/',
+        error: action.payload
+      };
+    case actionTypes.SET_DEFAULT_URL:
       return {
         ...state,
         defaultPath: action.payload
       };
-    }
-    case actionTypes.SET_BEFORE_SIGNIN_PATH: {
+    case actionTypes.SET_BEFORE_SIGNIN_PATH:
       return {
         ...state,
         beforeSignInPath: action.payload
       };
-    }
     case actionTypes.UNLOAD_AUTH_PAGE:
       return {
         ...state,
