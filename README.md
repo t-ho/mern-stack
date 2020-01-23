@@ -10,6 +10,7 @@ To start the server:
 
 ```bash
 cd mern/server
+npm install
 cp .env.example .env
 npm run dev # start server
 ```
@@ -18,5 +19,6 @@ To start client:
 
 ```bash
 cd mern/web-client
+npm install
 npm start
 ```
