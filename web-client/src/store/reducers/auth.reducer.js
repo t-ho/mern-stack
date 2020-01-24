@@ -55,6 +55,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
         processed: true,
         error: action.payload
       };
+    case actionTypes.TRY_LOCAL_SIGN_IN_FAIL:
     case actionTypes.SIGN_OUT_SUCCESS:
       return {
         ...state,
@@ -64,17 +65,6 @@ const authReducer = (state = INITIAL_STATE, action) => {
         user: {},
         expiresAt: null,
         defaultPath: '/'
-      };
-    case actionTypes.TRY_LOCAL_SIGN_IN_FAIL:
-      return {
-        ...state,
-        processing: false,
-        processed: true,
-        token: null,
-        user: {},
-        expiresAt: null,
-        defaultPath: '/',
-        error: action.payload
       };
     case actionTypes.SET_DEFAULT_URL:
       return {

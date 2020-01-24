@@ -64,12 +64,12 @@ export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
     const expiresAt = localStorage.getItem('expiresAt');
     const user = JSON.parse(localStorage.getItem('user'));
     if (!token || !expiresAt || !user) {
-      dispatch(tryLocalSignInFail('No local storage'));
+      dispatch(tryLocalSignInFail());
       return Promise.resolve();
     }
     const now = Math.floor(Date.now() / 1000);
     if (expiresAt <= now) {
-      dispatch(tryLocalSignInFail('Token is expired'));
+      dispatch(tryLocalSignInFail());
       return Promise.resolve();
     }
     // if token age > 30 days, then refresh token
@@ -87,7 +87,7 @@ export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
           redirectAfterSignIn(dispatch, getState);
         },
         err => {
-          dispatch(tryLocalSignInFail(err.response.data.error));
+          dispatch(tryLocalSignInFail());
         }
       );
     } else {
@@ -108,9 +108,9 @@ const tryLocalSignInSuccess = payload => (dispatch, getState, { mernApi }) => {
   });
 };
 
-const tryLocalSignInFail = payload => (dispatch, getState, { mernApi }) => {
+const tryLocalSignInFail = () => (dispatch, getState, { mernApi }) => {
   clearAuthInfo(mernApi);
-  dispatch({ type: actionTypes.TRY_LOCAL_SIGN_IN_FAIL, payload });
+  dispatch({ type: actionTypes.TRY_LOCAL_SIGN_IN_FAIL });
 };
 
 export const setAttemptedPath = path => {
