@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "nodemon --exec 'mocha'",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "tunnel": "ngrok http 8080"
   },
   "repository": {
     "type": "git",
@@ -45,6 +46,7 @@
   },
   "devDependencies": {
     "husky": "^4.0.10",
+    "ngrok": "^3.2.7",
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1"
   },
