@@ -22,3 +22,11 @@ cd mern/web-client
 npm install
 npm start
 ```
+
+To start mobile:
+
+```bash
+cd mern/mobile
+npm install
+npm start
+```
