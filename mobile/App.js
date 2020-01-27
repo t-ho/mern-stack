@@ -1,7 +1,10 @@
-import React from "react";
-import { Provider } from "react-redux";
-import AppNavigator from "./src/navigation/AppNavigator";
-import configureStore from "./src/store/configureStore";
+import React from 'react';
+import { Provider } from 'react-redux';
+import AppNavigator from './src/navigation/AppNavigator';
+import configureStore from './src/store/configureStore';
+import { enableScreens } from 'react-native-screens';
+
+enableScreens();
 
 const store = configureStore();
 
