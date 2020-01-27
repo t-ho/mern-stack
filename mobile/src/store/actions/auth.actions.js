@@ -47,6 +47,48 @@ const signUpFail = payload => {
   };
 };
 
+export const requestVerificationEmail = formValues => {
+  return (dispatch, getState, { mernApi }) => {
+    dispatch({ type: actionTypes.REQUEST_VERIFICATION_EMAIL });
+    return mernApi.post('/auth/send-token', formValues).then(
+      response => {
+        dispatch({ type: actionTypes.REQUEST_VERIFICATION_EMAIL_SUCCESS });
+      },
+      err => {
+        dispatch(requestVerificationEmailFail(err.response.data.error));
+      }
+    );
+  };
+};
+
+const requestVerificationEmailFail = payload => {
+  return {
+    type: actionTypes.REQUEST_VERIFICATION_EMAIL_FAIL,
+    payload
+  };
+};
+
+export const requestPasswordReset = formValues => {
+  return (dispatch, getState, { mernApi }) => {
+    dispatch({ type: actionTypes.REQUEST_PASSWORD_RESET });
+    return mernApi.post('/auth/send-token', formValues).then(
+      response => {
+        dispatch({ type: actionTypes.REQUEST_PASSWORD_RESET_SUCCESS });
+      },
+      err => {
+        dispatch(requestPasswordResetFail(err.response.data.error));
+      }
+    );
+  };
+};
+
+const requestPasswordResetFail = payload => {
+  return {
+    type: actionTypes.REQUEST_PASSWORD_RESET_FAIL,
+    payload
+  };
+};
+
 export const unloadAuthScreen = () => {
   return {
     type: actionTypes.UNLOAD_AUTH_SCREEN

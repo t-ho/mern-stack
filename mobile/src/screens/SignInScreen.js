@@ -26,7 +26,9 @@ class SignInScreen extends React.Component {
     return (
       <SafeAreaView forceInset={{ top: 'always' }} style={styles.container}>
         <Spacer>
-          <Text h3>Sign In</Text>
+          <Text h3 style={styles.title}>
+            Sign In
+          </Text>
         </Spacer>
         <Input
           label="Email"
@@ -50,7 +52,17 @@ class SignInScreen extends React.Component {
         <Spacer>
           <Button title="Sign In" onPress={this.onSubmit} />
         </Spacer>
+        <NavLink
+          text="Forgot your password?"
+          routeName="RequestPasswordReset"
+        />
         <NavLink text="Don't have an account? Sign Up!" routeName="SignUp" />
+        {this.props.errorMessage === 'Email is not verified.' && (
+          <NavLink
+            text="Have not received verification email?"
+            routeName="RequestVerificationEmail"
+          />
+        )}
       </SafeAreaView>
     );
   }
@@ -61,16 +73,19 @@ const mapStateToProps = state => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    marginBottom: 180
+  },
   errorMessage: {
     alignSelf: 'center',
     color: 'red',
     fontSize: 16,
     marginTop: 15
   },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    marginBottom: 180
+  title: {
+    alignSelf: 'center'
   }
 });
 

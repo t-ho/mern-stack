@@ -27,7 +27,9 @@ class SignUpScreen extends React.Component {
     return (
       <SafeAreaView forceInset={{ top: 'always' }} style={styles.container}>
         <Spacer>
-          <Text h3>Sign Up</Text>
+          <Text h3 style={styles.title}>
+            Sign Up
+          </Text>
         </Spacer>
         <Input
           label="Username"
@@ -70,16 +72,19 @@ const mapStateToProps = state => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    marginBottom: 120
+  },
   errorMessage: {
     alignSelf: 'center',
     color: 'red',
     fontSize: 16,
     marginTop: 15
   },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    marginBottom: 120
+  title: {
+    alignSelf: 'center'
   }
 });
 
