@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const mernApi = axios.create({
-  baseURL: 'http://2cfb9afa.ngrok.io/api'
+  baseURL: 'http://6e055219.ngrok.io/api'
 });
 
 mernApi.setAuthToken = jwtToken => {

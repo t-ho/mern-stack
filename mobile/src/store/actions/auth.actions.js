@@ -1,3 +1,4 @@
+import NavService from '../../navigation/NavigationService';
 import * as actionTypes from './types';
 
 export const signIn = formValues => (dispatch, getState, { mernApi }) => {
@@ -5,6 +6,7 @@ export const signIn = formValues => (dispatch, getState, { mernApi }) => {
   return mernApi.post('/auth/signin', formValues).then(
     response => {
       dispatch(signInSuccess(response.data));
+      NavService.navigate('Main');
     },
     err => {
       dispatch(signInFail(err.response.data.error));
