@@ -29,4 +29,9 @@ To start mobile:
 cd mern/mobile
 npm install
 npm start
+
+# Open another terminal
+cd mern/server
+npm run tunnel
+# Copy copy the URL http://xxxxxxxx.ngrok.io to the `baseUrl` in the file `rmg/mobile/src/store/apis/mern.js`
 ```

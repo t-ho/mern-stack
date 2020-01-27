@@ -1,19 +1,88 @@
-import React from "react";
-import { StyleSheet, View, Text } from "react-native";
-import { SafeAreaView } from "react-navigation";
-import NavLink from "../components/NavLink";
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-navigation';
+import { Text, Button, Input } from 'react-native-elements';
+import { connect } from 'react-redux';
+import NavLink from '../components/NavLink';
+import { getError } from '../store/selectors';
+import { signUp, unloadAuthScreen } from '../store/actions';
+import Spacer from '../components/Spacer';
 
 class SignUpScreen extends React.Component {
+  state = { username: '', email: '', password: '' };
+
+  onSubmit = () => {
+    this.props.signUp({
+      username: this.state.username,
+      email: this.state.email,
+      password: this.state.password
+    });
+  };
+
+  componentWillUnmount() {
+    this.props.unloadAuthScreen();
+  }
+
   render() {
     return (
-      <SafeAreaView forceInset={{ top: "always" }}>
-        <Text>SignUpScreen</Text>
+      <SafeAreaView forceInset={{ top: 'always' }} style={styles.container}>
+        <Spacer>
+          <Text h3>Sign Up</Text>
+        </Spacer>
+        <Input
+          label="Username"
+          value={this.state.username}
+          autoCapitalize="none"
+          autoCorrect={false}
+          onChangeText={username => this.setState({ username })}
+        />
+        <Spacer />
+        <Input
+          label="Email"
+          value={this.state.email}
+          autoCapitalize="none"
+          autoCorrect={false}
+          onChangeText={email => this.setState({ email })}
+        />
+        <Spacer />
+        <Input
+          label="Password"
+          secureTextEntry
+          value={this.state.password}
+          autoCapitalize="none"
+          autoCorrect={false}
+          onChangeText={password => this.setState({ password })}
+        />
+        {this.props.errorMessage ? (
+          <Text style={styles.errorMessage}>{this.props.errorMessage}</Text>
+        ) : null}
+        <Spacer>
+          <Button title="Sign Up" onPress={this.onSubmit} />
+        </Spacer>
         <NavLink text="Have an account? Sign In!" routeName="SignIn" />
       </SafeAreaView>
     );
   }
 }
 
-const styles = StyleSheet.create({});
+const mapStateToProps = state => {
+  return { errorMessage: getError(state) };
+};
 
-export default SignUpScreen;
+const styles = StyleSheet.create({
+  errorMessage: {
+    alignSelf: 'center',
+    color: 'red',
+    fontSize: 16,
+    marginTop: 15
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    marginBottom: 120
+  }
+});
+
+export default connect(mapStateToProps, { signUp, unloadAuthScreen })(
+  SignUpScreen
+);

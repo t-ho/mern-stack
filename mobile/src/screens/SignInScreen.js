@@ -5,7 +5,7 @@ import { Text, Button, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
 import NavLink from '../components/NavLink';
 import { getError } from '../store/selectors';
-import { signIn } from '../store/actions';
+import { signIn, unloadAuthScreen } from '../store/actions';
 import Spacer from '../components/Spacer';
 
 class SignInScreen extends React.Component {
@@ -17,6 +17,10 @@ class SignInScreen extends React.Component {
       password: this.state.password
     });
   };
+
+  componentWillUnmount() {
+    this.props.unloadAuthScreen();
+  }
 
   render() {
     return (
@@ -46,11 +50,7 @@ class SignInScreen extends React.Component {
         <Spacer>
           <Button title="Sign In" onPress={this.onSubmit} />
         </Spacer>
-        <NavLink
-          text="Don't have an account? Sign Up!"
-          routeName="SignUp"
-          style={styles.link}
-        />
+        <NavLink text="Don't have an account? Sign Up!" routeName="SignUp" />
       </SafeAreaView>
     );
   }
@@ -74,4 +74,6 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(mapStateToProps, { signIn })(SignInScreen);
+export default connect(mapStateToProps, { signIn, unloadAuthScreen })(
+  SignInScreen
+);

@@ -25,3 +25,28 @@ const signInFail = payload => {
     payload
   };
 };
+
+export const signUp = formValues => (dispatch, getState, { mernApi }) => {
+  dispatch({ type: actionTypes.SIGN_UP });
+  return mernApi.post('/auth/signup', formValues).then(
+    response => {
+      dispatch({ type: actionTypes.SIGN_UP_SUCCESS });
+    },
+    err => {
+      dispatch(signUpFail(err.response.data.error));
+    }
+  );
+};
+
+const signUpFail = payload => {
+  return {
+    type: actionTypes.SIGN_UP_FAIL,
+    payload
+  };
+};
+
+export const unloadAuthScreen = () => {
+  return {
+    type: actionTypes.UNLOAD_AUTH_SCREEN
+  };
+};
