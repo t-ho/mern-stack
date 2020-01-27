@@ -162,7 +162,6 @@ module.exports.signIn = (req, res, next) => {
       })(req, res, next);
     })
     .catch(err => {
-      console.log(err);
       next(err);
     });
 };

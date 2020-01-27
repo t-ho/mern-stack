@@ -1,6 +1,6 @@
-import React from "react";
-import { Text, StyleSheet, TouchableOpacity } from "react-native";
-import { withNavigation } from "react-navigation";
+import React from 'react';
+import { Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { withNavigation } from 'react-navigation';
 
 const NavLink = ({ navigation, text, routeName }) => {
   return (
@@ -12,7 +12,8 @@ const NavLink = ({ navigation, text, routeName }) => {
 
 const styles = StyleSheet.create({
   link: {
-    color: "blue"
+    color: 'blue',
+    alignSelf: 'center'
   }
 });
 
