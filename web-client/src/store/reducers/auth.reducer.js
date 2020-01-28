@@ -14,7 +14,6 @@ const INITIAL_STATE = {
 const authReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case actionTypes.SIGN_IN:
-    case actionTypes.TRY_LOCAL_SIGN_IN:
     case actionTypes.SIGN_OUT:
     case actionTypes.SIGN_UP:
     case actionTypes.VERIFY_EMAIL:
@@ -23,11 +22,18 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case actionTypes.RESET_PASSWORD:
       return { ...state, processed: false, processing: true, error: null };
     case actionTypes.SIGN_IN_SUCCESS:
-    case actionTypes.TRY_LOCAL_SIGN_IN_SUCCESS:
       return {
         ...state,
         processing: false,
         processed: true,
+        token: action.payload.token,
+        expiresAt: action.payload.expiresAt,
+        user: { ...action.payload.user },
+        defaultPath: '/profile'
+      };
+    case actionTypes.TRY_LOCAL_SIGN_IN_SUCCESS:
+      return {
+        ...state,
         token: action.payload.token,
         expiresAt: action.payload.expiresAt,
         user: { ...action.payload.user },
@@ -55,12 +61,19 @@ const authReducer = (state = INITIAL_STATE, action) => {
         processed: true,
         error: action.payload
       };
-    case actionTypes.TRY_LOCAL_SIGN_IN_FAIL:
     case actionTypes.SIGN_OUT_SUCCESS:
       return {
         ...state,
         processing: false,
         processed: true,
+        token: null,
+        user: {},
+        expiresAt: null,
+        defaultPath: '/'
+      };
+    case actionTypes.TRY_LOCAL_SIGN_IN_FAIL:
+      return {
+        ...state,
         token: null,
         user: {},
         expiresAt: null,
