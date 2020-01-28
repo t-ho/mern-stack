@@ -60,38 +60,29 @@ const redirectAfterSignIn = (dispatch, getState) => {
 export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.TRY_LOCAL_SIGN_IN });
   try {
-    const token = localStorage.getItem('token');
-    const expiresAt = localStorage.getItem('expiresAt');
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!token || !expiresAt || !user) {
-      dispatch(tryLocalSignInFail());
-      return Promise.resolve();
-    }
+    const authInfo = JSON.parse(localStorage.getItem('authInfo'));
     const now = Math.floor(Date.now() / 1000);
-    if (expiresAt <= now) {
+    if (!authInfo || (authInfo && authInfo.expiresAt <= now)) {
       dispatch(tryLocalSignInFail());
       return Promise.resolve();
     }
     // if token age > 30 days, then refresh token
-    if (expiresAt <= now + 30 * 24 * 60 * 60) {
-      mernApi.setAuthToken(token);
+    if (authInfo.expiresAt <= now + 30 * 24 * 60 * 60) {
+      mernApi.setAuthToken(authInfo.token);
       return mernApi.post('auth/refresh-token').then(
         response => {
-          dispatch(
-            tryLocalSignInSuccess({
-              token: response.data.token,
-              expiresAt: response.data.expiresAt,
-              user
-            })
-          );
+          authInfo.token = response.data.token;
+          authInfo.expiresAt = response.data.expiresAt;
+          dispatch(tryLocalSignInSuccess(authInfo));
           redirectAfterSignIn(dispatch, getState);
+          setAuthInfo(authInfo, mernApi);
         },
         err => {
           dispatch(tryLocalSignInFail());
         }
       );
     } else {
-      dispatch(tryLocalSignInSuccess({ token, expiresAt, user }));
+      dispatch(tryLocalSignInSuccess(authInfo));
       redirectAfterSignIn(dispatch, getState);
       return Promise.resolve();
     }
@@ -120,18 +111,14 @@ export const setAttemptedPath = path => {
   };
 };
 
-const setAuthInfo = ({ token, expiresAt, user }, mernApi) => {
-  mernApi.setAuthToken(token);
-  localStorage.setItem('token', token);
-  localStorage.setItem('expiresAt', expiresAt);
-  localStorage.setItem('user', JSON.stringify(user));
+const setAuthInfo = (authInfo, mernApi) => {
+  mernApi.setAuthToken(authInfo.token);
+  localStorage.setItem('authInfo', JSON.stringify(authInfo));
 };
 
 const clearAuthInfo = mernApi => {
   mernApi.setAuthToken('');
-  localStorage.removeItem('token');
-  localStorage.removeItem('expiresAt');
-  localStorage.removeItem('user');
+  localStorage.removeItem('authInfo');
 };
 
 export const signOut = () => (dispatch, getState, { mernApi }) => {
