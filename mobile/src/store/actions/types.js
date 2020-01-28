@@ -6,6 +6,13 @@ export const SIGN_UP = '[Auth] Sign Up';
 export const SIGN_UP_SUCCESS = '[Auth] Sign Up Success';
 export const SIGN_UP_FAIL = '[Auth] Sign Up Fail';
 
+export const TRY_LOCAL_SIGN_IN = '[Auth] Try Local Sign In';
+export const TRY_LOCAL_SIGN_IN_SUCCESS = '[Auth] Try Local Sign In Success';
+export const TRY_LOCAL_SIGN_IN_FAIL = '[Auth] Try Local Sign In Fail';
+
+export const SIGN_OUT = '[Auth] Sign Out';
+export const SIGN_OUT_SUCCESS = '[Auth] Sign Out Success';
+
 export const REQUEST_VERIFICATION_EMAIL = '[Auth] Request Verification Email';
 export const REQUEST_VERIFICATION_EMAIL_SUCCESS =
   '[Auth] Request Verification Email Success';

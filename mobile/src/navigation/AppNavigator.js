@@ -5,6 +5,7 @@ import SignUpScreen from '../screens/SignUpScreen';
 import MainScreen from '../screens/MainScreen';
 import RequestPasswordResetScreen from '../screens/RequestPasswordResetScreen';
 import RequestVerificationEmailScreen from '../screens/RequestVerificationEmailScreen';
+import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 
 const authStack = createStackNavigator(
   {
@@ -23,10 +24,16 @@ const mainSwitch = createSwitchNavigator(
   { initialRouteName: 'Main' }
 );
 
-const switchNavigator = createSwitchNavigator({
-  authStack,
-  mainSwitch
-});
+const switchNavigator = createSwitchNavigator(
+  {
+    AuthLoading: AuthLoadingScreen,
+    authStack,
+    mainSwitch
+  },
+  {
+    initialRouteName: 'AuthLoading'
+  }
+);
 
 const AppNavigator = createAppContainer(switchNavigator);
 
