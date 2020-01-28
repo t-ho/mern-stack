@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView, NavigationEvents } from 'react-navigation';
 import { Text, Button, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
 import NavLink from '../components/NavLink';
@@ -9,6 +9,11 @@ import { signIn, unloadAuthScreen } from '../store/actions';
 import Spacer from '../components/Spacer';
 
 class SignInScreen extends React.Component {
+  static navigationOptions = {
+    headerShown: false,
+    headerTitle: 'Sign In'
+  };
+
   state = { email: '', password: '' };
 
   onSubmit = () => {
@@ -18,13 +23,10 @@ class SignInScreen extends React.Component {
     });
   };
 
-  componentWillUnmount() {
-    this.props.unloadAuthScreen();
-  }
-
   render() {
     return (
       <SafeAreaView forceInset={{ top: 'always' }} style={styles.container}>
+        <NavigationEvents onWillBlur={this.props.unloadAuthScreen} />
         <Spacer>
           <Text h3 style={styles.title}>
             Sign In
@@ -76,7 +78,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    marginBottom: 180
+    marginBottom: 150
   },
   errorMessage: {
     alignSelf: 'center',
