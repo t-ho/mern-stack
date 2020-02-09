@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const compression = require('compression');
 const helmet = require('helmet');
@@ -35,6 +37,20 @@ app.use(bodyParser.json({ type: '*/*' }));
 app.use(passport.initialize());
 
 app.use(routes);
+
+// Serve static assets in production mode
+if (config.env === 'production') {
+  const buildDir = path.resolve(__dirname, '../../web-client/build');
+  if (!fs.existsSync(buildDir)) {
+    throw new Error(
+      `The production build directory "${buildDir}" does not exist`
+    );
+  }
+  app.use(express.static(buildDir));
+  app.get('*', (req, res) => {
+    res.sendFile(`${buildDir}/index.html`);
+  });
+}
 
 // catch 404 errors and forward to error handler
 app.use((req, res, next) => next(createError(404, 'Not Found')));
