@@ -1,5 +1,11 @@
 # MERN Stack
 
+### MongoDB - Express - React - Redux - React Native - NodeJS
+
+[![mern-workflow](https://raw.githubusercontent.com/t-ho/mern/master/mern-flow.gif)](https://github.com/t-ho/mern)
+
+## The server API documentation can be found [here](./server/README.md)
+
 ## Getting started
 
 1. Install `expo-cli` globally for development mobile app
