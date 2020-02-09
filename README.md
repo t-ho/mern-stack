@@ -13,12 +13,21 @@ npm install -g expo-cli
 ```bash
 git clone https://github.com/t-ho/mern.git
 cd mern
-npm install
 cp .env.example .env
 # Edit .env file to meet your requirements
 ```
 
-3. To start server, web client and mobile, run:
+3. Install package dependencies:
+
+```bash
+npm run install:deps
+# Note: On MacOs and Linux, the command above is kind of equivalent to:
+# npm install && cd server && npm install && cd ../web-client && npm install && cd ../mobile && npm install && cd ..
+```
+
+Then command `npm run install:deps` just provides a convenient (cross-platform) way for installing all deps in one command on MacOS, Linux and Windows:
+
+4. To start server, web client and mobile, run:
 
 ```bash
 # In the root directory (mern):
@@ -45,7 +54,7 @@ npm start # start server, web-client and mobile dev process
 npm run server:mobile # start server and mobile dev process
 ```
 
-4. To start server and web client only, run:
+5. To start server and web client only, run:
 
 ```bash
 # In the root directory (mern):
@@ -57,7 +66,7 @@ By running the command above, you will have:
 - Server API is listening on port **8080**
 - Web client is running at **http://localhost:3000**
 
-5. To start server and mobile only, run
+6. To start server and mobile only, run
 
 ```bash
 # In the root directory (mern):
@@ -69,7 +78,7 @@ By running the command above, you will have:
 - Server API is listening on port **8080**
 - Mobile - Expo DevTools is running at **http://localhost:19002**
 
-6. To debug mobile app with `react-native-debugger`:
+7. To debug mobile app with `react-native-debugger`:
 
 - Install [react-native-debugger](https://github.com/jhen0409/react-native-debugger/releases).
 - Open React Native Debugger window instance with port `19001` (`Debugger` > `New Window`).

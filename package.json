@@ -4,6 +4,7 @@
   "description": "MERN stack - MongoDB - Express - React - Redux - React Native - NodeJs",
   "main": "start-server.js",
   "scripts": {
+    "install:deps": "node install-deps",
     "start": "concurrently -c \"green,yellow,gray\" -n \"SERVER,CLIENT,MOBILE\" \"npm:server\" \"npm:client\" \"npm:mobile\"",
     "server:client": "concurrently -c \"green,yellow\" -n \"SERVER,CLIENT\" \"npm:server\" \"npm:client\"",
     "server:mobile": "concurrently -c \"green,gray\" -n \"SERVER,MOBILE\" \"npm:server\" \"npm:mobile\"",
