@@ -2,7 +2,7 @@
 
 ### MongoDB - Express - React - Redux - React Native - NodeJS
 
-[![mern-workflow](https://raw.githubusercontent.com/t-ho/mern/master/mern-flow.gif)](https://github.com/t-ho/mern)
+[![mern-workflow](https://raw.githubusercontent.com/t-ho/mern/assets/assets/mern-flow.gif)](https://github.com/t-ho/mern)
 
 ## The server API documentation can be found [here](./server/README.md)
 
