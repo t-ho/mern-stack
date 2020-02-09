@@ -1,7 +1,7 @@
 const fspath = require('path');
 const dotenv = require('dotenv');
 
-dotenv.config();
+dotenv.config({ path: fspath.resolve(__dirname, '../../.env') });
 
 module.exports = {
   env: process.env.NODE_ENV,
@@ -11,13 +11,13 @@ module.exports = {
     verifyEmail: false // Note: If true, please specify your mailgun API key
   },
   email: {
-    from: 'no-reply@mern.com', // FIXME
+    from: 'no-reply@mern.com', // TODO
     to: '',
-    signature: 'The MERN Team' // FIXME
+    signature: 'The MERN Team' // TODO
   },
   mailgun: {
-    apiKey: process.env.MAILGUN_API_KEY, // FIXME: edit .env file
-    domain: 'sandbox4f20bd7a5b3a451e99ad609946b1db5d.mailgun.org' // FIXME:
+    apiKey: process.env.MAILGUN_API_KEY, // TODO: edit .env file
+    domain: 'sandbox4f20bd7a5b3a451e99ad609946b1db5d.mailgun.org' // TODO:
   },
   jwt: {
     algorithm: 'HS512',
@@ -25,11 +25,11 @@ module.exports = {
     expiresIn: 60 * 24 * 60 * 60 // seconds
   },
   mongo: {
-    uri: process.env.MONGO_URI // FIXME: edit .env file
+    uri: process.env.MONGO_URI // TODO: edit .env file
   },
   server: {
-    port: process.env.SERVER_PORT, // FIXME: edit .env file
-    url: 'http://localhost' // FIXME:
+    port: process.env.SERVER_PORT, // TODO: edit .env file
+    url: 'http://localhost' // TODO:
   },
   paths: {
     root: fspath.normalize(`${__dirname}/..`)

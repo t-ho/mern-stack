@@ -4,9 +4,8 @@
   "description": "MERN server",
   "main": "index.js",
   "scripts": {
-    "test": "nodemon --exec 'mocha'",
-    "dev": "nodemon index.js",
-    "tunnel": "ngrok http 8080"
+    "start": "nodemon index.js",
+    "test": "nodemon --exec 'mocha'"
   },
   "repository": {
     "type": "git",
@@ -44,15 +43,5 @@
     "passport-local": "^1.0.0",
     "uuid": "^3.4.0"
   },
-  "devDependencies": {
-    "husky": "^4.0.10",
-    "ngrok": "^3.2.7",
-    "prettier": "^1.19.1",
-    "pretty-quick": "^2.0.1"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
-  }
+  "devDependencies": {}
 }

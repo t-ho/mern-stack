@@ -1,0 +1,39 @@
+{
+  "name": "mern",
+  "version": "1.0.0",
+  "description": "MERN stack - MongoDB - Express - React - Redux - React Native - NodeJs",
+  "main": "start-server.js",
+  "scripts": {
+    "start": "concurrently -c \"green,yellow,gray\" -n \"SERVER,CLIENT,MOBILE\" \"npm:server\" \"npm:client\" \"npm:mobile\"",
+    "server:client": "concurrently -c \"green,yellow\" -n \"SERVER,CLIENT\" \"npm:server\" \"npm:client\"",
+    "server:mobile": "concurrently -c \"green,gray\" -n \"SERVER,MOBILE\" \"npm:server\" \"npm:mobile\"",
+    "client": "node start-web-client",
+    "mobile": "node start-mobile",
+    "server": "node start-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/t-ho/mern.git"
+  },
+  "author": "t-ho <toan.hmt@protonmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/t-ho/mern/issues"
+  },
+  "homepage": "https://github.com/t-ho/mern#readme",
+  "devDependencies": {
+    "concurrently": "^5.1.0",
+    "figlet": "^1.2.4",
+    "husky": "^4.2.1",
+    "ngrok": "^3.2.7",
+    "prettier": "^1.19.1",
+    "pretty-quick": "^2.0.1"
+  },
+  "dependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  }
+}

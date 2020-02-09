@@ -2,41 +2,74 @@
 
 ## Getting started
 
+1. Install `expo-cli` globally for development mobile app
+
+```bash
+npm install -g expo-cli
+```
+
+2. Clone the `mern` repository:
+
 ```bash
 git clone https://github.com/t-ho/mern.git
-```
-
-To start the server:
-
-```bash
-cd mern/server
+cd mern
 npm install
 cp .env.example .env
-npm run dev # start server
+# Edit .env file to meet your requirements
 ```
 
-To start client:
+3. To start server, web client and mobile, run:
 
 ```bash
-cd mern/web-client
-npm install
+# In the root directory (mern):
 npm start
 ```
 
-To start mobile:
+By running the command above, you will have:
+
+- Server API is listening on port **8080**
+- Web client is running at **http://localhost:3000**
+- Mobile - Expo DevTools is running at **http://localhost:19002**
+
+**NOTE:**
+
+- **For the sake of simplicity, we use free service [ngrok](https://ngrok.com/) to create public API URL for mobile development. The downside of this approach is that the public URL is only available for 8 hours, so we need to restart the `npm` process every 8 hours.**
+- **After 8 hours, the expired ngrok URL message will be displayed in your terminal to remind you restart npm process.**
+
+To restart npm process (_If you don't start mobile development process, simply ignore this step_):
 
 ```bash
-cd mern/mobile
-npm install
-npm start
-
-# Open another terminal
-cd mern/server
-npm run tunnel
-# Copy the URL http://xxxxxxxx.ngrok.io to the `baseUrl` in the file `rmg/mobile/src/store/apis/mern.js`
+# In your current terminal, press Ctrl + C to exit. Then run
+npm start # start server, web-client and mobile dev process
+# or
+npm run server:mobile # start server and mobile dev process
 ```
 
-To debug mobile app with `react-native-debugger`:
+4. To start server and web client only, run:
+
+```bash
+# In the root directory (mern):
+npm run server:client
+```
+
+By running the command above, you will have:
+
+- Server API is listening on port **8080**
+- Web client is running at **http://localhost:3000**
+
+5. To start server and mobile only, run
+
+```bash
+# In the root directory (mern):
+npm run server:mobile
+```
+
+By running the command above, you will have:
+
+- Server API is listening on port **8080**
+- Mobile - Expo DevTools is running at **http://localhost:19002**
+
+6. To debug mobile app with `react-native-debugger`:
 
 - Install [react-native-debugger](https://github.com/jhen0409/react-native-debugger/releases).
 - Open React Native Debugger window instance with port `19001` (`Debugger` > `New Window`).
