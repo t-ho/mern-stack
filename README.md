@@ -42,7 +42,7 @@ npm start
 
 By running the command above, you will have:
 
-- Server API is listening on port **8080**
+- Server API is running at **http://localhost:8080**
 - Web client is running at **http://localhost:3000**
 - Mobile - Expo DevTools is running at **http://localhost:19002**
 
@@ -69,7 +69,7 @@ npm run server:client
 
 By running the command above, you will have:
 
-- Server API is listening on port **8080**
+- Server API is running at **http://localhost:8080**
 - Web client is running at **http://localhost:3000**
 
 6. To start server and mobile only, run
@@ -81,7 +81,7 @@ npm run server:mobile
 
 By running the command above, you will have:
 
-- Server API is listening on port **8080**
+- Server API is running at **http://localhost:8080**
 - Mobile - Expo DevTools is running at **http://localhost:19002**
 
 7. To see the mobile app on your mobile devices:
