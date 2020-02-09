@@ -84,7 +84,13 @@ By running the command above, you will have:
 - Server API is listening on port **8080**
 - Mobile - Expo DevTools is running at **http://localhost:19002**
 
-7. To debug mobile app with `react-native-debugger`:
+7. To see the mobile app on your mobile devices:
+
+- On iOS devices, install [Expo Client](https://apps.apple.com/us/app/expo-client/id982107779)
+- On Android devices, install [Expo](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US)
+- Then scan QR code displayed on your terminal to launch the app.
+
+8. To debug mobile app with `react-native-debugger`:
 
 - Install [react-native-debugger](https://github.com/jhen0409/react-native-debugger/releases).
 - Open React Native Debugger window instance with port `19001` (`Debugger` > `New Window`).
