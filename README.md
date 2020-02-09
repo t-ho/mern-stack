@@ -8,13 +8,13 @@
 
 ## Getting started
 
-1. Install `expo-cli` globally for development mobile app
+### 1. Install `expo-cli` globally for development mobile app
 
 ```bash
 npm install -g expo-cli
 ```
 
-2. Clone the `mern` repository:
+### 2. Clone the `mern` repository:
 
 ```bash
 git clone https://github.com/t-ho/mern.git
@@ -23,7 +23,7 @@ cp .env.example .env
 # Edit .env file to meet your requirements
 ```
 
-3. Install package dependencies:
+### 3. Install package dependencies:
 
 ```bash
 npm run install:deps
@@ -33,18 +33,15 @@ npm run install:deps
 
 Then command `npm run install:deps` just provides a convenient (cross-platform) way for installing all deps in one command on MacOS, Linux and Windows:
 
-4. To start server, web client and mobile, run:
+### 4. To start server, web client and mobile, run:
 
 ```bash
 # In the root directory (mern):
 npm start
+# Server API is running at **http://localhost:8080**
+# Web client is running at **http://localhost:3000**
+# Mobile - Expo DevTools is running at **http://localhost:19002**
 ```
-
-By running the command above, you will have:
-
-- Server API is running at **http://localhost:8080**
-- Web client is running at **http://localhost:3000**
-- Mobile - Expo DevTools is running at **http://localhost:19002**
 
 **NOTE:**
 
@@ -60,37 +57,31 @@ npm start # start server, web-client and mobile dev process
 npm run server:mobile # start server and mobile dev process
 ```
 
-5. To start server and web client only, run:
+Or to start server and web client only, run:
 
 ```bash
 # In the root directory (mern):
 npm run server:client
+# Server API is running at http://localhost:8080
+# Web client is running at http://localhost:3000
 ```
 
-By running the command above, you will have:
-
-- Server API is running at **http://localhost:8080**
-- Web client is running at **http://localhost:3000**
-
-6. To start server and mobile only, run
+Or to start server and mobile only, run
 
 ```bash
 # In the root directory (mern):
 npm run server:mobile
+# Server API is running at **http://localhost:8080**
+# Mobile - Expo DevTools is running at **http://localhost:19002**
 ```
 
-By running the command above, you will have:
-
-- Server API is running at **http://localhost:8080**
-- Mobile - Expo DevTools is running at **http://localhost:19002**
-
-7. To see the mobile app on your mobile devices:
+### 5. To see the mobile app on your mobile devices:
 
 - On iOS devices, install [Expo Client](https://apps.apple.com/us/app/expo-client/id982107779)
 - On Android devices, install [Expo](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US)
 - Then scan QR code displayed on your terminal to launch the app.
 
-8. To debug mobile app with `react-native-debugger`:
+### 6. To debug mobile app with `react-native-debugger`:
 
 - Install [react-native-debugger](https://github.com/jhen0409/react-native-debugger/releases).
 - Open React Native Debugger window instance with port `19001` (`Debugger` > `New Window`).
