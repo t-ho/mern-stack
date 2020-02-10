@@ -2,13 +2,13 @@
 
 ### MongoDB - Express - React - Redux - React Native - NodeJS
 
-[![mern-workflow](https://raw.githubusercontent.com/t-ho/mern/assets/assets/mern-flow.gif)](https://github.com/t-ho/mern)
+[![mern-workflow](https://raw.githubusercontent.com/t-ho/mern/assets/assets/mern-workflow.gif)](https://github.com/t-ho/mern)
 
 ## The server API documentation can be found [here](./server/README.md)
 
 ## Getting started
 
-### 1. Install `expo-cli` globally for development mobile app
+### 1. Install `expo-cli` globally for developing mobile app
 
 ```bash
 npm install -g expo-cli
@@ -38,9 +38,9 @@ Then command `npm run install:deps` just provides a convenient (cross-platform) 
 ```bash
 # In the root directory (mern):
 npm start
-# Server API is running at **http://localhost:8080**
-# Web client is running at **http://localhost:3000**
-# Mobile - Expo DevTools is running at **http://localhost:19002**
+# Server API is running at http://localhost:8080
+# Web client is running at http://localhost:3000
+# Mobile - Expo DevTools is running at http://localhost:19002
 ```
 
 **NOTE:**
@@ -71,8 +71,8 @@ Or to start server and mobile only, run
 ```bash
 # In the root directory (mern):
 npm run server:mobile
-# Server API is running at **http://localhost:8080**
-# Mobile - Expo DevTools is running at **http://localhost:19002**
+# Server API is running at http://localhost:8080
+# Mobile - Expo DevTools is running at http://localhost:19002
 ```
 
 ### 5. To see the mobile app on your mobile devices:
