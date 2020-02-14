@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const request = require('supertest');
 const expect = require('chai').expect;
 const _ = require('lodash');
+const config = require('../../../config');
 
 describe('ENDPOINT: /api/auth/signup', function() {
   it('POST /api/auth/signup - Email required', function(done) {
@@ -95,6 +96,7 @@ describe('ENDPOINT: /api/auth/signup', function() {
         done
       );
   });
+
   it('POST /api/auth/signup - Sign up succeeded', function(done) {
     const User = mongoose.model('User');
     const newUser = {
@@ -111,30 +113,28 @@ describe('ENDPOINT: /api/auth/signup', function() {
         message: 'Your account has been created successfully',
         success: true
       })
-      .then(res => {
-        User.findOne({ email: newUser.email })
-          .then(user => {
-            user = user.toJSON();
-            expect(user).to.have.property('permissions');
-            _.forOwn(user.permissions, (value, key) => {
-              expect(value).to.be.false;
-            });
-            expect(user.status).to.be.oneOf([
-              'active',
-              'disabled',
-              'unverifiedEmail'
-            ]);
-            expect(user.role).to.equal('user');
-            expect(user.username).to.be.a('string');
-            expect(user.email).to.be.a('string');
-            expect(user.subId).to.be.a('string');
-            expect(user).to.not.have.property('password');
-            expect(user.hashedPassword).to.be.a('string');
-            expect(user.hashedPassword).to.not.equal(newUser.password);
-            done();
-          })
-          .catch(done);
-      });
+      .then(res => User.findOne({ email: newUser.email }))
+      .then(user => {
+        user = user.toJSON();
+        expect(user).to.have.property('permissions');
+        _.forOwn(user.permissions, (value, key) => {
+          expect(value).to.be.false;
+        });
+        expect(user.status).to.be.oneOf([
+          'active',
+          'disabled',
+          'unverifiedEmail'
+        ]);
+        expect(user.role).to.equal('user');
+        expect(user.username).to.be.a('string');
+        expect(user.email).to.be.a('string');
+        expect(user.subId).to.be.a('string');
+        expect(user).to.not.have.property('password');
+        expect(user.hashedPassword).to.be.a('string');
+        expect(user.hashedPassword).to.not.equal(newUser.password);
+        done();
+      })
+      .catch(done);
   });
 });
 
@@ -245,5 +245,104 @@ describe('ENDPOINT: /api/auth/signin', function() {
       password: 'password'
     };
     testSignInSuccess(userInfo, done);
+  });
+});
+
+describe('ENDPOINT: /api/auth/send-token', function() {
+  it('POST /api/auth/send-token - Email required', function(done) {
+    const payload = {
+      tokenPurpose: 'resetPassword'
+    };
+
+    request(app)
+      .post('/api/auth/send-token')
+      .send(payload)
+      .expect(400)
+      .expect(
+        {
+          error: 'Email is required.'
+        },
+        done
+      );
+  });
+
+  it('POST /api/auth/send-token - Token purpose required', function(done) {
+    const payload = {
+      email: 'admin@mern-stack.org'
+    };
+
+    request(app)
+      .post('/api/auth/send-token')
+      .send(payload)
+      .expect(400)
+      .expect(
+        {
+          error: '"tokenPurpose" is required'
+        },
+        done
+      );
+  });
+
+  it('POST /api/auth/send-token - Token purpose invalid', function(done) {
+    const payload = {
+      email: 'admin@mern-stack.org',
+      tokenPurpose: 'invalidTokenPurpose'
+    };
+
+    request(app)
+      .post('/api/auth/send-token')
+      .send(payload)
+      .expect(400)
+      .expect(
+        {
+          error: '"tokenPurpose" must be one of [verifyEmail, resetPassword]'
+        },
+        done
+      );
+  });
+
+  it('POST /api/auth/send-token - Send password reset token succeeded', function(done) {
+    const User = mongoose.model('User');
+    const payload = {
+      email: 'admin@mern-stack.org',
+      tokenPurpose: 'resetPassword'
+    };
+
+    request(app)
+      .post('/api/auth/send-token')
+      .send(payload)
+      .then(res => User.findOne({ email: payload.email }))
+      .then(user => {
+        expect(user.token).to.be.a('string');
+        expect(user.tokenPurpose).to.equal(payload.tokenPurpose);
+        done();
+      })
+      .catch(done);
+  });
+
+  it('POST /api/auth/send-token - Send email verification token succeeded', function(done) {
+    const User = mongoose.model('User');
+    const payload = {
+      email: 'admin@mern-stack.org',
+      tokenPurpose: 'verifyEmail'
+    };
+    if (!config.auth.verifyEmail) {
+      request(app)
+        .post('/api/auth/send-token')
+        .send(payload)
+        .expect(404)
+        .expect({ error: 'Unknown request.' }, done);
+    } else {
+      request(app)
+        .post('/api/auth/send-token')
+        .send(payload)
+        .then(res => User.findOne({ email: payload.email }))
+        .then(user => {
+          expect(user.token).to.be.a('string');
+          expect(user.tokenPurpose).to.equal(payload.tokenPurpose);
+          done();
+        })
+        .catch(done);
+    }
   });
 });

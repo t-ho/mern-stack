@@ -322,16 +322,16 @@ const sendPasswordResetToken = (req, res, next) => {
  */
 const sendVerificationEmailToken = (req, res, next) => {
   if (!config.auth.verifyEmail) {
-    return next(createError(404, 'Unknown request'));
+    return next(createError(404, 'Unknown request.'));
   }
 
   User.findOne({ email: req.body.email })
     .then(user => {
       if (!user) {
-        throw createError(422, 'Email not associated with any acount');
+        throw createError(422, 'Email not associated with any acount.');
       }
       if (user.status !== 'unverifiedEmail') {
-        throw createError(422, 'Email already verified');
+        throw createError(422, 'Email already verified.');
       }
       user.setToken(req.body.tokenPurpose);
       return user.save();
