@@ -209,9 +209,9 @@ module.exports.signUp = (req, res, next) => {
     .then(existingUser => {
       if (existingUser) {
         if (existingUser.email == req.body.email) {
-          throw createError(422, 'Email is already in use');
+          throw createError(422, 'Email is already in use.');
         } else {
-          throw createError(422, 'Username is already in use');
+          throw createError(422, 'Username is already in use.');
         }
       }
 
