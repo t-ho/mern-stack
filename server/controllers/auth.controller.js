@@ -260,14 +260,14 @@ module.exports.verifyEmail = (req, res, next) => {
   })
     .then(user => {
       if (!user) {
-        throw createError(422, 'Token expired');
+        throw createError(422, 'Token expired.');
       }
       user.clearToken();
       user.status = 'active';
       return user.save();
     })
     .then(user => {
-      res.status(200).json({ success: true, message: 'Email verified' });
+      res.status(200).json({ success: true, message: 'Email verified.' });
     })
     .catch(next);
 };

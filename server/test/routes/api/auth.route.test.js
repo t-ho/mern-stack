@@ -483,3 +483,65 @@ describe('ENDPOINT: /api/auth/reset-password/:token', function() {
       .catch(done);
   });
 });
+
+describe('ENDPOINT: /api/auth/verify-email/:token', function() {
+  let endpoint = '';
+  beforeEach(function(done) {
+    app.test.data.admin.token = uuidv4();
+    app.test.data.admin.tokenPurpose = 'verifyEmail';
+    app.test.data.admin.save().then(user => {
+      app.test.data.admin = user;
+      endpoint = `/api/auth/verify-email/${user.token}`;
+      done();
+    });
+  });
+
+  it('POST /api/auth/verify-email/:token - Token not existed', function(done) {
+    request(app)
+      .post('/api/auth/verify-email/not-existed-token')
+      .expect(422)
+      .expect(
+        {
+          error: 'Token expired.'
+        },
+        done
+      );
+  });
+
+  it('POST /api/auth/verify-email/:token - Token existed but not verifyEmail token', function(done) {
+    app.test.data.admin.tokenPurpose = 'resetPassword';
+    app.test.data.admin
+      .save()
+      .then(user => {
+        request(app)
+          .post(endpoint)
+          .expect(422)
+          .expect(
+            {
+              error: 'Token expired.'
+            },
+            done
+          );
+      })
+      .catch(done);
+  });
+
+  it('POST /api/auth/verify-email/:token - Email verified succeeded', function(done) {
+    const User = mongoose.model('User');
+    request(app)
+      .post(endpoint)
+      .expect(200)
+      .expect({
+        message: 'Email verified.',
+        success: true
+      })
+      .then(res => User.findOne({ email: app.test.data.admin.email }))
+      .then(user => {
+        expect(user.status).to.be.equal('active');
+        expect(user.token).to.be.undefined;
+        expect(user.tokenPurpose).to.be.undefined;
+        done();
+      })
+      .catch(done);
+  });
+});
