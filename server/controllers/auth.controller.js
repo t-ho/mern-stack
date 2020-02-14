@@ -51,7 +51,7 @@ module.exports.resetPassword = (req, res, next) => {
     .then(user => {
       existingUser = user;
       if (!existingUser) {
-        throw createError(422, 'Token expired');
+        throw createError(422, 'Token expired.');
       }
       existingUser.clearToken();
       return existingUser.setPasswordAsync(req.body.password);
@@ -60,7 +60,7 @@ module.exports.resetPassword = (req, res, next) => {
       return existingUser.save();
     })
     .then(user => {
-      res.status(200).json({ success: true, message: 'Password reset' });
+      res.status(200).json({ success: true, message: 'Password reset.' });
     })
     .catch(next);
 };

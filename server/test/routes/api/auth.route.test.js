@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const request = require('supertest');
 const expect = require('chai').expect;
 const _ = require('lodash');
+const uuidv4 = require('uuid/v4');
 const config = require('../../../config');
 
 describe('ENDPOINT: /api/auth/signup', function() {
@@ -344,5 +345,141 @@ describe('ENDPOINT: /api/auth/send-token', function() {
         })
         .catch(done);
     }
+  });
+});
+
+describe('ENDPOINT: /api/auth/reset-password/:token', function() {
+  let endpoint = '';
+  beforeEach(function(done) {
+    app.test.data.admin.token = uuidv4();
+    app.test.data.admin.tokenPurpose = 'resetPassword';
+    app.test.data.admin.save().then(user => {
+      app.test.data.admin = user;
+      endpoint = `/api/auth/reset-password/${user.token}`;
+      done();
+    });
+  });
+
+  it('POST /api/auth/reset-password/:token - Email required', function(done) {
+    const payload = {
+      password: 'new-password'
+    };
+
+    request(app)
+      .post(endpoint)
+      .send(payload)
+      .expect(400)
+      .expect(
+        {
+          error: 'Email is required.'
+        },
+        done
+      );
+  });
+
+  it('POST /api/auth/reset-password/:token - New password required', function(done) {
+    const payload = {
+      email: 'admin@mern-stack.org'
+    };
+
+    request(app)
+      .post(endpoint)
+      .send(payload)
+      .expect(400)
+      .expect(
+        {
+          error: 'Password is required.'
+        },
+        done
+      );
+  });
+
+  it('POST /api/auth/reset-password/:token - Email and token is not a pair', function(done) {
+    const payload = {
+      email: 'another@mern-stack.org',
+      password: 'new-password'
+    };
+
+    request(app)
+      .post(endpoint)
+      .send(payload)
+      .expect(422)
+      .expect(
+        {
+          error: 'Token expired.'
+        },
+        done
+      );
+  });
+
+  it('POST /api/auth/reset-password/:token - Token not existed', function(done) {
+    const payload = {
+      email: 'admin@mern-stack.org',
+      password: 'new-password'
+    };
+
+    request(app)
+      .post('/api/auth/reset-password/not-exist-token')
+      .send(payload)
+      .expect(422)
+      .expect(
+        {
+          error: 'Token expired.'
+        },
+        done
+      );
+  });
+
+  it('POST /api/auth/reset-password/:token - Token existed but not resetPassword token', function(done) {
+    const payload = {
+      email: 'admin@mern-stack.org',
+      password: 'new-password'
+    };
+    app.test.data.admin.tokenPurpose = 'verifyEmail';
+    app.test.data.admin
+      .save()
+      .then(user => {
+        request(app)
+          .post(endpoint)
+          .send(payload)
+          .expect(422)
+          .expect(
+            {
+              error: 'Token expired.'
+            },
+            done
+          );
+      })
+      .catch(done);
+  });
+
+  it('POST /api/auth/reset-password/:token - Password reset succeeded', function(done) {
+    const User = mongoose.model('User');
+    const payload = {
+      email: 'admin@mern-stack.org',
+      password: 'new-password'
+    };
+
+    request(app)
+      .post(endpoint)
+      .send(payload)
+      .expect(200)
+      .expect({
+        message: 'Password reset.',
+        success: true
+      })
+      .then(res => User.findOne({ email: payload.email }))
+      .then(user => {
+        expect(user.token).to.be.undefined;
+        expect(user.tokenPurpose).to.be.undefined;
+        expect(user.hashedPassword).to.be.a('string');
+        expect(user.hashedPassword).to.not.equal(
+          app.test.data.admin.hashedPassword
+        );
+        expect(user.subId).to.be.a('string');
+        expect(user.subId).to.not.equal(app.test.data.admin.subId);
+        done();
+      })
+      .catch(done);
   });
 });
