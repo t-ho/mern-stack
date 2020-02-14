@@ -26,7 +26,8 @@ beforeEach(function(done) {
     email: 'admin@mern-stack.org',
     password: 'password',
     firstName: 'Admin',
-    lastName: 'Local'
+    lastName: 'Local',
+    role: 'admin'
   });
   user
     .setPasswordAsync('password')
