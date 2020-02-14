@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "test": "NODE_ENV=test nodemon --exec 'mocha --recursive'"
+    "test": "NODE_ENV=test mocha --recursive --exit",
+    "test:watch": "NODE_ENV=test nodemon --exec 'mocha --recursive'"
   },
   "repository": {
     "type": "git",
