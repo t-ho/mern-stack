@@ -3,102 +3,71 @@ const request = require('supertest');
 const expect = require('chai').expect;
 const _ = require('lodash');
 const uuidv4 = require('uuid/v4');
+const jwt = require('jsonwebtoken');
 const config = require('../../../config');
 
+const createTestPayloadValidation = endpoint => {
+  return (payload, statusCode, errorMessage, done) => {
+    request(app)
+      .post(endpoint)
+      .send(payload)
+      .expect(statusCode)
+      .expect({ error: errorMessage }, done);
+  };
+};
+
 describe('ENDPOINT: /api/auth/signup', function() {
-  it('POST /api/auth/signup - Email required', function(done) {
-    const newUser = {
+  const endpoint = '/api/auth/signup';
+  const testValidation = createTestPayloadValidation(endpoint);
+
+  it(`POST ${endpoint} - Email required`, function(done) {
+    const payload = {
       username: 'john',
       password: 'qweasdzxc'
     };
 
-    request(app)
-      .post('/api/auth/signup')
-      .send(newUser)
-      .expect(400)
-      .expect(
-        {
-          error: 'Email is required.'
-        },
-        done
-      );
+    testValidation(payload, 400, 'Email is required.', done);
   });
 
-  it('POST /api/auth/signup - Username required', function(done) {
-    const newUser = {
+  it(`POST ${endpoint} - Username required`, function(done) {
+    const payload = {
       email: 'john@mern-stack.org',
       password: 'qweasdzxc'
     };
 
-    request(app)
-      .post('/api/auth/signup')
-      .send(newUser)
-      .expect(400)
-      .expect(
-        {
-          error: 'Username is required.'
-        },
-        done
-      );
+    testValidation(payload, 400, 'Username is required.', done);
   });
 
-  it('POST /api/auth/signup - Password required', function(done) {
-    const newUser = {
+  it(`POST ${endpoint} - Password required`, function(done) {
+    const payload = {
       username: 'john',
       email: 'john@mern-stack.org'
     };
 
-    request(app)
-      .post('/api/auth/signup')
-      .send(newUser)
-      .expect(400)
-      .expect(
-        {
-          error: 'Password is required.'
-        },
-        done
-      );
+    testValidation(payload, 400, 'Password is required.', done);
   });
 
-  it('POST /api/auth/signup - Email existed', function(done) {
-    const newUser = {
+  it(`POST ${endpoint} - Email existed`, function(done) {
+    const payload = {
       username: 'john',
       email: 'admin@mern-stack.org',
       password: 'qweasdzxc'
     };
 
-    request(app)
-      .post('/api/auth/signup')
-      .send(newUser)
-      .expect(422)
-      .expect(
-        {
-          error: 'Email is already in use.'
-        },
-        done
-      );
+    testValidation(payload, 422, 'Email is already in use.', done);
   });
 
-  it('POST /api/auth/signup - Username existed', function(done) {
-    const newUser = {
+  it(`POST ${endpoint} - Username existed`, function(done) {
+    const payload = {
       username: 'admin',
       email: 'john@mern-stack.org',
       password: 'qweasdzxc'
     };
 
-    request(app)
-      .post('/api/auth/signup')
-      .send(newUser)
-      .expect(422)
-      .expect(
-        {
-          error: 'Username is already in use.'
-        },
-        done
-      );
+    testValidation(payload, 422, 'Username is already in use.', done);
   });
 
-  it('POST /api/auth/signup - Sign up succeeded', function(done) {
+  it(`POST ${endpoint} - Sign up succeeded`, function(done) {
     const User = mongoose.model('User');
     const newUser = {
       username: 'john',
@@ -107,7 +76,7 @@ describe('ENDPOINT: /api/auth/signup', function() {
     };
 
     request(app)
-      .post('/api/auth/signup')
+      .post(endpoint)
       .send(newUser)
       .expect(201)
       .expect({
@@ -140,80 +109,65 @@ describe('ENDPOINT: /api/auth/signup', function() {
 });
 
 describe('ENDPOINT: /api/auth/signin', function() {
-  it('POST /api/auth/signin - Either username or email required', function(done) {
-    const userInfo = {
+  const endpoint = '/api/auth/signin';
+  const testValidation = createTestPayloadValidation(endpoint);
+
+  it(`POST ${endpoint} - Either username or email required`, function(done) {
+    const payload = {
       password: 'qweasdzxc'
     };
 
-    request(app)
-      .post('/api/auth/signin')
-      .send(userInfo)
-      .expect(400)
-      .expect(
-        {
-          error: 'Either username or email must be provided.'
-        },
-        done
-      );
+    testValidation(
+      payload,
+      400,
+      'Either username or email must be provided.',
+      done
+    );
   });
 
-  it('POST /api/auth/signin - Password required', function(done) {
-    const userInfo = {
+  it(`POST ${endpoint} - Password required`, function(done) {
+    const payload = {
       email: 'admin@mern-stack.org'
     };
 
-    request(app)
-      .post('/api/auth/signin')
-      .send(userInfo)
-      .expect(400)
-      .expect(
-        {
-          error: 'Password is required.'
-        },
-        done
-      );
+    testValidation(payload, 400, 'Password is required.', done);
   });
 
-  const testUsernameOrEmailNotExist = (userInfo, done) => {
-    request(app)
-      .post('/api/auth/signin')
-      .send(userInfo)
-      .expect(401)
-      .expect(
-        {
-          error: 'Username or email does not exist.'
-        },
-        done
-      );
-  };
-
-  it('POST /api/auth/signin - Email not existed', function(done) {
-    const userInfo = {
+  it(`POST ${endpoint} - Email not existed`, function(done) {
+    const payload = {
       email: 'not-exist@mern-stack.org',
       password: 'password'
     };
 
-    testUsernameOrEmailNotExist(userInfo, done);
+    testValidation(payload, 401, 'Username or email does not exist.', done);
   });
 
-  it('POST /api/auth/signin - Username not existed', function(done) {
-    const userInfo = {
+  it(`POST ${endpoint} - Username not existed`, function(done) {
+    const payload = {
       username: 'not-exist',
       password: 'password'
     };
 
-    testUsernameOrEmailNotExist(userInfo, done);
+    testValidation(payload, 401, 'Username or email does not exist.', done);
   });
 
   const testSignInSuccess = (userInfo, done) => {
+    const admin = app.test.data.admin;
     request(app)
-      .post('/api/auth/signin')
+      .post(endpoint)
       .send(userInfo)
       .expect(200)
       .then(res => {
         expect(res.body.token).to.be.a('string');
         expect(res.body.expiresAt).to.be.a('number');
-        expect(res.body.user._id).to.be.a('string');
+        const decodedToken = jwt.verify(res.body.token, config.jwt.secret);
+        expect(decodedToken.sub).to.be.equal(admin.subId);
+        expect(decodedToken.userId).to.be.equal(admin._id.toString());
+        expect(decodedToken.exp).to.be.equal(res.body.expiresAt);
+        expect(decodedToken.iat).to.be.equal(
+          decodedToken.exp - config.jwt.expiresIn
+        );
+        expect(res.body.user._id).to.be.equal(admin._id.toString());
         expect(res.body.user).to.have.property('createdAt');
         expect(res.body.user).to.have.property('updatedAt');
         expect(res.body.user).to.deep.include(
@@ -232,7 +186,7 @@ describe('ENDPOINT: /api/auth/signin', function() {
       .catch(done);
   };
 
-  it('POST /api/auth/signin - Sign in by email succeeded', function(done) {
+  it(`POST ${endpoint} - Sign in by email succeeded`, function(done) {
     const userInfo = {
       email: 'admin@mern-stack.org',
       password: 'password'
@@ -240,7 +194,7 @@ describe('ENDPOINT: /api/auth/signin', function() {
     testSignInSuccess(userInfo, done);
   });
 
-  it('POST /api/auth/signin - Sign in by username succeeded', function(done) {
+  it(`POST ${endpoint} - Sign in by username succeeded`, function(done) {
     const userInfo = {
       username: 'admin',
       password: 'password'
@@ -250,59 +204,40 @@ describe('ENDPOINT: /api/auth/signin', function() {
 });
 
 describe('ENDPOINT: /api/auth/send-token', function() {
-  it('POST /api/auth/send-token - Email required', function(done) {
+  const endpoint = '/api/auth/send-token';
+  const testValidation = createTestPayloadValidation(endpoint);
+
+  it(`POST ${endpoint} - Email required`, function(done) {
     const payload = {
       tokenPurpose: 'resetPassword'
     };
 
-    request(app)
-      .post('/api/auth/send-token')
-      .send(payload)
-      .expect(400)
-      .expect(
-        {
-          error: 'Email is required.'
-        },
-        done
-      );
+    testValidation(payload, 400, 'Email is required.', done);
   });
 
-  it('POST /api/auth/send-token - Token purpose required', function(done) {
+  it(`POST ${endpoint} - Token purpose required`, function(done) {
     const payload = {
       email: 'admin@mern-stack.org'
     };
 
-    request(app)
-      .post('/api/auth/send-token')
-      .send(payload)
-      .expect(400)
-      .expect(
-        {
-          error: '"tokenPurpose" is required'
-        },
-        done
-      );
+    testValidation(payload, 400, '"tokenPurpose" is required', done);
   });
 
-  it('POST /api/auth/send-token - Token purpose invalid', function(done) {
+  it(`POST ${endpoint} - Token purpose invalid`, function(done) {
     const payload = {
       email: 'admin@mern-stack.org',
       tokenPurpose: 'invalidTokenPurpose'
     };
 
-    request(app)
-      .post('/api/auth/send-token')
-      .send(payload)
-      .expect(400)
-      .expect(
-        {
-          error: '"tokenPurpose" must be one of [verifyEmail, resetPassword]'
-        },
-        done
-      );
+    testValidation(
+      payload,
+      400,
+      '"tokenPurpose" must be one of [verifyEmail, resetPassword]',
+      done
+    );
   });
 
-  it('POST /api/auth/send-token - Send password reset token succeeded', function(done) {
+  it(`POST ${endpoint} - Send password reset token succeeded`, function(done) {
     const User = mongoose.model('User');
     const payload = {
       email: 'admin@mern-stack.org',
@@ -310,7 +245,7 @@ describe('ENDPOINT: /api/auth/send-token', function() {
     };
 
     request(app)
-      .post('/api/auth/send-token')
+      .post(endpoint)
       .send(payload)
       .then(res => User.findOne({ email: payload.email }))
       .then(user => {
@@ -321,7 +256,7 @@ describe('ENDPOINT: /api/auth/send-token', function() {
       .catch(done);
   });
 
-  it('POST /api/auth/send-token - Send email verification token succeeded', function(done) {
+  it(`POST ${endpoint} - Send email verification token succeeded`, function(done) {
     const User = mongoose.model('User');
     const payload = {
       email: 'admin@mern-stack.org',
@@ -329,13 +264,13 @@ describe('ENDPOINT: /api/auth/send-token', function() {
     };
     if (!config.auth.verifyEmail) {
       request(app)
-        .post('/api/auth/send-token')
+        .post(endpoint)
         .send(payload)
         .expect(404)
         .expect({ error: 'Unknown request.' }, done);
     } else {
       request(app)
-        .post('/api/auth/send-token')
+        .post(endpoint)
         .send(payload)
         .then(res => User.findOne({ email: payload.email }))
         .then(user => {
@@ -350,69 +285,48 @@ describe('ENDPOINT: /api/auth/send-token', function() {
 
 describe('ENDPOINT: /api/auth/reset-password/:token', function() {
   let endpoint = '';
+  let testValidation;
+
   beforeEach(function(done) {
     app.test.data.admin.token = uuidv4();
     app.test.data.admin.tokenPurpose = 'resetPassword';
-    app.test.data.admin.save().then(user => {
-      app.test.data.admin = user;
-      endpoint = `/api/auth/reset-password/${user.token}`;
-      done();
-    });
+    app.test.data.admin
+      .save()
+      .then(user => {
+        app.test.data.admin = user;
+        endpoint = `/api/auth/reset-password/${user.token}`;
+        testValidation = createTestPayloadValidation(endpoint);
+        done();
+      })
+      .catch(done);
   });
 
-  it('POST /api/auth/reset-password/:token - Email required', function(done) {
+  it(`POST ${endpoint} - Email required`, function(done) {
     const payload = {
       password: 'new-password'
     };
 
-    request(app)
-      .post(endpoint)
-      .send(payload)
-      .expect(400)
-      .expect(
-        {
-          error: 'Email is required.'
-        },
-        done
-      );
+    testValidation(payload, 400, 'Email is required.', done);
   });
 
-  it('POST /api/auth/reset-password/:token - New password required', function(done) {
+  it(`POST ${endpoint} - New password required`, function(done) {
     const payload = {
       email: 'admin@mern-stack.org'
     };
 
-    request(app)
-      .post(endpoint)
-      .send(payload)
-      .expect(400)
-      .expect(
-        {
-          error: 'Password is required.'
-        },
-        done
-      );
+    testValidation(payload, 400, 'Password is required.', done);
   });
 
-  it('POST /api/auth/reset-password/:token - Email and token is not a pair', function(done) {
+  it(`POST ${endpoint} - Email and token is not a pair`, function(done) {
     const payload = {
       email: 'another@mern-stack.org',
       password: 'new-password'
     };
 
-    request(app)
-      .post(endpoint)
-      .send(payload)
-      .expect(422)
-      .expect(
-        {
-          error: 'Token expired.'
-        },
-        done
-      );
+    testValidation(payload, 422, 'Token expired.', done);
   });
 
-  it('POST /api/auth/reset-password/:token - Token not existed', function(done) {
+  it(`POST ${endpoint} - Token not existed`, function(done) {
     const payload = {
       email: 'admin@mern-stack.org',
       password: 'new-password'
@@ -430,7 +344,7 @@ describe('ENDPOINT: /api/auth/reset-password/:token', function() {
       );
   });
 
-  it('POST /api/auth/reset-password/:token - Token existed but not resetPassword token', function(done) {
+  it(`POST ${endpoint} - Token existed but not resetPassword token`, function(done) {
     const payload = {
       email: 'admin@mern-stack.org',
       password: 'new-password'
@@ -439,21 +353,12 @@ describe('ENDPOINT: /api/auth/reset-password/:token', function() {
     app.test.data.admin
       .save()
       .then(user => {
-        request(app)
-          .post(endpoint)
-          .send(payload)
-          .expect(422)
-          .expect(
-            {
-              error: 'Token expired.'
-            },
-            done
-          );
+        testValidation(payload, 422, 'Token expired.', done);
       })
       .catch(done);
   });
 
-  it('POST /api/auth/reset-password/:token - Password reset succeeded', function(done) {
+  it(`POST ${endpoint} - Password reset succeeded`, function(done) {
     const User = mongoose.model('User');
     const payload = {
       email: 'admin@mern-stack.org',
@@ -486,17 +391,22 @@ describe('ENDPOINT: /api/auth/reset-password/:token', function() {
 
 describe('ENDPOINT: /api/auth/verify-email/:token', function() {
   let endpoint = '';
+  let testValidation;
   beforeEach(function(done) {
     app.test.data.admin.token = uuidv4();
     app.test.data.admin.tokenPurpose = 'verifyEmail';
-    app.test.data.admin.save().then(user => {
-      app.test.data.admin = user;
-      endpoint = `/api/auth/verify-email/${user.token}`;
-      done();
-    });
+    app.test.data.admin
+      .save()
+      .then(user => {
+        app.test.data.admin = user;
+        endpoint = `/api/auth/verify-email/${user.token}`;
+        testValidation = createTestPayloadValidation(endpoint);
+        done();
+      })
+      .catch(done);
   });
 
-  it('POST /api/auth/verify-email/:token - Token not existed', function(done) {
+  it(`POST ${endpoint} - Token not existed`, function(done) {
     request(app)
       .post('/api/auth/verify-email/not-existed-token')
       .expect(422)
@@ -508,25 +418,17 @@ describe('ENDPOINT: /api/auth/verify-email/:token', function() {
       );
   });
 
-  it('POST /api/auth/verify-email/:token - Token existed but not verifyEmail token', function(done) {
+  it(`POST ${endpoint} - Token existed but not verifyEmail token`, function(done) {
     app.test.data.admin.tokenPurpose = 'resetPassword';
     app.test.data.admin
       .save()
       .then(user => {
-        request(app)
-          .post(endpoint)
-          .expect(422)
-          .expect(
-            {
-              error: 'Token expired.'
-            },
-            done
-          );
+        testValidation({}, 422, 'Token expired.', done);
       })
       .catch(done);
   });
 
-  it('POST /api/auth/verify-email/:token - Email verified succeeded', function(done) {
+  it(`POST ${endpoint} - Email verified succeeded`, function(done) {
     const User = mongoose.model('User');
     request(app)
       .post(endpoint)
