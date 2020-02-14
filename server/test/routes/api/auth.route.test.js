@@ -391,7 +391,6 @@ describe('ENDPOINT: /api/auth/reset-password/:token', function() {
 
 describe('ENDPOINT: /api/auth/verify-email/:token', function() {
   let endpoint = '';
-  let testValidation;
   beforeEach(function(done) {
     app.test.data.admin.token = uuidv4();
     app.test.data.admin.tokenPurpose = 'verifyEmail';
@@ -400,7 +399,6 @@ describe('ENDPOINT: /api/auth/verify-email/:token', function() {
       .then(user => {
         app.test.data.admin = user;
         endpoint = `/api/auth/verify-email/${user.token}`;
-        testValidation = createTestPayloadValidation(endpoint);
         done();
       })
       .catch(done);
@@ -423,7 +421,15 @@ describe('ENDPOINT: /api/auth/verify-email/:token', function() {
     app.test.data.admin
       .save()
       .then(user => {
-        testValidation({}, 422, 'Token expired.', done);
+        request(app)
+          .post(endpoint)
+          .expect(422)
+          .expect(
+            {
+              error: 'Token expired.'
+            },
+            done
+          );
       })
       .catch(done);
   });
@@ -442,6 +448,93 @@ describe('ENDPOINT: /api/auth/verify-email/:token', function() {
         expect(user.status).to.be.equal('active');
         expect(user.token).to.be.undefined;
         expect(user.tokenPurpose).to.be.undefined;
+        done();
+      })
+      .catch(done);
+  });
+});
+
+describe('ENDPOINT: /api/auth/refresh-token', function() {
+  let endpoint = '/api/auth/refresh-token';
+  let decodedToken;
+
+  const createJwtToken = payload => {
+    return jwt.sign(payload, config.jwt.secret, {
+      algorithm: config.jwt.algorithm
+    });
+  };
+
+  const testJwtTokenValidation = (jwtToken, done) => {
+    request(app)
+      .post(endpoint)
+      .set('Authorization', `Bearer ${jwtToken}`)
+      .expect(401)
+      .expect({})
+      .then(res => {
+        expect(res.text).to.be.equal('Unauthorized');
+        done();
+      })
+      .catch(done);
+  };
+
+  beforeEach(function(done) {
+    request(app)
+      .post('/api/auth/signin')
+      .send({ email: 'admin@mern-stack.org', password: 'password' })
+      .then(res => {
+        decodedToken = jwt.verify(res.body.token, config.jwt.secret);
+        done();
+      })
+      .catch(done);
+  });
+
+  it(`POST ${endpoint} - JWT token not provided`, function(done) {
+    request(app)
+      .post(endpoint)
+      .expect(401)
+      .expect({})
+      .then(res => {
+        expect(res.text).to.be.equal('Unauthorized');
+        done();
+      })
+      .catch(done);
+  });
+
+  it(`POST ${endpoint} - JWT token - invalid subId`, function(done) {
+    decodedToken.sub = 'invalid-sub-id';
+    const invalidJwtToken = createJwtToken(decodedToken);
+    testJwtTokenValidation(invalidJwtToken, done);
+  });
+
+  it(`POST ${endpoint} - JWT token - not exist userId`, function(done) {
+    decodedToken.userId = '5e24db1d560ba309f0b0b5a8';
+    const invalidJwtToken = createJwtToken(decodedToken);
+    testJwtTokenValidation(invalidJwtToken, done);
+  });
+
+  it(`POST ${endpoint} - JWT token - expired token`, function(done) {
+    decodedToken.iat = decodedToken.iat - 100;
+    decodedToken.exp = decodedToken.iat - 50;
+    const invalidJwtToken = createJwtToken(decodedToken);
+    testJwtTokenValidation(invalidJwtToken, done);
+  });
+
+  it(`POST ${endpoint} - JWT Token - refresh succeeded`, function(done) {
+    const newJwtToken = createJwtToken(decodedToken);
+    const admin = app.test.data.admin;
+    request(app)
+      .post(endpoint)
+      .set('Authorization', `Bearer ${newJwtToken}`)
+      .expect(200)
+      .then(res => {
+        expect(res.body.expiresAt).to.be.a('number');
+        const decoded = jwt.verify(res.body.token, config.jwt.secret);
+        expect(decoded.sub).to.be.equal(admin.subId);
+        expect(decoded.userId).to.be.equal(admin._id.toString());
+        expect(decoded.exp).to.be.equal(res.body.expiresAt);
+        expect(decoded.iat).to.be.equal(
+          decodedToken.exp - config.jwt.expiresIn
+        );
         done();
       })
       .catch(done);
