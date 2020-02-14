@@ -11,7 +11,7 @@
     "client": "node start-web-client",
     "mobile": "node start-mobile",
     "server": "node start-server",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node run-tests"
   },
   "repository": {
     "type": "git",
