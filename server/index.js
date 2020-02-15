@@ -10,6 +10,6 @@ const app = require('./config/express');
 // Server Setup
 const server = http.createServer(app);
 server.listen(config.server.port);
-console.log(`[+] Server is listening on port ${config.server.port}`);
+console.log(`\n[*] Server is listening on port ${config.server.port}\n`);
 
 global.app = app;
