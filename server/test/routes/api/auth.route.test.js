@@ -152,7 +152,7 @@ describe('ENDPOINT: /api/auth/signin', function() {
   });
 
   const testSignInSuccess = (userInfo, done) => {
-    const admin = app.test.data.admin;
+    let admin = app.locals.test.admin;
     request(app)
       .post(endpoint)
       .send(userInfo)
@@ -171,7 +171,7 @@ describe('ENDPOINT: /api/auth/signin', function() {
         expect(res.body.user).to.have.property('createdAt');
         expect(res.body.user).to.have.property('updatedAt');
         expect(res.body.user).to.deep.include(
-          _.pick(app.test.data.admin.toJSON(), [
+          _.pick(admin.toJSON(), [
             'username',
             'email',
             'status',
@@ -288,12 +288,13 @@ describe('ENDPOINT: /api/auth/reset-password/:token', function() {
   let testValidation;
 
   beforeEach(function(done) {
-    app.test.data.admin.token = uuidv4();
-    app.test.data.admin.tokenPurpose = 'resetPassword';
-    app.test.data.admin
+    let admin = app.locals.test.admin;
+    admin.token = uuidv4();
+    admin.tokenPurpose = 'resetPassword';
+    admin
       .save()
       .then(user => {
-        app.test.data.admin = user;
+        admin = user;
         endpoint = `/api/auth/reset-password/${user.token}`;
         testValidation = createTestPayloadValidation(endpoint);
         done();
@@ -345,12 +346,13 @@ describe('ENDPOINT: /api/auth/reset-password/:token', function() {
   });
 
   it(`POST ${endpoint} - Token existed but not resetPassword token`, function(done) {
+    let admin = app.locals.test.admin;
     const payload = {
       email: 'admin@mern-stack.org',
       password: 'new-password'
     };
-    app.test.data.admin.tokenPurpose = 'verifyEmail';
-    app.test.data.admin
+    admin.tokenPurpose = 'verifyEmail';
+    admin
       .save()
       .then(user => {
         testValidation(payload, 422, 'Token expired.', done);
@@ -359,6 +361,7 @@ describe('ENDPOINT: /api/auth/reset-password/:token', function() {
   });
 
   it(`POST ${endpoint} - Password reset succeeded`, function(done) {
+    let admin = app.locals.test.admin;
     const User = mongoose.model('User');
     const payload = {
       email: 'admin@mern-stack.org',
@@ -378,11 +381,9 @@ describe('ENDPOINT: /api/auth/reset-password/:token', function() {
         expect(user.token).to.be.undefined;
         expect(user.tokenPurpose).to.be.undefined;
         expect(user.hashedPassword).to.be.a('string');
-        expect(user.hashedPassword).to.not.equal(
-          app.test.data.admin.hashedPassword
-        );
+        expect(user.hashedPassword).to.not.equal(admin.hashedPassword);
         expect(user.subId).to.be.a('string');
-        expect(user.subId).to.not.equal(app.test.data.admin.subId);
+        expect(user.subId).to.not.equal(admin.subId);
         done();
       })
       .catch(done);
@@ -391,13 +392,15 @@ describe('ENDPOINT: /api/auth/reset-password/:token', function() {
 
 describe('ENDPOINT: /api/auth/verify-email/:token', function() {
   let endpoint = '';
+
   beforeEach(function(done) {
-    app.test.data.admin.token = uuidv4();
-    app.test.data.admin.tokenPurpose = 'verifyEmail';
-    app.test.data.admin
+    let admin = app.locals.test.admin;
+    admin.token = uuidv4();
+    admin.tokenPurpose = 'verifyEmail';
+    admin
       .save()
       .then(user => {
-        app.test.data.admin = user;
+        admin = user;
         endpoint = `/api/auth/verify-email/${user.token}`;
         done();
       })
@@ -417,8 +420,9 @@ describe('ENDPOINT: /api/auth/verify-email/:token', function() {
   });
 
   it(`POST ${endpoint} - Token existed but not verifyEmail token`, function(done) {
-    app.test.data.admin.tokenPurpose = 'resetPassword';
-    app.test.data.admin
+    let admin = app.locals.test.admin;
+    admin.tokenPurpose = 'resetPassword';
+    admin
       .save()
       .then(user => {
         request(app)
@@ -435,6 +439,7 @@ describe('ENDPOINT: /api/auth/verify-email/:token', function() {
   });
 
   it(`POST ${endpoint} - Email verified succeeded`, function(done) {
+    let admin = app.locals.test.admin;
     const User = mongoose.model('User');
     request(app)
       .post(endpoint)
@@ -443,7 +448,7 @@ describe('ENDPOINT: /api/auth/verify-email/:token', function() {
         message: 'Email verified.',
         success: true
       })
-      .then(res => User.findOne({ email: app.test.data.admin.email }))
+      .then(res => User.findOne({ email: admin.email }))
       .then(user => {
         expect(user.status).to.be.equal('active');
         expect(user.token).to.be.undefined;
@@ -521,7 +526,7 @@ describe('ENDPOINT: /api/auth/refresh-token', function() {
 
   it(`POST ${endpoint} - JWT Token - refresh succeeded`, function(done) {
     const newJwtToken = createJwtToken(decodedToken);
-    const admin = app.test.data.admin;
+    let admin = app.locals.test.admin;
     request(app)
       .post(endpoint)
       .set('Authorization', `Bearer ${newJwtToken}`)

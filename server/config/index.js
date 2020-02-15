@@ -1,11 +1,15 @@
 const fspath = require('path');
 const dotenv = require('dotenv');
+const _ = require('lodash');
 
 dotenv.config({ path: fspath.resolve(__dirname, '../../.env') });
 
-module.exports = {
+let config = {
   env: process.env.NODE_ENV,
-  appName: 'MERN',
+  app: {
+    name: 'mern', // TODO: Lowercase, URL compatible name
+    title: 'MERN Stack' // TODO: Human friendly name
+  },
   auth: {
     // require verify email when signing up
     verifyEmail: false // Note: If true, please specify your mailgun API key
@@ -33,5 +37,42 @@ module.exports = {
   },
   paths: {
     root: fspath.normalize(`${__dirname}/..`)
+  },
+  seed: {
+    logging: true,
+    users: [
+      {
+        username: 'root',
+        email: 'root@mern-stack.org',
+        password: 'password',
+        firstName: 'Root',
+        lastName: 'Account',
+        role: 'root'
+      },
+      {
+        username: 'admin',
+        email: 'admin@mern-stack.org',
+        password: 'password',
+        firstName: 'Admin',
+        lastName: 'Account',
+        role: 'admin'
+      },
+      {
+        username: 'user',
+        email: 'user@mern-stack.org',
+        password: 'password',
+        firstName: 'User',
+        lastName: 'Account',
+        role: 'user'
+      }
+    ]
   }
 };
+
+if (config.env === 'test') {
+  config.seed.logging = false;
+  config.mongo.uri = `mongodb://localhost/${config.app.name}_test`;
+  config.server.port = 7357; // 7357 = TEST
+}
+
+module.exports = config;

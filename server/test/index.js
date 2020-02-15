@@ -1,11 +1,43 @@
 const mongoose = require('mongoose');
+const chalk = require('chalk');
+const seed = require('../config/seed');
+const config = require('../config');
+
+const users = [
+  {
+    username: 'root',
+    email: 'root@mern-stack.org',
+    password: 'password',
+    firstName: 'Root',
+    lastName: 'Account',
+    role: 'root'
+  },
+  {
+    username: 'admin',
+    email: 'admin@mern-stack.org',
+    password: 'password',
+    firstName: 'Admin',
+    lastName: 'Account',
+    role: 'admin'
+  },
+  {
+    username: 'user',
+    email: 'user@mern-stack.org',
+    password: 'password',
+    firstName: 'User',
+    lastName: 'Account',
+    role: 'user'
+  }
+];
 
 before(function(done) {
+  if (config.env !== 'test') {
+    throw new Error(
+      chalk.red('[-] Test must be run in "test" environment (NODE_ENV=test)')
+    );
+  }
   // Load the app server
   require('../index');
-
-  // connect to the test database
-  mongoose.connect('mongodb://localhost/mern_test');
 
   mongoose.connection.once('open', () => {
     done();
@@ -20,25 +52,17 @@ beforeEach(function(done) {
 });
 
 beforeEach(function(done) {
-  const User = mongoose.model('User');
-  const user = new User({
-    username: 'admin',
-    email: 'admin@mern-stack.org',
-    password: 'password',
-    firstName: 'Admin',
-    lastName: 'Local',
-    role: 'admin'
+  seed.createUsers(users).then(users => {
+    app.locals.test = {};
+    users.forEach(user => {
+      app.locals.test[[user.role]] = user;
+    });
+    done();
   });
-  user
-    .setPasswordAsync('password')
-    .then(() => user.save())
-    .then(user => {
-      app.test = {
-        data: {
-          admin: user
-        }
-      };
-      done();
-    })
-    .catch(done);
+});
+
+after(function(done) {
+  mongoose.connection.db.dropDatabase(function(err, result) {
+    done();
+  });
 });

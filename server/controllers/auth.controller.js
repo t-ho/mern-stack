@@ -294,7 +294,7 @@ const sendPasswordResetToken = (req, res, next) => {
         user,
         'Password reset',
         'Password reset',
-        `Someone requested a new password for your ${config.appName} account.
+        `Someone requested a new password for your ${config.app.title} account.
         If this was you, click button below to reset your password.
         Otherwise, ignore this email.`,
         'Reset Password',
@@ -361,7 +361,7 @@ const sendVerificationEmailAsync = user => {
   return sendEmailHelperAsync(
     user,
     'Verify your email',
-    `Welcome to ${config.appName}`,
+    `Welcome to ${config.app.title}`,
     'Before you can start using your account, please verify it by following the link below:',
     'Verify Email',
     `${config.server.url}:3000/verify-email/${user.token}` // FIXME: fix port number
@@ -392,8 +392,8 @@ const sendEmailHelperAsync = (
 ) => {
   return sendMailAsync({
     to: user.email,
-    from: `${config.appName} <${config.email.from}>`,
-    subject: `${config.appName} - ${subject}`,
+    from: `${config.app.title} <${config.email.from}>`,
+    subject: `${config.app.title} - ${subject}`,
     template: `${config.paths.root}/templates/email.html`,
     templateParams: {
       title: title,
