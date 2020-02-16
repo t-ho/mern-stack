@@ -72,13 +72,13 @@ describe('ENDPOINT: GET /api/profiles/', function() {
 
   it(`GET ${endpoint} - Get profile succeeded`, function(done) {
     const newJwtToken = createJwtToken(decodedToken);
-    let admin = app.locals.test.admin;
+    let existingAdmin = app.locals.existing.admin;
     request(app)
       .get(endpoint)
       .set('Authorization', `Bearer ${newJwtToken}`)
       .expect(200)
       .then(res => {
-        expect(res.body.profile._id).to.be.equal(admin._id.toString());
+        expect(res.body.profile._id).to.be.equal(existingAdmin._id.toString());
         expect(res.body.profile).to.have.property('createdAt');
         expect(res.body.profile).to.have.property('updatedAt');
         expect(res.body.profile).to.not.have.property('hashedPassword');
@@ -87,7 +87,7 @@ describe('ENDPOINT: GET /api/profiles/', function() {
         expect(res.body.profile).to.not.have.property('token');
         expect(res.body.profile).to.not.have.property('tokenPurpose');
         expect(res.body.profile).to.deep.include(
-          _.pick(admin.toJSON(), [
+          _.pick(existingAdmin.toJSON(), [
             'username',
             'email',
             'status',
@@ -176,7 +176,7 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
   it(`PUT ${endpoint} - Can only update firstName, lastName and password`, function(done) {
     const User = mongoose.model('User');
     const newJwtToken = createJwtToken(decodedToken);
-    let admin = app.locals.test.admin;
+    let existingAdmin = app.locals.existing.admin;
     const payload = {
       _id: '5e24db1d560ba309f0b0b5a8',
       username: 'newusername',
@@ -202,10 +202,10 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
         success: true,
         updatedFields: ['firstName', 'lastName', 'password']
       })
-      .then(res => User.findById(admin._id))
+      .then(res => User.findById(existingAdmin._id))
       .then(updatedUser => {
         expect(updatedUser.toJSON()).to.deep.include(
-          _.pick(admin.toJSON(), [
+          _.pick(existingAdmin.toJSON(), [
             '_id',
             'username',
             'email',
@@ -221,9 +221,11 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
         expect(updatedUser.lastName).to.be.equal(payload.lastName);
         // password changed
         expect(updatedUser.hashedPassword).to.not.equal(payload.password);
-        expect(updatedUser.hashedPassword).to.not.equal(admin.hashedPassword);
+        expect(updatedUser.hashedPassword).to.not.equal(
+          existingAdmin.hashedPassword
+        );
         expect(updatedUser.subId).to.not.equal(payload.subId);
-        expect(updatedUser.subId).to.not.equal(admin.subId);
+        expect(updatedUser.subId).to.not.equal(existingAdmin.subId);
 
         done();
       })
@@ -233,7 +235,7 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
   it(`PUT ${endpoint} - Should not update subId`, function(done) {
     const User = mongoose.model('User');
     const newJwtToken = createJwtToken(decodedToken);
-    let admin = app.locals.test.admin;
+    let existingAdmin = app.locals.existing.admin;
     const payload = {
       firstName: 'John',
       lastName: 'Connor',
@@ -248,10 +250,10 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
         success: true,
         updatedFields: ['firstName', 'lastName']
       })
-      .then(res => User.findById(admin._id))
+      .then(res => User.findById(existingAdmin._id))
       .then(updatedUser => {
         expect(updatedUser.toJSON()).to.deep.include(
-          _.pick(admin.toJSON(), [
+          _.pick(existingAdmin.toJSON(), [
             '_id',
             'username',
             'email',
@@ -289,15 +291,21 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
     });
 
     it(`GET ${endpoint} - Get public profile succeeded`, function(done) {
-      let admin = app.locals.test.admin;
+      let existingAdmin = app.locals.existing.admin;
       request(app)
-        .get(`${endpoint}/${admin._id}`)
+        .get(`${endpoint}/${existingAdmin._id}`)
         .expect(200)
         .then(res => {
-          expect(res.body.profile._id).to.be.equal(admin._id.toString());
+          expect(res.body.profile._id).to.be.equal(
+            existingAdmin._id.toString()
+          );
           expect(res.body.profile).to.have.property('createdAt');
           expect(res.body.profile).to.be.deep.include(
-            _.pick(admin.toString(), ['username', 'firstName', 'lastName'])
+            _.pick(existingAdmin.toString(), [
+              'username',
+              'firstName',
+              'lastName'
+            ])
           );
           expect(res.body.profile).to.not.have.property('email');
           expect(res.body.profile).to.not.have.property('status');

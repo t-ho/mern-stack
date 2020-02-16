@@ -53,9 +53,9 @@ beforeEach(function(done) {
 
 beforeEach(function(done) {
   seed.createUsers(users).then(users => {
-    app.locals.test = {};
+    app.locals.existing = {};
     users.forEach(user => {
-      app.locals.test[[user.role]] = user;
+      app.locals.existing[[user.role]] = user;
     });
     done();
   });
