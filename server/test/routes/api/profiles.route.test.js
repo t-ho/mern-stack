@@ -5,15 +5,18 @@ const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const config = require('../../../config');
 
+const createJwtToken = payload => {
+  return jwt.sign(payload, config.jwt.secret, {
+    algorithm: config.jwt.algorithm
+  });
+};
+
+const decodeJwtToken = jwtToken => {
+  return jwt.verify(jwtToken, config.jwt.secret);
+};
+
 describe('ENDPOINT: GET /api/profiles/', function() {
   let endpoint = '/api/profiles/';
-  let decodedToken;
-
-  const createJwtToken = payload => {
-    return jwt.sign(payload, config.jwt.secret, {
-      algorithm: config.jwt.algorithm
-    });
-  };
 
   const testJwtTokenValidation = (jwtToken, done) => {
     request(app)
@@ -28,17 +31,6 @@ describe('ENDPOINT: GET /api/profiles/', function() {
       .catch(done);
   };
 
-  beforeEach(function(done) {
-    request(app)
-      .post('/api/auth/signin')
-      .send({ email: 'admin@mern-stack.org', password: 'password' })
-      .then(res => {
-        decodedToken = jwt.verify(res.body.token, config.jwt.secret);
-        done();
-      })
-      .catch(done);
-  });
-
   it(`GET ${endpoint} - JWT token not provided`, function(done) {
     request(app)
       .get(endpoint)
@@ -52,18 +44,24 @@ describe('ENDPOINT: GET /api/profiles/', function() {
   });
 
   it(`GET ${endpoint} - JWT token - invalid subId`, function(done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.sub = 'invalid-sub-id';
     const invalidJwtToken = createJwtToken(decodedToken);
     testJwtTokenValidation(invalidJwtToken, done);
   });
 
   it(`GET ${endpoint} - JWT token - not exist userId`, function(done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.userId = '5e24db1d560ba309f0b0b5a8';
     const invalidJwtToken = createJwtToken(decodedToken);
     testJwtTokenValidation(invalidJwtToken, done);
   });
 
   it(`GET ${endpoint} - JWT token - expired token`, function(done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.iat = decodedToken.iat - 100;
     decodedToken.exp = decodedToken.iat - 50;
     const invalidJwtToken = createJwtToken(decodedToken);
@@ -71,11 +69,10 @@ describe('ENDPOINT: GET /api/profiles/', function() {
   });
 
   it(`GET ${endpoint} - Get profile succeeded`, function(done) {
-    const newJwtToken = createJwtToken(decodedToken);
     let existingAdmin = app.locals.existing.admin;
     request(app)
       .get(endpoint)
-      .set('Authorization', `Bearer ${newJwtToken}`)
+      .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
       .expect(200)
       .then(res => {
         expect(res.body.profile._id).to.be.equal(existingAdmin._id.toString());
@@ -105,13 +102,6 @@ describe('ENDPOINT: GET /api/profiles/', function() {
 
 describe('ENDPOINT: PUT /api/profiles/', function() {
   let endpoint = '/api/profiles/';
-  let decodedToken;
-
-  const createJwtToken = payload => {
-    return jwt.sign(payload, config.jwt.secret, {
-      algorithm: config.jwt.algorithm
-    });
-  };
 
   const testJwtTokenValidation = (jwtToken, payload, done) => {
     request(app)
@@ -127,17 +117,6 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
       .catch(done);
   };
 
-  beforeEach(function(done) {
-    request(app)
-      .post('/api/auth/signin')
-      .send({ email: 'admin@mern-stack.org', password: 'password' })
-      .then(res => {
-        decodedToken = jwt.verify(res.body.token, config.jwt.secret);
-        done();
-      })
-      .catch(done);
-  });
-
   it(`PUT ${endpoint} - JWT token not provided`, function(done) {
     request(app)
       .put(endpoint)
@@ -152,6 +131,8 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
   });
 
   it(`PUT ${endpoint} - JWT token - invalid subId`, function(done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.sub = 'invalid-sub-id';
     const invalidJwtToken = createJwtToken(decodedToken);
     const payload = { firstName: 'John', password: 'new-password' };
@@ -159,6 +140,8 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
   });
 
   it(`PUT ${endpoint} - JWT token - not exist userId`, function(done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.userId = '5e24db1d560ba309f0b0b5a8';
     const invalidJwtToken = createJwtToken(decodedToken);
     const payload = { firstName: 'John', password: 'new-password' };
@@ -166,6 +149,8 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
   });
 
   it(`PUT ${endpoint} - JWT token - expired token`, function(done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.iat = decodedToken.iat - 100;
     decodedToken.exp = decodedToken.iat - 50;
     const invalidJwtToken = createJwtToken(decodedToken);
@@ -175,7 +160,6 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
 
   it(`PUT ${endpoint} - Can only update firstName, lastName and password`, function(done) {
     const User = mongoose.model('User');
-    const newJwtToken = createJwtToken(decodedToken);
     let existingAdmin = app.locals.existing.admin;
     const payload = {
       _id: '5e24db1d560ba309f0b0b5a8',
@@ -195,7 +179,7 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
     };
     request(app)
       .put(endpoint)
-      .set('Authorization', `Bearer ${newJwtToken}`)
+      .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
       .send(payload)
       .expect(200)
       .expect({
@@ -234,7 +218,6 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
 
   it(`PUT ${endpoint} - Should not update subId`, function(done) {
     const User = mongoose.model('User');
-    const newJwtToken = createJwtToken(decodedToken);
     let existingAdmin = app.locals.existing.admin;
     const payload = {
       firstName: 'new-first-name',
@@ -243,7 +226,7 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
     };
     request(app)
       .put(endpoint)
-      .set('Authorization', `Bearer ${newJwtToken}`)
+      .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
       .send(payload)
       .expect(200)
       .expect({
