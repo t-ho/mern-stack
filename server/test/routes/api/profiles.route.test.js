@@ -182,8 +182,8 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
       username: 'newusername',
       email: 'new-email@mern-stack.org',
       status: 'disabled',
-      firstName: 'John',
-      lastName: 'Connor',
+      firstName: 'new-first-name',
+      lastName: 'new-last-name',
       password: 'new-password',
       role: 'root',
       subId: '5e24db1d560ba309f0b0b5a8',
@@ -237,8 +237,8 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
     const newJwtToken = createJwtToken(decodedToken);
     let existingAdmin = app.locals.existing.admin;
     const payload = {
-      firstName: 'John',
-      lastName: 'Connor',
+      firstName: 'new-first-name',
+      lastName: 'new-last-name',
       subId: '5e24db1d560ba309f0b0b5a8'
     };
     request(app)
@@ -274,50 +274,48 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
       })
       .catch(done);
   });
+});
 
-  describe('ENDPOINT: GET /api/profiles/:userId', function() {
-    let endpoint = '/api/profiles';
+describe('ENDPOINT: GET /api/profiles/:userId', function() {
+  let endpoint = '/api/profiles';
 
-    it(`GET ${endpoint} - User ID not exist`, function(done) {
-      request(app)
-        .get(`${endpoint}/5e24db1d560ba309f0b0b5a8`)
-        .expect(422)
-        .expect(
-          {
-            error: 'User ID does not exist'
-          },
-          done
+  it(`GET ${endpoint} - User ID not exist`, function(done) {
+    request(app)
+      .get(`${endpoint}/5e24db1d560ba309f0b0b5a8`)
+      .expect(422)
+      .expect(
+        {
+          error: 'User ID does not exist'
+        },
+        done
+      );
+  });
+
+  it(`GET ${endpoint} - Get public profile succeeded`, function(done) {
+    let existingAdmin = app.locals.existing.admin;
+    request(app)
+      .get(`${endpoint}/${existingAdmin._id}`)
+      .expect(200)
+      .then(res => {
+        expect(res.body.profile._id).to.be.equal(existingAdmin._id.toString());
+        expect(res.body.profile).to.have.property('createdAt');
+        expect(res.body.profile).to.be.deep.include(
+          _.pick(existingAdmin.toString(), [
+            'username',
+            'firstName',
+            'lastName'
+          ])
         );
-    });
-
-    it(`GET ${endpoint} - Get public profile succeeded`, function(done) {
-      let existingAdmin = app.locals.existing.admin;
-      request(app)
-        .get(`${endpoint}/${existingAdmin._id}`)
-        .expect(200)
-        .then(res => {
-          expect(res.body.profile._id).to.be.equal(
-            existingAdmin._id.toString()
-          );
-          expect(res.body.profile).to.have.property('createdAt');
-          expect(res.body.profile).to.be.deep.include(
-            _.pick(existingAdmin.toString(), [
-              'username',
-              'firstName',
-              'lastName'
-            ])
-          );
-          expect(res.body.profile).to.not.have.property('email');
-          expect(res.body.profile).to.not.have.property('status');
-          expect(res.body.profile).to.not.have.property('role');
-          expect(res.body.profile).to.not.have.property('permissions');
-          expect(res.body.profile).to.not.have.property('subId');
-          expect(res.body.profile).to.not.have.property('token');
-          expect(res.body.profile).to.not.have.property('tokenPurpose');
-          expect(res.body.profile).to.not.have.property('hashedPassword');
-          done();
-        })
-        .catch(done);
-    });
+        expect(res.body.profile).to.not.have.property('email');
+        expect(res.body.profile).to.not.have.property('status');
+        expect(res.body.profile).to.not.have.property('role');
+        expect(res.body.profile).to.not.have.property('permissions');
+        expect(res.body.profile).to.not.have.property('subId');
+        expect(res.body.profile).to.not.have.property('token');
+        expect(res.body.profile).to.not.have.property('tokenPurpose');
+        expect(res.body.profile).to.not.have.property('hashedPassword');
+        done();
+      })
+      .catch(done);
   });
 });

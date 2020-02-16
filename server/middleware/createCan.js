@@ -32,7 +32,7 @@ const createCan = action => (req, res, next) => {
   res.locals.action = action;
 
   if (!req.user || (req.user && !req.user.can(action))) {
-    return next(createError(401, 'Unauthorized action'));
+    return next(createError(401, 'Unauthorized action.'));
   }
 
   if (action !== 'updateUsers' && action !== 'deleteUsers') {
@@ -59,7 +59,7 @@ const createCan = action => (req, res, next) => {
   if (canContinue) {
     return next();
   }
-  next(createError(401, 'Unauthorized action'));
+  next(createError(401, 'Unauthorized action.'));
 };
 
 module.exports = createCan;

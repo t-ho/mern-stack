@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const chalk = require('chalk');
-const seed = require('../config/seed');
+const jwt = require('jsonwebtoken');
 const config = require('../config');
+const seed = require('../config/seed');
 
 const users = [
   {
@@ -30,6 +31,19 @@ const users = [
   }
 ];
 
+const generateJwtToken = user => {
+  const iat = Math.floor(Date.now() / 1000);
+  const token = jwt.sign(
+    { sub: user.subId, userId: user._id, iat },
+    config.jwt.secret,
+    {
+      algorithm: config.jwt.algorithm,
+      expiresIn: config.jwt.expiresIn // seconds
+    }
+  );
+  return token;
+};
+
 before(function(done) {
   if (config.env !== 'test') {
     throw new Error(
@@ -55,6 +69,7 @@ beforeEach(function(done) {
   seed.createUsers(users).then(users => {
     app.locals.existing = {};
     users.forEach(user => {
+      user.jwtToken = generateJwtToken(user);
       app.locals.existing[[user.role]] = user;
     });
     done();
