@@ -16,6 +16,16 @@ const createTestPayloadValidation = endpoint => {
   };
 };
 
+const createJwtToken = payload => {
+  return jwt.sign(payload, config.jwt.secret, {
+    algorithm: config.jwt.algorithm
+  });
+};
+
+const decodeJwtToken = jwtToken => {
+  return jwt.verify(jwtToken, config.jwt.secret);
+};
+
 describe('ENDPOINT: POST /api/auth/signup', function() {
   const endpoint = '/api/auth/signup';
   const testValidation = createTestPayloadValidation(endpoint);
@@ -231,8 +241,9 @@ describe('ENDPOINT: POST /api/auth/send-token', function() {
   });
 
   it(`POST ${endpoint} - Token purpose invalid`, function(done) {
+    let existingUser = app.locals.existing.user;
     const payload = {
-      email: 'admin@mern-stack.org',
+      email: existingUser.email,
       tokenPurpose: 'invalidTokenPurpose'
     };
 
@@ -367,8 +378,9 @@ describe('ENDPOINT: POST /api/auth/reset-password/:token', function() {
   });
 
   it(`POST ${endpoint} - Token not existed`, function(done) {
+    const existingAdmin = app.locals.existing.admin;
     const payload = {
-      email: 'admin@mern-stack.org',
+      email: existingAdmin.email,
       password: 'new-password'
     };
 
@@ -387,7 +399,7 @@ describe('ENDPOINT: POST /api/auth/reset-password/:token', function() {
   it(`POST ${endpoint} - Token existed but not resetPassword token`, function(done) {
     let existingAdmin = app.locals.existing.admin;
     const payload = {
-      email: 'admin@mern-stack.org',
+      email: existingAdmin.email,
       password: 'new-password'
     };
     existingAdmin.tokenPurpose = 'verifyEmail';
@@ -525,13 +537,6 @@ describe('ENDPOINT: POST /api/auth/verify-email/:token', function() {
 
 describe('ENDPOINT: POST /api/auth/refresh-token', function() {
   let endpoint = '/api/auth/refresh-token';
-  let decodedToken;
-
-  const createJwtToken = payload => {
-    return jwt.sign(payload, config.jwt.secret, {
-      algorithm: config.jwt.algorithm
-    });
-  };
 
   const testJwtTokenValidation = (jwtToken, done) => {
     request(app)
@@ -546,17 +551,6 @@ describe('ENDPOINT: POST /api/auth/refresh-token', function() {
       .catch(done);
   };
 
-  beforeEach(function(done) {
-    request(app)
-      .post('/api/auth/signin')
-      .send({ email: 'admin@mern-stack.org', password: 'password' })
-      .then(res => {
-        decodedToken = jwt.verify(res.body.token, config.jwt.secret);
-        done();
-      })
-      .catch(done);
-  });
-
   it(`POST ${endpoint} - JWT token not provided`, function(done) {
     request(app)
       .post(endpoint)
@@ -570,18 +564,24 @@ describe('ENDPOINT: POST /api/auth/refresh-token', function() {
   });
 
   it(`POST ${endpoint} - JWT token - invalid subId`, function(done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.sub = 'invalid-sub-id';
     const invalidJwtToken = createJwtToken(decodedToken);
     testJwtTokenValidation(invalidJwtToken, done);
   });
 
   it(`POST ${endpoint} - JWT token - not exist userId`, function(done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.userId = '5e24db1d560ba309f0b0b5a8';
     const invalidJwtToken = createJwtToken(decodedToken);
     testJwtTokenValidation(invalidJwtToken, done);
   });
 
   it(`POST ${endpoint} - JWT token - expired token`, function(done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.iat = decodedToken.iat - 100;
     decodedToken.exp = decodedToken.iat - 50;
     const invalidJwtToken = createJwtToken(decodedToken);
@@ -589,20 +589,21 @@ describe('ENDPOINT: POST /api/auth/refresh-token', function() {
   });
 
   it(`POST ${endpoint} - JWT Token - refresh succeeded`, function(done) {
-    const newJwtToken = createJwtToken(decodedToken);
     let existingAdmin = app.locals.existing.admin;
     request(app)
       .post(endpoint)
-      .set('Authorization', `Bearer ${newJwtToken}`)
+      .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
       .expect(200)
       .then(res => {
         expect(res.body.expiresAt).to.be.a('number');
-        const decoded = jwt.verify(res.body.token, config.jwt.secret);
-        expect(decoded.sub).to.be.equal(existingAdmin.subId);
-        expect(decoded.userId).to.be.equal(existingAdmin._id.toString());
-        expect(decoded.exp).to.be.equal(res.body.expiresAt);
-        expect(decoded.iat).to.be.equal(
-          decodedToken.exp - config.jwt.expiresIn
+        const newlyDecodedToken = decodeJwtToken(res.body.token);
+        expect(newlyDecodedToken.sub).to.be.equal(existingAdmin.subId);
+        expect(newlyDecodedToken.userId).to.be.equal(
+          existingAdmin._id.toString()
+        );
+        expect(newlyDecodedToken.exp).to.be.equal(res.body.expiresAt);
+        expect(newlyDecodedToken.iat).to.be.equal(
+          newlyDecodedToken.exp - config.jwt.expiresIn
         );
         done();
       })
