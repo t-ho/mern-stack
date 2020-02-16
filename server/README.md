@@ -56,11 +56,11 @@ Sample request body payload
 
 ```
 {
-  "username": "tester",
-  "email": "test@test.com",
+  "username": "user",
+  "email": "user@mern-stack.org",
   "password": "password",
-  "firstName": "John",
-  "lastName": "Connor"
+  "firstName": "User",
+  "lastName": "Account"
 }
 ```
 
@@ -102,7 +102,7 @@ Sample request body payload
 
 ```
 {
-  "email": "test@test.com",
+  "email": "user@mern-stack.org",
   "password": "password"
 }
 ```
@@ -119,19 +119,21 @@ Sample response
 
 ```
 {
-  "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZTI0ZDQyY2Y3ZGRkZjAxMmNkNDk2YjIiLCJ1c2VySWQiOiI1ZTI0ZDQyY2Y3ZGRkZjAxMmNkNDk2YjIiLCJpYXQiOjE1Nzk0NzI1OTMsImV4cCI6MTU4NDY1NjU5M30.nlrURWeYjMr9cBXa-QhWCQVyKw2tPsQjnUyPaXnitMv9PxcOUjZJzn4U-mN4o_Eg8d9IqTP2_WJjmiAU5QydPA",
-  "expiresAt": 1584656593,
+  "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZTQ3YTk2MDBjYWM4NTE3OTBmMjk2NjMiLCJ1c2VySWQiOiI1ZTQ3YTk2MDBjYWM4NTE3OTBmMjk2NjIiLCJpYXQiOjE1ODE4MDk2ODYsImV4cCI6MTU4Njk5MzY4Nn0.6rjee9HpGVP-IsKfGBAiqU8Y6FHuuBN25odKZExig7liOhJd2lq_eUn8JUOtz7QpRX5RvGYzbzlxdRED0boNVA",
+  "expiresAt": 1586993686,
   "user": {
-    "_id": "5e24d42cf7dddf012cd496b2",
-    "username": "tester",
-    "email": "test@test.com",
+    "_id": "5e47a9600cac851790f29662",
+    "username": "user",
+    "email": "user@mern-stack.org",
     "status": "active",
-    "firstName": "John",
-    "lastName": "Connor",
+    "firstName": "User",
+    "lastName": "Account",
     "role": "user",
     "permissions": {
       "debug": false
-    }
+    },
+    "createdAt": "2020-02-15T08:18:40.429Z",
+    "updatedAt": "2020-02-15T08:18:40.429Z"
   }
 }
 ```
@@ -157,7 +159,7 @@ Sample request body payload
 
 ```
 {
-  "email": "test@test.com",
+  "email": "user@mern-stack.org",
   "tokenPurpose": "verifyEmail",
 }
 ```
@@ -225,7 +227,7 @@ Sample request body payload
 
 ```
 {
-  "email": "test@test.com",
+  "email": "user@mern-stack.org",
   "tokenPurpose": "resetPassword",
 }
 ```
@@ -269,7 +271,7 @@ Sample request body payload
 
 ```
 {
-  "email": "test@test.com",
+  "email": "user@mern-stack.org",
   "password: "new-password"
 }
 ```
@@ -349,16 +351,18 @@ Sample response
 ```
 {
   "profile": {
-    "_id": "5e24d42cf7dddf012cd496b2",
-    "username": "tester",
-    "email": "test@test.com",
+    "_id": "5e47a9600cac851790f29662",
+    "username": "user",
+    "email": "user@mern-stack.org",
     "status": "active",
-    "firstName": "John",
-    "lastName": "Connor",
+    "firstName": "User",
+    "lastName": "Account",
     "role": "user",
     "permissions": {
       "debug": false
-    }
+    },
+    "createdAt": "2020-02-15T08:18:40.429Z",
+    "updatedAt": "2020-02-15T08:18:40.429Z"
   }
 }
 ```
@@ -386,7 +390,7 @@ Sample response
 {
   "profile": {
     "_id": "5e24d42cf7dddf012cd496b2",
-    "username": "tester",
+    "username": "sarah",
     "firstName": "Sarah",
     "lastName": "Connor",
     "createdAt": "2020-01-19T22:11:56.779Z"

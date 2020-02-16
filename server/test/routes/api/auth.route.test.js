@@ -16,7 +16,7 @@ const createTestPayloadValidation = endpoint => {
   };
 };
 
-describe('ENDPOINT: /api/auth/signup', function() {
+describe('ENDPOINT: POST /api/auth/signup', function() {
   const endpoint = '/api/auth/signup';
   const testValidation = createTestPayloadValidation(endpoint);
 
@@ -108,7 +108,7 @@ describe('ENDPOINT: /api/auth/signup', function() {
   });
 });
 
-describe('ENDPOINT: /api/auth/signin', function() {
+describe('ENDPOINT: POST /api/auth/signin', function() {
   const endpoint = '/api/auth/signin';
   const testValidation = createTestPayloadValidation(endpoint);
 
@@ -170,6 +170,11 @@ describe('ENDPOINT: /api/auth/signin', function() {
         expect(res.body.user._id).to.be.equal(admin._id.toString());
         expect(res.body.user).to.have.property('createdAt');
         expect(res.body.user).to.have.property('updatedAt');
+        expect(res.body.user).to.not.have.property('hashedPassword');
+        expect(res.body.user).to.not.have.property('password');
+        expect(res.body.user).to.not.have.property('subId');
+        expect(res.body.user).to.not.have.property('token');
+        expect(res.body.user).to.not.have.property('tokenPurpose');
         expect(res.body.user).to.deep.include(
           _.pick(admin.toJSON(), [
             'username',
@@ -203,7 +208,7 @@ describe('ENDPOINT: /api/auth/signin', function() {
   });
 });
 
-describe('ENDPOINT: /api/auth/send-token', function() {
+describe('ENDPOINT: POST /api/auth/send-token', function() {
   const endpoint = '/api/auth/send-token';
   const testValidation = createTestPayloadValidation(endpoint);
 
@@ -283,7 +288,7 @@ describe('ENDPOINT: /api/auth/send-token', function() {
   });
 });
 
-describe('ENDPOINT: /api/auth/reset-password/:token', function() {
+describe('ENDPOINT: POST /api/auth/reset-password/:token', function() {
   let endpoint = '';
   let testValidation;
 
@@ -390,7 +395,7 @@ describe('ENDPOINT: /api/auth/reset-password/:token', function() {
   });
 });
 
-describe('ENDPOINT: /api/auth/verify-email/:token', function() {
+describe('ENDPOINT: POST /api/auth/verify-email/:token', function() {
   let endpoint = '';
 
   beforeEach(function(done) {
@@ -459,7 +464,7 @@ describe('ENDPOINT: /api/auth/verify-email/:token', function() {
   });
 });
 
-describe('ENDPOINT: /api/auth/refresh-token', function() {
+describe('ENDPOINT: POST /api/auth/refresh-token', function() {
   let endpoint = '/api/auth/refresh-token';
   let decodedToken;
 
