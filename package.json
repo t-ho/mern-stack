@@ -4,14 +4,14 @@
   "description": "MERN stack - MongoDB - Express - React - Redux - React Native - NodeJs",
   "main": "start-server.js",
   "scripts": {
-    "install:deps": "node install-deps",
-    "start": "concurrently -c \"green,yellow,gray\" -n \"SERVER,CLIENT,MOBILE\" \"npm:server\" \"npm:client\" \"npm:mobile\"",
-    "server:client": "concurrently -c \"green,yellow\" -n \"SERVER,CLIENT\" \"npm:server\" \"npm:client\"",
-    "server:mobile": "concurrently -c \"green,gray\" -n \"SERVER,MOBILE\" \"npm:server\" \"npm:mobile\"",
-    "client": "node start-web-client",
-    "mobile": "node start-mobile",
-    "server": "node start-server",
-    "test": "node run-tests"
+    "install:deps": "node start install",
+    "start": "node start server:client:mobile",
+    "server:client": "node start server:client",
+    "server:mobile": "node start server:mobile",
+    "client": "node start client",
+    "mobile": "node start mobile",
+    "server": "node start server",
+    "test": "node start test"
   },
   "repository": {
     "type": "git",
@@ -24,13 +24,16 @@
   },
   "homepage": "https://github.com/t-ho/mern#readme",
   "devDependencies": {
+    "chalk": "^3.0.0",
     "concurrently": "^5.1.0",
     "dotenv": "^8.2.0",
     "figlet": "^1.2.4",
     "husky": "^4.2.1",
+    "lodash": "^4.17.15",
     "ngrok": "^3.2.7",
     "prettier": "^1.19.1",
-    "pretty-quick": "^2.0.1"
+    "pretty-quick": "^2.0.1",
+    "tree-kill": "^1.2.2"
   },
   "dependencies": {},
   "husky": {
