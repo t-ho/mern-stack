@@ -8,7 +8,7 @@ const User = mongoose.model('User');
 /**
  * Joi schema for validating getUser query
  */
-const getUserSchema = Joi.object({
+const getUsersSchema = Joi.object({
   sort: Joi.string()
     .trim()
     .pattern(/^(-?[A-Za-z]+)( -?[A-Za-z]+)*$/), // matches "-descFieldName ascFieldName"
@@ -45,7 +45,7 @@ const getUserSchema = Joi.object({
  * @param {string} [req.query.permissions] The user permissions
  */
 module.exports.getUsers = (req, res, next) => {
-  getUserSchema
+  getUsersSchema
     .validateAsync(req.query)
     .then(payload => {
       req.query = payload;
@@ -92,18 +92,26 @@ module.exports.getUsers = (req, res, next) => {
  */
 module.exports.preloadTargetUser = (req, res, next, userId) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return next(createError(422, 'Invalid user ID'));
+    return next(createError(422, 'Invalid user ID.'));
   }
 
   User.findById(userId)
     .then(targetUser => {
       if (!targetUser) {
-        throw createError(422, 'User ID does not exist');
+        throw createError(422, 'User ID does not exist.');
       }
       res.locals.targetUser = targetUser;
       next();
     })
     .catch(next);
+};
+
+/**
+ * @function getUser
+ * Get the target user
+ */
+module.exports.getUser = (req, res, next) => {
+  res.status(200).json({ user: res.locals.targetUser.toProfileJson() });
 };
 
 /**

@@ -15,6 +15,8 @@ router.param('userId', usersCtr.preloadTargetUser);
 
 router.get('/', canReadUsers, usersCtr.getUsers);
 
+router.get('/:userId', canReadUsers, usersCtr.getUser);
+
 router.put('/:userId', canUpdateUsers, usersCtr.updateUser);
 
 router.delete('/:userId', canDeleteUsers, usersCtr.deleteUser);

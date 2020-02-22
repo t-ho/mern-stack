@@ -123,6 +123,132 @@ describe('ENDPOINT: GET /api/users/', function() {
   });
 });
 
+describe('ENDPOINT: GET /api/users/:id', function() {
+  let endpoint = '/api/users';
+
+  const testJwtTokenValidation = (jwtToken, done) => {
+    let existingUser = app.locals.existing.user;
+    request(app)
+      .get(`${endpoint}/${existingUser._id}`)
+      .set('Authorization', `Bearer ${jwtToken}`)
+      .expect(401)
+      .expect({})
+      .then(res => {
+        expect(res.text).to.be.equal('Unauthorized');
+        done();
+      })
+      .catch(done);
+  };
+
+  it(`GET ${endpoint}/:userId - JWT token not provided`, function(done) {
+    let existingUser = app.locals.existing.user;
+    request(app)
+      .get(`${endpoint}/${existingUser._id}`)
+      .expect(401)
+      .expect({})
+      .then(res => {
+        expect(res.text).to.be.equal('Unauthorized');
+        done();
+      })
+      .catch(done);
+  });
+
+  it(`GET ${endpoint}/:userId - JWT token - invalid subId`, function(done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.sub = 'invalid-sub-id';
+    const invalidJwtToken = createJwtToken(decodedToken);
+    testJwtTokenValidation(invalidJwtToken, done);
+  });
+
+  it(`GET ${endpoint}/:userId - JWT token - not exist userId`, function(done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.userId = '5e24db1d560ba309f0b0b5a8';
+    const invalidJwtToken = createJwtToken(decodedToken);
+    testJwtTokenValidation(invalidJwtToken, done);
+  });
+
+  it(`GET ${endpoint}/:userId - JWT token - expired token`, function(done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.iat = decodedToken.iat - 100;
+    decodedToken.exp = decodedToken.iat - 50;
+    const invalidJwtToken = createJwtToken(decodedToken);
+    testJwtTokenValidation(invalidJwtToken, done);
+  });
+
+  it(`GET ${endpoint}/:userId - Params - Invalid userId`, function(done) {
+    let existingUser = app.locals.existing.user;
+    request(app)
+      .get(`${endpoint}/invalid-user-id`)
+      .set('Authorization', `Bearer ${existingUser.jwtToken}`)
+      .expect(422)
+      .expect({ error: 'Invalid user ID.' }, done);
+  });
+
+  it(`GET ${endpoint}/:userId - Params - not existed userId`, function(done) {
+    let existingUser = app.locals.existing.user;
+    request(app)
+      .get(`${endpoint}/5e24db1d560ba309f0b0b5a8`)
+      .set('Authorization', `Bearer ${existingUser.jwtToken}`)
+      .expect(422)
+      .expect({ error: 'User ID does not exist.' }, done);
+  });
+
+  it(`GET ${endpoint}/:userId - Normal user cannot get user details`, function(done) {
+    let existingUser = app.locals.existing.user;
+    request(app)
+      .get(`${endpoint}/${existingUser._id}`)
+      .set('Authorization', `Bearer ${existingUser.jwtToken}`)
+      .expect(401)
+      .expect({ error: 'Unauthorized action.' }, done);
+  });
+
+  const testCanGetUserDetails = (currentUser, done) => {
+    let existingRoot = app.locals.existing.root;
+    request(app)
+      .get(`${endpoint}/${existingRoot._id}`)
+      .set('Authorization', `Bearer ${currentUser.jwtToken}`)
+      .expect(200)
+      .then(res => {
+        expect(res.body.user._id).to.be.equal(
+          app.locals.existing[[res.body.user.role]]._id.toString()
+        );
+        expect(res.body.user).to.have.property('createdAt');
+        expect(res.body.user).to.have.property('updatedAt');
+        expect(res.body.user).to.not.have.property('hashedPassword');
+        expect(res.body.user).to.not.have.property('password');
+        expect(res.body.user).to.not.have.property('subId');
+        expect(res.body.user).to.not.have.property('token');
+        expect(res.body.user).to.not.have.property('tokenPurpose');
+        expect(res.body.user).to.deep.include(
+          _.pick(app.locals.existing[[res.body.user.role]].toJSON(), [
+            'username',
+            'email',
+            'status',
+            'firstName',
+            'lastName',
+            'role',
+            'permissions'
+          ])
+        );
+        done();
+      })
+      .catch(done);
+  };
+
+  it(`GET ${endpoint}/:userId - Admin can get user detail`, function(done) {
+    let existingAdmin = app.locals.existing.admin;
+    testCanGetUserDetails(existingAdmin, done);
+  });
+
+  it(`GET ${endpoint}/:userId - Root can get user detail`, function(done) {
+    let existingRoot = app.locals.existing.root;
+    testCanGetUserDetails(existingRoot, done);
+  });
+});
+
 describe('ENDPOINT: PUT /api/users/:userId', function() {
   let endpoint = '/api/users';
 
@@ -195,6 +321,24 @@ describe('ENDPOINT: PUT /api/users/:userId', function() {
       payload,
       done
     );
+  });
+
+  it(`PUT ${endpoint}/:userId - Params - Invalid userId`, function(done) {
+    let existingUser = app.locals.existing.user;
+    request(app)
+      .put(`${endpoint}/invalid-user-id`)
+      .set('Authorization', `Bearer ${existingUser.jwtToken}`)
+      .expect(422)
+      .expect({ error: 'Invalid user ID.' }, done);
+  });
+
+  it(`PUT ${endpoint}/:userId - Params - not existed userId`, function(done) {
+    let existingUser = app.locals.existing.user;
+    request(app)
+      .put(`${endpoint}/5e24db1d560ba309f0b0b5a8`)
+      .set('Authorization', `Bearer ${existingUser.jwtToken}`)
+      .expect(422)
+      .expect({ error: 'User ID does not exist.' }, done);
   });
 
   const testInvalidPayload = (payload, errorMessage, done) => {
@@ -445,6 +589,24 @@ describe('ENDPOINT: DELETE /api/users/:userId', function() {
       invalidJwtToken,
       done
     );
+  });
+
+  it(`DELETE ${endpoint}/:userId - Params - Invalid userId`, function(done) {
+    let existingUser = app.locals.existing.user;
+    request(app)
+      .delete(`${endpoint}/invalid-user-id`)
+      .set('Authorization', `Bearer ${existingUser.jwtToken}`)
+      .expect(422)
+      .expect({ error: 'Invalid user ID.' }, done);
+  });
+
+  it(`DELETE ${endpoint}/:userId - Params - not existed userId`, function(done) {
+    let existingUser = app.locals.existing.user;
+    request(app)
+      .delete(`${endpoint}/5e24db1d560ba309f0b0b5a8`)
+      .set('Authorization', `Bearer ${existingUser.jwtToken}`)
+      .expect(422)
+      .expect({ error: 'User ID does not exist.' }, done);
   });
 
   const testUserCannotDeleteOther = (currentUser, targetUser, done) => {

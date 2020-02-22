@@ -71,13 +71,13 @@ module.exports.updateProfile = (req, res, next) => {
  */
 module.exports.getPublicProfile = (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
-    return next(createError(422, 'Invalid user ID'));
+    return next(createError(422, 'Invalid user ID.'));
   }
 
   User.findById(req.params.userId)
     .then(user => {
       if (!user) {
-        throw createError(422, 'User ID does not exist');
+        throw createError(422, 'User ID does not exist.');
       }
       res.status(200).send({ profile: user.toPublicProfileJson() });
     })

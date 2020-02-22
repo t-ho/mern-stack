@@ -530,6 +530,49 @@ Sample response
 }
 ```
 
+### Get User
+
+- **Method:** `GET`
+- **Content-Type:** `application/json`
+- **Authentication Header**
+
+```
+Authorization: Bearer {JWT Token}
+```
+
+- **Endpoint**
+
+```
+/api/users/:userId
+```
+
+- **Response Payload**
+
+| Property Name | Type           | Description     |
+| ------------- | -------------- | --------------- |
+| `user`        | _object array_ | A list of users |
+
+Sample response
+
+```
+{
+  "user": {
+    "_id": "5e24d42cf7dddf012cd496b2",
+    "username": "tester",
+    "email": "test@test.com",
+    "status": "active",
+    "firstName": "Sarah",
+    "lastName": "Connor",
+    "role": "root",
+    "permissions": {
+      "debug": false
+    },
+    "createdAt": "2020-01-19T22:11:56.779Z",
+    "updatedAt": "2020-01-19T23:18:47.897Z"
+  }
+}
+```
+
 ### Update User
 
 - **Method:** `PUT`

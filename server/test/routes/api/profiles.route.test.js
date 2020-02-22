@@ -262,19 +262,22 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
 describe('ENDPOINT: GET /api/profiles/:userId', function() {
   let endpoint = '/api/profiles';
 
-  it(`GET ${endpoint} - User ID not exist`, function(done) {
+  it(`GET ${endpoint}/:userId - Params - Invalid userId`, function(done) {
+    let existingUser = app.locals.existing.user;
+    request(app)
+      .get(`${endpoint}/invalid-user-id`)
+      .expect(422)
+      .expect({ error: 'Invalid user ID.' }, done);
+  });
+
+  it(`GET ${endpoint}/userId - Params - User ID not exist`, function(done) {
     request(app)
       .get(`${endpoint}/5e24db1d560ba309f0b0b5a8`)
       .expect(422)
-      .expect(
-        {
-          error: 'User ID does not exist'
-        },
-        done
-      );
+      .expect({ error: 'User ID does not exist.' }, done);
   });
 
-  it(`GET ${endpoint} - Get public profile succeeded`, function(done) {
+  it(`GET ${endpoint}/userId - Get public profile succeeded`, function(done) {
     let existingAdmin = app.locals.existing.admin;
     request(app)
       .get(`${endpoint}/${existingAdmin._id}`)
