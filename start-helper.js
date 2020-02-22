@@ -13,7 +13,7 @@ dotenv.config();
 /**
  * This script provide a cross-platform way for starting npm process in child directory.
  *
- * Usage: node start-helper.js [server|client|mobile|test|install]
+ * Usage: node start-helper.js [server|client|mobile|test|install-children]
  *
  */
 
@@ -47,10 +47,10 @@ const options = [
     message: 'Running tests for'
   },
   {
-    name: 'install',
+    name: 'install-children',
     command: 'npm',
     arguments: ['install'],
-    workingDirs: ['.', 'server', 'client', 'mobile'],
+    workingDirs: ['server', 'client', 'mobile'],
     message: 'Installing dependencies for'
   }
 ];

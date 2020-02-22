@@ -27,15 +27,13 @@ cp .env.example .env
 
 ### 3. Install package dependencies:
 
-The command below provides a convenient (cross-platform) way for installing all dependencies in one command on MacOS, Linux and Windows:
+In the `root` directory, run:
 
 ```bash
-npm run install:deps
-# Note: On MacOs and Linux, the command above is kind of equivalent to:
-# npm install && cd server && npm install && cd ../web-client && npm install && cd ../mobile && npm install && cd ..
+npm install
 ```
 
-### 4. To start `server`, `web-client` and `mobile`, run:
+### 4. To start `server`, `client` and `mobile`, run:
 
 ```bash
 # In the root directory (mern):
@@ -48,18 +46,18 @@ npm start
 **NOTE:**
 
 - **For the sake of simplicity, we use free service [ngrok](https://ngrok.com/) to create a public API URL for mobile development. The downside of this approach is that the public URL is only available for 8 hours, so we need to restart the npm process every 8 hours.**
-- **After 8 hours, the warning message will be displayed in your terminal to remind you to restart npm process.**
+- **After 8 hours, the `mobile` process will be terminated and a warning message will be displayed in your terminal to remind you to restart npm process.**
 
 To restart npm process (_If you don't start mobile development process, simply ignore this step_):
 
 ```bash
 # In your current terminal, press Ctrl + C to exit. Then run
-npm start # start server, web-client and mobile dev process
+npm start # start server, client and mobile dev process
 # or
 npm run server:mobile # start server and mobile dev process
 ```
 
-Or to start `server` and `web-client` only, run:
+Or to start `server` and `client` only, run:
 
 ```bash
 # In the root directory (mern):

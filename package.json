@@ -4,7 +4,7 @@
   "description": "MERN stack - MongoDB - Express - React - Redux - React Native - NodeJs",
   "main": "start-server.js",
   "scripts": {
-    "install:deps": "node start install",
+    "postinstall": "node start install-children",
     "start": "node start server:client:mobile",
     "server:client": "node start server:client",
     "server:mobile": "node start server:mobile",

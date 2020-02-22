@@ -6,10 +6,10 @@ const _ = require('lodash');
 /**
  * This script run npm proccesses concurrently
  *
- * Usage: node start [install|test|server|client|mobile|server:client:mobile|server:client|server:mobile]
+ * Usage: node start [install-children|test|server|client|mobile|server:client:mobile|server:client|server:mobile]
  *
  * Example:
- * * node start install
+ * * node start install-children
  * * node start test
  * * node start server
  * * node start client
@@ -21,7 +21,7 @@ const _ = require('lodash');
 
 const getUppercaseArgs = () => {
   validArgs = [
-    'install',
+    'install-children',
     'test',
     'server',
     'client',
@@ -49,8 +49,8 @@ const run = () => {
   const upperCaseArgs = getUppercaseArgs();
   let availableCommands = [
     {
-      command: 'node start-helper install',
-      name: 'INSTALL',
+      command: 'node start-helper install-children',
+      name: 'INSTALL-CHILDREN',
       prefixColor: 'gray'
     },
     {
@@ -86,7 +86,7 @@ const run = () => {
     successCondition: 'all'
   };
 
-  if (_.isEqual(upperCaseArgs, ['INSTALL'])) {
+  if (_.isEqual(upperCaseArgs, ['INSTALL-CHILDREN'])) {
     options.raw = true;
   }
 
