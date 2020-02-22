@@ -459,7 +459,7 @@ describe('ENDPOINT: PUT /api/users/:userId', function() {
     const payload = {
       _id: '5e24db1d560ba309f0b0b5a8',
       username: 'newusername',
-      email: 'new-email@mern-stack.org',
+      email: 'new-email@tdev.app',
       status: 'disabled', // this will be updated
       firstName: 'new-first-name',
       lastName: 'new-last-name',

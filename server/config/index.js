@@ -43,7 +43,7 @@ let config = {
     users: [
       {
         username: 'root',
-        email: 'root@mern-stack.org',
+        email: 'root@tdev.app',
         password: 'password',
         firstName: 'Root',
         lastName: 'Account',
@@ -51,7 +51,7 @@ let config = {
       },
       {
         username: 'admin',
-        email: 'admin@mern-stack.org',
+        email: 'admin@tdev.app',
         password: 'password',
         firstName: 'Admin',
         lastName: 'Account',
@@ -59,7 +59,7 @@ let config = {
       },
       {
         username: 'user',
-        email: 'user@mern-stack.org',
+        email: 'user@tdev.app',
         password: 'password',
         firstName: 'User',
         lastName: 'Account',

@@ -41,7 +41,7 @@ describe('ENDPOINT: POST /api/auth/signup', function() {
 
   it(`POST ${endpoint} - Username required`, function(done) {
     const payload = {
-      email: 'john@mern-stack.org',
+      email: 'john@tdev.app',
       password: 'qweasdzxc'
     };
 
@@ -51,7 +51,7 @@ describe('ENDPOINT: POST /api/auth/signup', function() {
   it(`POST ${endpoint} - Password required`, function(done) {
     const payload = {
       username: 'john',
-      email: 'john@mern-stack.org'
+      email: 'john@tdev.app'
     };
 
     testValidation(payload, 400, 'Password is required.', done);
@@ -60,7 +60,7 @@ describe('ENDPOINT: POST /api/auth/signup', function() {
   it(`POST ${endpoint} - Email existed`, function(done) {
     const payload = {
       username: 'john',
-      email: 'admin@mern-stack.org',
+      email: 'admin@tdev.app',
       password: 'qweasdzxc'
     };
 
@@ -70,7 +70,7 @@ describe('ENDPOINT: POST /api/auth/signup', function() {
   it(`POST ${endpoint} - Username existed`, function(done) {
     const payload = {
       username: 'admin',
-      email: 'john@mern-stack.org',
+      email: 'john@tdev.app',
       password: 'qweasdzxc'
     };
 
@@ -81,7 +81,7 @@ describe('ENDPOINT: POST /api/auth/signup', function() {
     const User = mongoose.model('User');
     const payload = {
       username: 'john',
-      email: 'john@mern-stack.org',
+      email: 'john@tdev.app',
       password: 'qweasdzxc'
     };
 
@@ -137,7 +137,7 @@ describe('ENDPOINT: POST /api/auth/signin', function() {
 
   it(`POST ${endpoint} - Password required`, function(done) {
     const payload = {
-      email: 'admin@mern-stack.org'
+      email: 'admin@tdev.app'
     };
 
     testValidation(payload, 400, 'Password is required.', done);
@@ -145,7 +145,7 @@ describe('ENDPOINT: POST /api/auth/signin', function() {
 
   it(`POST ${endpoint} - Email not existed`, function(done) {
     const payload = {
-      email: 'not-exist@mern-stack.org',
+      email: 'not-exist@tdev.app',
       password: 'password'
     };
 
@@ -234,7 +234,7 @@ describe('ENDPOINT: POST /api/auth/send-token', function() {
 
   it(`POST ${endpoint} - Token purpose required`, function(done) {
     const payload = {
-      email: 'admin@mern-stack.org'
+      email: 'admin@tdev.app'
     };
 
     testValidation(payload, 400, '"tokenPurpose" is required', done);
@@ -362,7 +362,7 @@ describe('ENDPOINT: POST /api/auth/reset-password/:token', function() {
 
   it(`POST ${endpoint} - New password required`, function(done) {
     const payload = {
-      email: 'admin@mern-stack.org'
+      email: 'admin@tdev.app'
     };
 
     testValidation(payload, 400, 'Password is required.', done);
@@ -370,7 +370,7 @@ describe('ENDPOINT: POST /api/auth/reset-password/:token', function() {
 
   it(`POST ${endpoint} - Email and token is not a pair`, function(done) {
     const payload = {
-      email: 'another@mern-stack.org',
+      email: 'another@tdev.app',
       password: 'new-password'
     };
 

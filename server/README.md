@@ -57,7 +57,7 @@ Sample request body payload
 ```
 {
   "username": "user",
-  "email": "user@mern-stack.org",
+  "email": "user@tdev.app",
   "password": "password",
   "firstName": "User",
   "lastName": "Account"
@@ -102,7 +102,7 @@ Sample request body payload
 
 ```
 {
-  "email": "user@mern-stack.org",
+  "email": "user@tdev.app",
   "password": "password"
 }
 ```
@@ -124,7 +124,7 @@ Sample response
   "user": {
     "_id": "5e47a9600cac851790f29662",
     "username": "user",
-    "email": "user@mern-stack.org",
+    "email": "user@tdev.app",
     "status": "active",
     "firstName": "User",
     "lastName": "Account",
@@ -159,7 +159,7 @@ Sample request body payload
 
 ```
 {
-  "email": "user@mern-stack.org",
+  "email": "user@tdev.app",
   "tokenPurpose": "verifyEmail",
 }
 ```
@@ -227,7 +227,7 @@ Sample request body payload
 
 ```
 {
-  "email": "user@mern-stack.org",
+  "email": "user@tdev.app",
   "tokenPurpose": "resetPassword",
 }
 ```
@@ -271,7 +271,7 @@ Sample request body payload
 
 ```
 {
-  "email": "user@mern-stack.org",
+  "email": "user@tdev.app",
   "password: "new-password"
 }
 ```
@@ -353,7 +353,7 @@ Sample response
   "profile": {
     "_id": "5e47a9600cac851790f29662",
     "username": "user",
-    "email": "user@mern-stack.org",
+    "email": "user@tdev.app",
     "status": "active",
     "firstName": "User",
     "lastName": "Account",
