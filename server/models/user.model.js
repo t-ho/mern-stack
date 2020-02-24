@@ -56,8 +56,8 @@ const userSchema = new mongoose.Schema(
     hashedPassword: {
       type: String
     },
-    // subId will be regenerated (new ObjectId()) when calling user.setPasswordAsync(password)
-    // or user.setSubId(). Hence, we can invalidate all existing JWT tokens.
+    // subId is used to validate JWT token.
+    // Do NOT set directly, call user.setSubId().
     subId: {
       type: String,
       unique: true
@@ -140,6 +140,7 @@ userSchema.methods.toPublicProfileJson = function() {
 
 /**
  * Set subId to this user.
+ * Invalidate all existing JWT tokens
  *
  */
 userSchema.methods.setSubId = function() {
@@ -147,7 +148,7 @@ userSchema.methods.setSubId = function() {
 };
 
 /**
- * Set password and subId to this user.
+ * Set password to this user
  * The password will be hashed and assigned to hashedPassword field
  *
  * Call this function when updating the user password
@@ -157,7 +158,6 @@ userSchema.methods.setSubId = function() {
 userSchema.methods.setPasswordAsync = function(password) {
   const saltRounds = 10;
   return bcrypt.hash(password, saltRounds).then(hash => {
-    this.setSubId();
     this.hashedPassword = hash;
   });
 };
@@ -168,6 +168,9 @@ userSchema.methods.setPasswordAsync = function(password) {
  * @returns {Promise} Resolve with a boolean value
  */
 userSchema.methods.comparePasswordAsync = function(candidatePassword) {
+  if (!this.hashedPassword) {
+    return Promise.resolve(false);
+  }
   return bcrypt.compare(candidatePassword, this.hashedPassword);
 };
 

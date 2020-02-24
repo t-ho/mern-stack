@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const createError = require('http-errors');
-const passport = require('passport');
 const Joi = require('@hapi/joi');
 const sendMailAsync = require('../config/nodemailer');
 const config = require('../config');
@@ -67,6 +66,7 @@ module.exports.resetPassword = (req, res, next) => {
         throw createError(422, 'Token expired.');
       }
       existingUser.clearToken();
+      existingUser.setSubId(); // invalidate all issued JWT tokens
       return existingUser.setPasswordAsync(req.body.password);
     })
     .then(() => {
@@ -232,14 +232,24 @@ module.exports.signUp = (req, res, next) => {
     })
     .then(existingUser => {
       if (existingUser) {
-        if (existingUser.email == req.body.email) {
-          throw createError(422, 'Email is already in use.');
+        if (existingUser.email === req.body.email) {
+          if (existingUser.hashedPassword) {
+            throw createError(422, 'Email is already in use.');
+          } else {
+            newUser = existingUser;
+          }
         } else {
           throw createError(422, 'Username is already in use.');
         }
+      } else {
+        newUser = new User(req.body);
+        newUser.setSubId();
       }
 
-      newUser = new User(req.body);
+      newUser.providers = {
+        name: 'local',
+        userId: newUser._id
+      };
       return newUser.setPasswordAsync(req.body.password);
     })
     .then(() => {

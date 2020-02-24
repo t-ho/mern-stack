@@ -48,6 +48,7 @@ module.exports.updateProfile = (req, res, next) => {
         const { password, ...others } = req.body;
         _.merge(req.user, others);
         if (password) {
+          req.user.setSubId(); // invalidate all existing JWT tokens
           return req.user.setPasswordAsync(password);
         }
       })

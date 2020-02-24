@@ -24,6 +24,12 @@ const localStrategy = new LocalStrategy(
             message: 'Username or email does not exist.'
           });
         }
+        if (!user.hashedPassword) {
+          // not a local account (email and password)
+          return done(null, false, {
+            message: 'Username or email does not exist.'
+          });
+        }
         user.comparePasswordAsync(password).then(isMatch => {
           if (!isMatch) {
             return done(null, false, { message: 'Password is incorrect.' });
