@@ -4,6 +4,8 @@ const authCtrl = require('../../controllers/auth.controller');
 
 const router = express.Router();
 
+router.post('/facebook', authCtrl.facebookSignIn);
+
 router.post('/google', authCtrl.googleSignIn);
 
 router.post(

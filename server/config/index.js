@@ -43,6 +43,10 @@ let config = {
     google: {
       clientId: process.env.GOOGLE_ID, // TODO: edit .env file
       clientSecret: process.env.GOOGLE_SECRET // TODO: edit .env file
+    },
+    facebook: {
+      clientId: process.env.FACEBOOK_ID, // TODO: edit .env file
+      clientSecret: process.env.FACEBOOK_SECRET // TODO: edit .env file
     }
   },
   seed: {

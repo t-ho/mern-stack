@@ -20,6 +20,11 @@ const googleTokenAuthenticate = createAuthStrategy(
   responseAfterSignIn
 );
 
+const facebookTokenAuthenticate = createAuthStrategy(
+  'facebook-token',
+  responseAfterSignIn
+);
+
 /**
  * JOI schema for validating resetPassword payload
  */
@@ -186,6 +191,23 @@ module.exports.googleSignIn = (req, res, next) => {
     .then(payload => {
       req.body = payload;
       googleTokenAuthenticate(req, res, next);
+    })
+    .catch(next);
+};
+
+/**
+ * @function facebookSignIn
+ * Sign in using Facebook token strategy
+ *
+ * @param {string} req.body.access_token The Google access_token
+ * @param {string} [req.body.refresh_token] The Google refresh_token
+ */
+module.exports.facebookSignIn = (req, res, next) => {
+  oauthSignInSchema
+    .validateAsync(req.body)
+    .then(payload => {
+      req.body = payload;
+      facebookTokenAuthenticate(req, res, next);
     })
     .catch(next);
 };

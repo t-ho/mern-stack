@@ -3,6 +3,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
+const FacebookTokenStrategy = require('passport-facebook-token');
 const GoogleTokenStrategy = require('passport-google-token').Strategy;
 const config = require('./index');
 
@@ -64,15 +65,15 @@ const jwtStrategy = new JwtStrategy(
     User.findById(jwtPayload.userId)
       .then(user => {
         if (!user) {
-          return done(null, false, 'Invalid credentials');
+          return done(null, false, 'Invalid credentials.');
         }
 
         if (user.status !== 'active') {
-          return done(null, false, 'Disabled or unverified account');
+          return done(null, false, 'Disabled or unverified account.');
         }
 
         if (user.subId !== jwtPayload.sub) {
-          return done(null, false, 'Invalid credentials');
+          return done(null, false, 'Invalid JWT token.');
         }
 
         return done(null, user);
@@ -97,10 +98,41 @@ const googleTokenStrategy = new GoogleTokenStrategy(
         profile._json.given_name,
         profile._json.family_name
       ),
-      verifiedEmail: profile._json.verified_email,
       firstName: profile._json.given_name,
       lastName: profile._json.family_name,
       picture: profile._json.picture,
+      accessToken,
+      refreshToken
+    };
+
+    updateOrInsert(userProfile)
+      .then(user => {
+        done(null, user);
+      })
+      .catch(done);
+  }
+);
+
+// Create Google Token Strategy
+const facebookTokenStrategy = new FacebookTokenStrategy(
+  {
+    clientID: config.oauth.facebook.clientId,
+    clientSecret: config.oauth.facebook.clientSecret
+  },
+  function(accessToken, refreshToken, profile, done) {
+    console.log(accessToken, refreshToken, profile);
+    const userProfile = {
+      provider: 'facebook',
+      userId: profile.id,
+      email: profile._json.email,
+      username: generateUsername(
+        profile._json.email,
+        profile._json.given_name,
+        profile._json.family_name
+      ),
+      firstName: profile._json.first_name,
+      lastName: profile._json.last_name,
+      picture: profile.photos[0].value,
       accessToken,
       refreshToken
     };
@@ -217,8 +249,9 @@ const updateOrInsert = userProfile => {
   });
 };
 
-passport.use(localStrategy);
-passport.use(jwtStrategy);
+passport.use(facebookTokenStrategy);
 passport.use(googleTokenStrategy);
+passport.use(jwtStrategy);
+passport.use(localStrategy);
 
 module.exports = passport;
