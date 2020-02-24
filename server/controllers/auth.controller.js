@@ -5,8 +5,21 @@ const Joi = require('@hapi/joi');
 const sendMailAsync = require('../config/nodemailer');
 const config = require('../config');
 const constants = require('./constants');
+const createAuthStrategy = require('../middleware/createAuthStrategy');
 
 const User = mongoose.model('User');
+
+const responseAfterSignIn = (req, res, next, user) => {
+  const jwtTokenObj = user.generateJwtToken();
+  res.json({ ...jwtTokenObj, user: user.toProfileJson() });
+};
+
+const localAuthenticate = createAuthStrategy('local', responseAfterSignIn);
+
+const googleTokenAuthenticate = createAuthStrategy(
+  'google-token',
+  responseAfterSignIn
+);
 
 /**
  * JOI schema for validating resetPassword payload
@@ -130,14 +143,14 @@ const signInSchema = Joi.object({
   .messages({ 'object.missing': 'Either username or email must be provided.' });
 
 /**
- * @function signIn
- * Sign in controller. Either email or username must be specified.
+ * @function localSignIn
+ * Sign in using local strategy. Either email or username must be specified.
  *
  * @param {string} req.body.email The email to login
  * @param {string} req.body.username The username to login
  * @param {string} req.body.password The password to login
  */
-module.exports.signIn = (req, res, next) => {
+module.exports.localSignIn = (req, res, next) => {
   signInSchema
     .validateAsync(req.body)
     .then(payload => {
@@ -145,25 +158,36 @@ module.exports.signIn = (req, res, next) => {
 
       req.body.usernameOrEmail = req.body.username || req.body.email;
 
-      passport.authenticate('local', { session: false }, function(
-        err,
-        user,
-        info
-      ) {
-        if (err) {
-          return next(err);
-        }
-        if (!user) {
-          return next(createError(401, info.message));
-        }
-        // login success
-        jwtTokenObj = user.generateJwtToken();
-        res.json({ ...jwtTokenObj, user: user.toProfileJson() });
-      })(req, res, next);
+      localAuthenticate(req, res, next);
     })
     .catch(err => {
       next(err);
     });
+};
+
+/**
+ * JOI schema for validating oauthSignIn payload
+ */
+const oauthSignInSchema = Joi.object({
+  access_token: Joi.string().required(),
+  refresh_token: Joi.string()
+});
+
+/**
+ * @function googleSignIn
+ * Sign in using Google token strategy
+ *
+ * @param {string} req.body.access_token The Google access_token
+ * @param {string} [req.body.refresh_token] The Google refresh_token
+ */
+module.exports.googleSignIn = (req, res, next) => {
+  oauthSignInSchema
+    .validateAsync(req.body)
+    .then(payload => {
+      req.body = payload;
+      googleTokenAuthenticate(req, res, next);
+    })
+    .catch(next);
 };
 
 /**

@@ -38,6 +38,13 @@ let config = {
   paths: {
     root: fspath.normalize(`${__dirname}/..`)
   },
+  oauth: {
+    storeToken: false, // If true, the OAuth access_token and refresh_token will be stored in database
+    google: {
+      clientId: process.env.GOOGLE_ID, // TODO: edit .env file
+      clientSecret: process.env.GOOGLE_SECRET // TODO: edit .env file
+    }
+  },
   seed: {
     logging: true,
     users: [

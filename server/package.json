@@ -44,6 +44,7 @@
     "nodemailer-mailgun-transport": "^2.0.0",
     "nodemon": "^2.0.2",
     "passport": "^0.4.1",
+    "passport-google-token": "^0.1.2",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "supertest": "^4.0.2",

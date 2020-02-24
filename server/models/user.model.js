@@ -5,6 +5,28 @@ const _ = require('lodash');
 const uuidv4 = require('uuid/v4');
 const config = require('../config');
 
+// By defaulf, we don't store oauth access_token and refresh_token
+const providerSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'Provider name is required'],
+    enum: ['local', 'google', 'facebook']
+  },
+  userId: {
+    type: String,
+    required: [true, 'Provider userId is required']
+  },
+  accessToken: {
+    type: String
+  },
+  refreshToken: {
+    type: String
+  },
+  picture: {
+    type: String
+  }
+});
+
 // Define Schema
 const userSchema = new mongoose.Schema(
   {
@@ -32,11 +54,10 @@ const userSchema = new mongoose.Schema(
     },
     // Do NOT set directly, call user.setPasswordAsync(password)
     hashedPassword: {
-      type: String,
-      required: true
+      type: String
     },
-    // subId will be regenerated (new ObjectId()) when call user.setPasswordAsync(password)
-    // hence, we can invalidate all existing JWT tokens.
+    // subId will be regenerated (new ObjectId()) when calling user.setPasswordAsync(password)
+    // or user.setSubId(). Hence, we can invalidate all existing JWT tokens.
     subId: {
       type: String,
       unique: true
@@ -76,7 +97,8 @@ const userSchema = new mongoose.Schema(
     // Do NOT set directly, call user.setToken(tokenPurpose) user.clearToken()
     // to set and clear token and tokenPurpose
     token: { type: String, index: true },
-    tokenPurpose: { type: String, enum: ['verifyEmail', 'resetPassword'] }
+    tokenPurpose: { type: String, enum: ['verifyEmail', 'resetPassword'] },
+    providers: [providerSchema]
   },
   { timestamps: true }
 );
@@ -117,7 +139,15 @@ userSchema.methods.toPublicProfileJson = function() {
 };
 
 /**
- * Set password to this user.
+ * Set subId to this user.
+ *
+ */
+userSchema.methods.setSubId = function() {
+  this.subId = new mongoose.Types.ObjectId().toHexString();
+};
+
+/**
+ * Set password and subId to this user.
  * The password will be hashed and assigned to hashedPassword field
  *
  * Call this function when updating the user password
@@ -127,7 +157,7 @@ userSchema.methods.toPublicProfileJson = function() {
 userSchema.methods.setPasswordAsync = function(password) {
   const saltRounds = 10;
   return bcrypt.hash(password, saltRounds).then(hash => {
-    this.subId = new mongoose.Types.ObjectId().toHexString();
+    this.setSubId();
     this.hashedPassword = hash;
   });
 };
