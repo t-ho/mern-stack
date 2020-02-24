@@ -6,6 +6,10 @@ export const SIGN_IN = '[Auth] Sign In';
 export const SIGN_IN_SUCCESS = '[Auth] Sign In Success';
 export const SIGN_IN_FAIL = '[Auth] Sign In Fail';
 
+export const OAUTH_SIGN_IN = '[Auth] OAuth Sign In';
+export const OAUTH_SIGN_IN_SUCCESS = '[Auth] OAuth Sign In Success';
+export const OAUTH_SIGN_IN_FAIL = '[Auth] OAuth Sign In Fail';
+
 export const TRY_LOCAL_SIGN_IN = '[Auth] Try Local Sign In';
 export const TRY_LOCAL_SIGN_IN_SUCCESS = '[Auth] Try Local Sign In Success';
 export const TRY_LOCAL_SIGN_IN_FAIL = '[Auth] Try Local Sign In Fail';

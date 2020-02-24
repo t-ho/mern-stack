@@ -4,9 +4,11 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { Link } from 'react-router-dom';
 import requireAnonymous from '../../hoc/requireAnonymous';
-import { signIn, unloadAuthPage } from '../../store/actions';
+import { signIn, unloadAuthPage, oauthSignIn } from '../../store/actions';
 import { getProcessing, getError } from '../../store/selectors';
 import { email, minLength, required } from '../../utils/formValidator';
+import GoogleLogin from 'react-google-login';
+import FacebookLogin from 'react-facebook-login';
 
 class SignIn extends React.Component {
   renderInput = field => {
@@ -37,6 +39,30 @@ class SignIn extends React.Component {
     return this.props.signIn(formValues).then(() => {
       if (this.props.errorMessage) {
         throw new SubmissionError({ _error: this.props.errorMessage });
+      }
+    });
+  };
+
+  onGoogleResponse = response => {
+    const payload = {
+      access_token: response.tokenObj.access_token
+    };
+    this.props.oauthSignIn('google', payload).then(() => {
+      // FIXME:
+      if (this.props.errorMessage) {
+        console.log(this.props.errorMessage);
+      }
+    });
+  };
+
+  onFacebookResponse = response => {
+    const payload = {
+      access_token: response.accessToken
+    };
+    this.props.oauthSignIn('facebook', payload).then(() => {
+      // FIXME:
+      if (this.props.errorMessage) {
+        console.log(this.props.errorMessage);
       }
     });
   };
@@ -105,6 +131,39 @@ class SignIn extends React.Component {
               </button>
             </form>
           </div>
+          <div className="ui segment">
+            <div className="ui stackable two column center aligned grid">
+              <div className="column">
+                <GoogleLogin
+                  clientId="134675062003-kr7i4td4lce2pqanf6gb4dnl741h9fk2.apps.googleusercontent.com"
+                  buttonText="Google Login"
+                  onSuccess={this.onGoogleResponse}
+                  onFailure={this.onGoogleResponse}
+                  render={renderProps => (
+                    <button
+                      onClick={renderProps.onClick}
+                      disabled={renderProps.disabled}
+                      className="ui google blue large button"
+                    >
+                      <i className="google icon"></i>
+                      Google Login
+                    </button>
+                  )}
+                />
+              </div>
+              <div className="column">
+                <FacebookLogin
+                  appId="3506152506126012"
+                  fields="name,email,picture"
+                  scope="public_profile,email"
+                  callback={this.onFacebookResponse}
+                  textButton="Facebook Login"
+                  icon={<i className="facebook icon"></i>}
+                  cssClass="ui facebook large button"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -131,6 +190,6 @@ const validate = values => {
 
 export default compose(
   requireAnonymous(),
-  connect(maptStateToProps, { signIn, unloadAuthPage }),
+  connect(maptStateToProps, { signIn, unloadAuthPage, oauthSignIn }),
   reduxForm({ form: 'signIn', validate })
 )(SignIn);

@@ -48,6 +48,38 @@ const signInFail = payload => {
   };
 };
 
+export const oauthSignIn = (provider, formValues) => (
+  dispatch,
+  getState,
+  { mernApi }
+) => {
+  dispatch({ type: actionTypes.OAUTH_SIGN_IN });
+  return mernApi.post(`/auth/${provider}`, formValues).then(
+    response => {
+      dispatch(oauthSignInSuccess(response.data));
+      redirectAfterSignIn(dispatch, getState);
+      setAuthInfo(response.data, mernApi);
+    },
+    err => {
+      dispatch(oauthSignInFail(err.response.data.error));
+    }
+  );
+};
+
+const oauthSignInSuccess = payload => {
+  return {
+    type: actionTypes.OAUTH_SIGN_IN_SUCCESS,
+    payload
+  };
+};
+
+const oauthSignInFail = payload => {
+  return {
+    type: actionTypes.OAUTH_SIGN_IN_FAIL,
+    payload
+  };
+};
+
 const redirectAfterSignIn = (dispatch, getState) => {
   if (getState().auth.attemptedPath) {
     dispatch(replace(getState().auth.attemptedPath));
