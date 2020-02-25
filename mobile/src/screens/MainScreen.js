@@ -10,11 +10,12 @@ class MainScreen extends React.Component {
   render() {
     const { currentUser, signedInWith } = this.props;
     let picture = '';
-    if (currentUser.provider) {
+    let initials = '';
+    if (currentUser) {
       picture = currentUser.provider[signedInWith].picture;
+      initials =
+        currentUser.firstName.charAt(0) + currentUser.lastName.charAt(0);
     }
-    const initials =
-      currentUser.firstName.charAt(0) + currentUser.lastName.charAt(0);
     return (
       <SafeAreaView forceInset={{ top: 'always' }}>
         <Card title={`${currentUser.firstName} ${currentUser.lastName}`}>

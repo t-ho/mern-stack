@@ -4,17 +4,17 @@ import { SafeAreaView, NavigationEvents } from 'react-navigation';
 import { Text, Button, SocialIcon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { getError } from '../store/selectors';
-import { facebookSignIn, unloadAuthScreen } from '../store/actions';
+import {
+  facebookSignIn,
+  googleSignIn,
+  unloadAuthScreen
+} from '../store/actions';
 import Spacer from '../components/Spacer';
 
 class SignInOptionsScreen extends React.Component {
   static navigationOptions = {
     headerShown: false,
     headerTitle: 'Sign In Options'
-  };
-
-  onFacebookPress = () => {
-    this.props.facebookSignIn();
   };
 
   render() {
@@ -44,7 +44,7 @@ class SignInOptionsScreen extends React.Component {
             title="Sign In With Facebook"
             button
             type="facebook"
-            onPress={this.onFacebookPress}
+            onPress={() => this.props.facebookSignIn()}
           />
         </Spacer>
         <Spacer>
@@ -53,7 +53,7 @@ class SignInOptionsScreen extends React.Component {
             title="Sign In With Google"
             button
             type="google"
-            onPress={this.onFacebookPress}
+            onPress={() => this.props.googleSignIn()}
           />
         </Spacer>
       </SafeAreaView>
@@ -86,6 +86,8 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(mapStateToProps, { facebookSignIn, unloadAuthScreen })(
-  SignInOptionsScreen
-);
+export default connect(mapStateToProps, {
+  facebookSignIn,
+  googleSignIn,
+  unloadAuthScreen
+})(SignInOptionsScreen);

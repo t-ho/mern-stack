@@ -1,5 +1,6 @@
 import { AsyncStorage } from 'react-native';
 import * as Facebook from 'expo-facebook';
+import * as Google from 'expo-google-app-auth';
 import NavService from '../../navigation/NavigationService';
 import * as actionTypes from './types';
 
@@ -70,6 +71,50 @@ const facebookSignInSuccess = payload => {
 const facebookSignInFail = payload => {
   return {
     type: actionTypes.FACEBOOK_SIGN_IN_FAIL,
+    payload
+  };
+};
+
+export const googleSignIn = () => (dispatch, getState, { mernApi }) => {
+  dispatch({ type: actionTypes.GOOGLE_SIGN_IN });
+  return Google.logInAsync({
+    iosClientId:
+      '134675062003-f1j19fs02f57g2pol76s1l63bo8bh065.apps.googleusercontent.com',
+    androidClientId:
+      '134675062003-5ndljaf10rb8k3g7kqkkcg3e89kuvdr8.apps.googleusercontent.com',
+    scopes: ['profile', 'email']
+  })
+    .then(response => {
+      if (response.type === 'success') {
+        return mernApi
+          .post('/auth/google', { access_token: response.accessToken })
+          .then(response => {
+            dispatch(googleSignInSuccess(response.data));
+            NavService.navigate('Main');
+            setAuthInfoAsync(response.data, mernApi);
+          })
+          .catch(err => {
+            dispatch(googleSignInFail(err.response.data.error));
+          });
+      } else {
+        // Simply ignore cancellation
+        dispatch(googleSignInFail());
+        return Promise.resolve();
+      }
+    })
+    .catch(err => console.log(err));
+};
+
+const googleSignInSuccess = payload => {
+  return {
+    type: actionTypes.GOOGLE_SIGN_IN_SUCCESS,
+    payload
+  };
+};
+
+const googleSignInFail = payload => {
+  return {
+    type: actionTypes.GOOGLE_SIGN_IN_FAIL,
     payload
   };
 };

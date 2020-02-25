@@ -6,6 +6,10 @@ export const FACEBOOK_SIGN_IN = '[Auth] Facebook Sign In';
 export const FACEBOOK_SIGN_IN_SUCCESS = '[Auth] Facebook Sign In Success';
 export const FACEBOOK_SIGN_IN_FAIL = '[Auth] Facebook Sign In Fail';
 
+export const GOOGLE_SIGN_IN = '[Auth] Google Sign In';
+export const GOOGLE_SIGN_IN_SUCCESS = '[Auth] Google Sign In Success';
+export const GOOGLE_SIGN_IN_FAIL = '[Auth] Google Sign In Fail';
+
 export const SIGN_UP = '[Auth] Sign Up';
 export const SIGN_UP_SUCCESS = '[Auth] Sign Up Success';
 export const SIGN_UP_FAIL = '[Auth] Sign Up Fail';
