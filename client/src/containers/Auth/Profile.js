@@ -2,29 +2,39 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import requireRole from '../../hoc/requireRole';
-import { getCurrentUser } from '../../store/selectors';
+import { getCurrentUser, getSignedInWith } from '../../store/selectors';
 
 class Profile extends React.Component {
   render() {
-    const { currentUser } = this.props;
+    const { currentUser, signedInWith } = this.props;
+    let picture = '';
+    if (currentUser.provider) {
+      picture = currentUser.provider[signedInWith].picture;
+    }
+    picture = picture ? picture : '/logo512.png';
     return (
-      <div className="ui card">
-        <div className="content">
-          <a className="header">{`${currentUser.firstName} ${currentUser.lastName}`}</a>
-          <div className="meta">
-            <span className="date">
-              Joined in {new Date(currentUser.createdAt).getFullYear()}
+      <div className="ui centered grid padded">
+        <div className="ui raised card">
+          <div className="image">
+            <img src={picture} />
+          </div>
+          <div className="content">
+            <span className="header">{`${currentUser.firstName} ${currentUser.lastName}`}</span>
+            <div className="meta">
+              <span className="date">
+                Joined in {new Date(currentUser.createdAt).getFullYear()}
+              </span>
+            </div>
+            <div className="description">
+              You are logged in as <b>{currentUser.username}</b>
+            </div>
+          </div>
+          <div className="extra content">
+            <span>
+              <i className="envelope icon"></i>
+              {currentUser.email}
             </span>
           </div>
-          <div className="description">
-            You are logged in as {currentUser.username}
-          </div>
-        </div>
-        <div className="extra content">
-          <a>
-            <i className="envelope icon"></i>
-            {currentUser.email}
-          </a>
         </div>
       </div>
     );
@@ -33,7 +43,8 @@ class Profile extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    currentUser: getCurrentUser(state)
+    currentUser: getCurrentUser(state),
+    signedInWith: getSignedInWith(state)
   };
 };
 

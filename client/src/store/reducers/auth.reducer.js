@@ -30,6 +30,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
         processed: true,
         token: action.payload.token,
         expiresAt: action.payload.expiresAt,
+        signedInWith: action.payload.signedInWith,
         user: { ...action.payload.user },
         defaultPath: '/profile'
       };
@@ -38,6 +39,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
         ...state,
         token: action.payload.token,
         expiresAt: action.payload.expiresAt,
+        signedInWith: action.payload.signedInWith,
         user: { ...action.payload.user },
         defaultPath: '/profile'
       };

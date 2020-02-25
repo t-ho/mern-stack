@@ -135,7 +135,7 @@ class SignIn extends React.Component {
             <div className="ui stackable two column center aligned grid">
               <div className="column">
                 <GoogleLogin
-                  clientId="134675062003-kr7i4td4lce2pqanf6gb4dnl741h9fk2.apps.googleusercontent.com"
+                  clientId="134675062003-8rtdt9qeg4o2gmeckeoe65s2i9lq9cks.apps.googleusercontent.com"
                   buttonText="Google Login"
                   onSuccess={this.onGoogleResponse}
                   onFailure={this.onGoogleResponse}

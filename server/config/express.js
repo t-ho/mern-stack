@@ -40,7 +40,7 @@ app.use(routes);
 
 // Serve static assets in production mode
 if (config.env === 'production') {
-  const buildDir = path.resolve(__dirname, '../../web-client/build');
+  const buildDir = path.resolve(__dirname, '../../client/build');
   if (!fs.existsSync(buildDir)) {
     throw new Error(
       `The production build directory "${buildDir}" does not exist`
