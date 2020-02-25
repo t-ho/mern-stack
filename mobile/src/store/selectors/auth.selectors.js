@@ -12,6 +12,11 @@ export const getProcessed = createSelector(
   auth => auth.processed
 );
 
+export const getSignedInWith = createSelector(
+  getAuthState,
+  auth => auth.signedInWith
+);
+
 export const getError = createSelector(getAuthState, auth => {
   return auth.error;
 });

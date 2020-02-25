@@ -1,5 +1,6 @@
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import SignInOptionsScreen from '../screens/SignInOptionsScreen';
 import SignInScreen from '../screens/SignInScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import MainScreen from '../screens/MainScreen';
@@ -9,12 +10,13 @@ import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 
 const authStack = createStackNavigator(
   {
+    SignInOptions: SignInOptionsScreen,
     SignIn: SignInScreen,
     SignUp: SignUpScreen,
     RequestPasswordReset: RequestPasswordResetScreen,
     RequestVerificationEmail: RequestVerificationEmailScreen
   },
-  { initialRouteName: 'SignIn' }
+  { initialRouteName: 'SignInOptions' }
 );
 
 const mainSwitch = createSwitchNavigator(

@@ -1,4 +1,5 @@
 import { AsyncStorage } from 'react-native';
+import * as Facebook from 'expo-facebook';
 import NavService from '../../navigation/NavigationService';
 import * as actionTypes from './types';
 
@@ -30,6 +31,49 @@ const signInFail = payload => {
   };
 };
 
+export const facebookSignIn = () => (dispatch, getState, { mernApi }) => {
+  dispatch({ type: actionTypes.FACEBOOK_SIGN_IN });
+  return Facebook.initializeAsync('1538677846308680')
+    .then(() => {
+      return Facebook.logInWithReadPermissionsAsync({
+        permissions: ['public_profile', 'email']
+      });
+    })
+    .then(response => {
+      if (response.type === 'success') {
+        return mernApi
+          .post('/auth/facebook', { access_token: response.token })
+          .then(response => {
+            dispatch(facebookSignInSuccess(response.data));
+            NavService.navigate('Main');
+            setAuthInfoAsync(response.data, mernApi);
+          })
+          .catch(err => {
+            dispatch(facebookSignInFail(err.response.data.error));
+          });
+      } else {
+        // Simply ignore cancellation
+        dispatch(facebookSignInFail());
+        return Promise.resolve();
+      }
+    })
+    .catch(err => console.log(err));
+};
+
+const facebookSignInSuccess = payload => {
+  return {
+    type: actionTypes.FACEBOOK_SIGN_IN_SUCCESS,
+    payload
+  };
+};
+
+const facebookSignInFail = payload => {
+  return {
+    type: actionTypes.FACEBOOK_SIGN_IN_FAIL,
+    payload
+  };
+};
+
 export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.TRY_LOCAL_SIGN_IN });
   getAuthInfoAsync().then(
@@ -37,7 +81,7 @@ export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
       const now = Math.floor(Date.now() / 1000);
       if (!authInfo || (authInfo && authInfo.expiresAt <= now)) {
         dispatch(tryLocalSignInFail());
-        NavService.navigate('SignIn');
+        NavService.navigate('SignInOptions');
         return Promise.resolve();
       }
       // if token age > 30 days, then refresh token
@@ -86,7 +130,7 @@ export const signOut = () => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.SIGN_OUT });
   clearAuthInfoAsync(mernApi);
   dispatch({ type: actionTypes.SIGN_OUT_SUCCESS });
-  NavService.navigate('SignIn');
+  NavService.navigate('SignInOptions');
 };
 
 export const signUp = formValues => (dispatch, getState, { mernApi }) => {

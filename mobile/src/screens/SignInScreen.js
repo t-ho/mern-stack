@@ -10,8 +10,7 @@ import Spacer from '../components/Spacer';
 
 class SignInScreen extends React.Component {
   static navigationOptions = {
-    headerShown: false,
-    headerTitle: 'Sign In'
+    headerTitle: ''
   };
 
   state = { email: '', password: '' };
@@ -29,7 +28,7 @@ class SignInScreen extends React.Component {
         <NavigationEvents onWillBlur={this.props.unloadAuthScreen} />
         <Spacer>
           <Text h3 style={styles.title}>
-            Sign In
+            Sign In With Email
           </Text>
         </Spacer>
         <Input

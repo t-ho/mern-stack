@@ -1,27 +1,67 @@
 import React from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { StyleSheet, Text } from 'react-native';
-import { Button } from 'react-native-elements';
+import { Button, Card, Avatar } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { signOut } from '../store/actions';
-import Spacer from '../components/Spacer';
+import { getCurrentUser, getSignedInWith } from '../store/selectors';
 
 class MainScreen extends React.Component {
   render() {
+    const { currentUser, signedInWith } = this.props;
+    let picture = '';
+    if (currentUser.provider) {
+      picture = currentUser.provider[signedInWith].picture;
+    }
+    const initials =
+      currentUser.firstName.charAt(0) + currentUser.lastName.charAt(0);
     return (
       <SafeAreaView forceInset={{ top: 'always' }}>
-        <Spacer>
-          <Text>MainScreen</Text>
-          <Text>You are logged in</Text>
-        </Spacer>
-        <Spacer>
-          <Button title="Sign Out" onPress={this.props.signOut} />
-        </Spacer>
+        <Card title={`${currentUser.firstName} ${currentUser.lastName}`}>
+          <Avatar
+            rounded
+            size="xlarge"
+            title={initials}
+            source={{ uri: picture }}
+            containerStyle={styles.avatar}
+          />
+          <Text style={styles.text}>
+            You are logged in as {currentUser.username}
+          </Text>
+          <Text style={styles.text}>Your email: {currentUser.email}</Text>
+          <Button
+            style={styles.button}
+            title="Sign Out"
+            onPress={this.props.signOut}
+          />
+        </Card>
       </SafeAreaView>
     );
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  text: {
+    alignSelf: 'center'
+  },
+  avatar: {
+    marginBottom: 20,
+    alignSelf: 'center'
+  },
+  button: {
+    marginTop: 20
+  }
+});
 
-export default connect(null, { signOut })(MainScreen);
+const mapStateToProps = state => {
+  return {
+    currentUser: getCurrentUser(state),
+    signedInWith: getSignedInWith(state)
+  };
+};
+
+export default connect(mapStateToProps, {
+  signOut,
+  getCurrentUser,
+  getSignedInWith
+})(MainScreen);

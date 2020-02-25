@@ -12,6 +12,7 @@ const INITIAL_STATE = {
 const authReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case actionTypes.SIGN_IN:
+    case actionTypes.FACEBOOK_SIGN_IN:
     case actionTypes.TRY_LOCAL_SIGN_IN:
     case actionTypes.SIGN_OUT:
     case actionTypes.SIGN_UP:
@@ -19,6 +20,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case actionTypes.REQUEST_PASSWORD_RESET:
       return { ...state, processed: false, processing: true, error: null };
     case actionTypes.SIGN_IN_SUCCESS:
+    case actionTypes.FACEBOOK_SIGN_IN_SUCCESS:
     case actionTypes.TRY_LOCAL_SIGN_IN_SUCCESS:
       return {
         ...state,
@@ -26,6 +28,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
         processed: true,
         token: action.payload.token,
         expiresAt: action.payload.expiresAt,
+        signedInWith: action.payload.signedInWith,
         user: { ...action.payload.user }
       };
     case actionTypes.SIGN_UP_SUCCESS:
@@ -37,6 +40,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
         processed: true
       };
     case actionTypes.SIGN_IN_FAIL:
+    case actionTypes.FACEBOOK_SIGN_IN_FAIL:
     case actionTypes.SIGN_UP_FAIL:
     case actionTypes.REQUEST_VERIFICATION_EMAIL_FAIL:
     case actionTypes.REQUEST_PASSWORD_RESET_FAIL:
