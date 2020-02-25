@@ -135,7 +135,7 @@ class SignIn extends React.Component {
             <div className="ui stackable two column center aligned grid">
               <div className="column">
                 <GoogleLogin
-                  clientId="134675062003-8rtdt9qeg4o2gmeckeoe65s2i9lq9cks.apps.googleusercontent.com"
+                  clientId="134675062003-8rtdt9qeg4o2gmeckeoe65s2i9lq9cks.apps.googleusercontent.com" // TODO: Add your Google client ID
                   buttonText="Google Login"
                   onSuccess={this.onGoogleResponse}
                   onFailure={this.onGoogleResponse}
@@ -153,7 +153,7 @@ class SignIn extends React.Component {
               </div>
               <div className="column">
                 <FacebookLogin
-                  appId="3506152506126012"
+                  appId="1538677846308680" // TODO: Add your Facebook app Id
                   fields="name,email,picture"
                   scope="public_profile,email"
                   callback={this.onFacebookResponse}

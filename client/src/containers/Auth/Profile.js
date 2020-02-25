@@ -16,7 +16,7 @@ class Profile extends React.Component {
       <div className="ui centered grid padded">
         <div className="ui raised card">
           <div className="image">
-            <img src={picture} />
+            <img alt="avatar" src={picture} />
           </div>
           <div className="content">
             <span className="header">{`${currentUser.firstName} ${currentUser.lastName}`}</span>
