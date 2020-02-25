@@ -1,29 +1,66 @@
 const mongoose = require('mongoose');
 const createError = require('http-errors');
 const Joi = require('@hapi/joi');
+const passport = require('passport');
 const sendMailAsync = require('../config/nodemailer');
 const config = require('../config');
 const constants = require('./constants');
-const createAuthStrategy = require('../middleware/createAuthStrategy');
 
 const User = mongoose.model('User');
 
-const responseAfterSignIn = (req, res, next, user) => {
-  const jwtTokenObj = user.generateJwtToken();
-  res.json({ ...jwtTokenObj, user: user.toProfileJson() });
+/**
+ * @function determineStrategy
+ * Determine the authentication strategy based on the given provider
+ *
+ * @param {string} provider The authentication provider
+ * @returns {string} The passport strategy name/type
+ */
+const determineStrategy = provider => {
+  switch (provider) {
+    case 'local':
+      return 'local';
+    case 'google':
+      return 'google-token';
+    case 'facebook':
+      return 'facebook-token';
+    default:
+      throw new Error(`Unknown provider "${provider}".`);
+  }
 };
 
-const localAuthenticate = createAuthStrategy('local', responseAfterSignIn);
+/**
+ * @function createAuthStrategy
+ * Create a function/controller to authenticate requests based on the given provider
+ *
+ * @param {string} provider The authentication provider
+ * @returns {function} The function/controller to authenticate requests
+ */
+const createAuthStrategy = provider => (req, res, next) => {
+  const strategy = determineStrategy(provider);
+  passport.authenticate(strategy, { session: false }, function(
+    err,
+    user,
+    info
+  ) {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return next(createError(401, info.message));
+    }
+    res.json({
+      ...user.generateJwtToken(),
+      signedInWith: provider,
+      user: user.toProfileJson()
+    });
+  })(req, res, next);
+};
 
-const googleTokenAuthenticate = createAuthStrategy(
-  'google-token',
-  responseAfterSignIn
-);
+const localAuthenticate = createAuthStrategy('local');
 
-const facebookTokenAuthenticate = createAuthStrategy(
-  'facebook-token',
-  responseAfterSignIn
-);
+const googleAuthenticate = createAuthStrategy('google');
+
+const facebookAuthenticate = createAuthStrategy('facebook');
 
 /**
  * JOI schema for validating resetPassword payload
@@ -190,7 +227,7 @@ module.exports.googleSignIn = (req, res, next) => {
     .validateAsync(req.body)
     .then(payload => {
       req.body = payload;
-      googleTokenAuthenticate(req, res, next);
+      googleAuthenticate(req, res, next);
     })
     .catch(next);
 };
@@ -207,7 +244,7 @@ module.exports.facebookSignIn = (req, res, next) => {
     .validateAsync(req.body)
     .then(payload => {
       req.body = payload;
-      facebookTokenAuthenticate(req, res, next);
+      facebookAuthenticate(req, res, next);
     })
     .catch(next);
 };
@@ -255,7 +292,7 @@ module.exports.signUp = (req, res, next) => {
     .then(existingUser => {
       if (existingUser) {
         if (existingUser.email === req.body.email) {
-          if (existingUser.hashedPassword) {
+          if (existingUser.provider.local) {
             throw createError(422, 'Email is already in use.');
           } else {
             newUser = existingUser;
@@ -268,8 +305,7 @@ module.exports.signUp = (req, res, next) => {
         newUser.setSubId();
       }
 
-      newUser.providers = {
-        name: 'local',
+      newUser.provider.local = {
         userId: newUser._id
       };
       return newUser.setPasswordAsync(req.body.password);
@@ -286,14 +322,14 @@ module.exports.signUp = (req, res, next) => {
         return sendVerificationEmailAsync(user).then(result => {
           res.status(201).json({
             success: true,
-            message: 'A verification email has been sent to your email'
+            message: 'A verification email has been sent to your email.'
           });
         });
       }
 
       res.status(201).json({
         success: true,
-        message: 'Your account has been created successfully'
+        message: 'Your account has been created successfully.'
       });
     })
     .catch(next);
@@ -307,7 +343,7 @@ module.exports.signUp = (req, res, next) => {
  */
 module.exports.verifyEmail = (req, res, next) => {
   if (!req.params.token) {
-    return next(createError(422, 'No token provided'));
+    return next(createError(422, 'No token provided.'));
   }
 
   return User.findOne({
@@ -340,7 +376,7 @@ const sendPasswordResetToken = (req, res, next) => {
   User.findOne({ email: req.body.email })
     .then(user => {
       if (!user) {
-        throw createError(422, 'Email not associated with any acount');
+        throw createError(422, 'Email not associated with any acount.');
       }
       user.setToken(req.body.tokenPurpose);
       return user.save();
@@ -360,7 +396,7 @@ const sendPasswordResetToken = (req, res, next) => {
     .then(result => {
       res.status(200).json({
         success: true,
-        message: 'A password-reset email has been sent to your email'
+        message: 'A password-reset email has been sent to your email.'
       });
     })
     .catch(next);

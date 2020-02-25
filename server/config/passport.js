@@ -25,7 +25,7 @@ const localStrategy = new LocalStrategy(
             message: 'Username or email does not exist.'
           });
         }
-        if (!user.hashedPassword) {
+        if (!user.provider.local) {
           // not a local account (email and password)
           return done(null, false, {
             message: 'Username or email does not exist.'
@@ -120,7 +120,6 @@ const facebookTokenStrategy = new FacebookTokenStrategy(
     clientSecret: config.oauth.facebook.clientSecret
   },
   function(accessToken, refreshToken, profile, done) {
-    console.log(accessToken, refreshToken, profile);
     const userProfile = {
       provider: 'facebook',
       userId: profile.id,
@@ -201,11 +200,8 @@ const updateOrInsert = userProfile => {
     $or: [
       { email: userProfile.email },
       {
-        providers: {
-          $elemMatch: {
-            name: userProfile.provider,
-            userId: userProfile.userId
-          }
+        [`provider.${userProfile.provider}`]: {
+          userId: userProfile.userId
         }
       }
     ]
@@ -230,19 +226,24 @@ const updateOrInsert = userProfile => {
             username: availableUsername,
             firstName: userProfile.firstName,
             lastName: userProfile.lastName,
-            providers: [provider]
+            provider: {
+              [userProfile.provider]: provider
+            }
           });
           user.setSubId();
           return user.save();
         }
       );
     }
-    // user existed, update providers
-    let providers = existingUser.providers.filter(
-      p => p.name !== provider.name
-    );
-    providers.push(provider);
-    existingUser.providers = providers;
+    // user existed, update provider
+    if (existingUser.provider[userProfile.provider]) {
+      existingUser.provider[userProfile.provider] = {
+        ...existingUser.provider[userProfile.provider],
+        ...provider
+      };
+    } else {
+      existingUser.provider[userProfile.provider] = provider;
+    }
     existingUser.firstName = userProfile.firstName;
     existingUser.lastName = userProfile.lastName;
     return existingUser.save();

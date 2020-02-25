@@ -90,7 +90,7 @@ describe('ENDPOINT: POST /api/auth/signup', function() {
       .send(payload)
       .expect(201)
       .expect({
-        message: 'Your account has been created successfully',
+        message: 'Your account has been created successfully.',
         success: true
       })
       .then(res => User.findOne({ email: payload.email }))

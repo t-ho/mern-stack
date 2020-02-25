@@ -36,8 +36,7 @@ module.exports.createUsers = users => {
           }
           const user = new User(userInfo);
           user.setSubId();
-          user.providers = {
-            name: 'local',
+          user.provider.local = {
             userId: user._id
           };
           return user.setPasswordAsync(userInfo.password).then(() => {

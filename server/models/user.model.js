@@ -6,12 +6,7 @@ const uuidv4 = require('uuid/v4');
 const config = require('../config');
 
 // By defaulf, we don't store oauth access_token and refresh_token
-const providerSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Provider name is required'],
-    enum: ['local', 'google', 'facebook']
-  },
+const providerDataSchema = new mongoose.Schema({
   userId: {
     type: String,
     required: [true, 'Provider userId is required']
@@ -98,7 +93,17 @@ const userSchema = new mongoose.Schema(
     // to set and clear token and tokenPurpose
     token: { type: String, index: true },
     tokenPurpose: { type: String, enum: ['verifyEmail', 'resetPassword'] },
-    providers: [providerSchema]
+    provider: {
+      local: {
+        type: providerDataSchema
+      },
+      google: {
+        type: providerDataSchema
+      },
+      facebook: {
+        type: providerDataSchema
+      }
+    }
   },
   { timestamps: true }
 );
@@ -111,7 +116,11 @@ userSchema.virtual('fullName').get(function() {
  * @returns {object} The user profile object without sensitive info such as hashed password
  */
 userSchema.methods.toProfileJson = function() {
-  return _.pick(this, [
+  const user = this.toObject();
+  user.provider = _.mapValues(user.provider, p => {
+    return _.pick(p, ['userId', 'picture']);
+  });
+  return _.pick(user, [
     '_id',
     'username',
     'email',
@@ -120,6 +129,7 @@ userSchema.methods.toProfileJson = function() {
     'lastName',
     'role',
     'permissions',
+    'provider',
     'createdAt',
     'updatedAt'
   ]);
