@@ -6,6 +6,30 @@
 
 # API
 
+- [General](#general)
+  - [Health Check - `GET /api/alive`](#health-check)
+- [Authentication](#authentication)
+  - [Sign Up - `POST /api/auth/signup`](#sign-up)
+  - [Sign In With Email - `POST /api/auth/signin`](#sign-in-with-email)
+  - [Sign In With Facebook - `POST /api/auth/facebook`](#sign-in-with-facebook)
+  - [Sign In With Google - `POST /api/auth/google`](#sign-in-with-google)
+  - [Send Verification Email - `POST /api/auth/send-token`](#send-verification-email)
+  - [Verify Email Code - `POST /api/auth/verify-email/:token`](#verify-email-code)
+  - [Send Password Reset Email - `POST /api/auth/send-token`](#send-password-reset-email)
+  - [Confirm Password Reset - `POST /api/auth/password-reset/:token`](#confirm-password-reset)
+  - [Refresh JWT Token - `POST /api/auth/refresh-token`](#refresh-jwt-token)
+- [Profile](#profile)
+  - [Get User Profile - `GET /api/profiles`](#get-user-profile)
+  - [Get User Public Profile - `GET /api/profiles/:userId`](#get-user-public-profile)
+  - [Update User Profile - `PUT /api/profiles`](#update-user-profile)
+- [Users](#users)
+  - [Get Users - `GET /api/users`](#get-users)
+  - [Get User - `GET /api/users/:userId`](#get-user)
+  - [Update User - `PUT /api/users/:userId`](#update-user)
+  - [Delete User - `DELETE /api/users/:userId`](#delete-user)
+
+## General
+
 ### Health Check
 
 - **Method:** `GET`
@@ -80,7 +104,7 @@ Sample response
 }
 ```
 
-### Sign In
+### Sign In With Email
 
 - **Method:** `POST`
 - **Content-Type:** `application/json`
@@ -121,6 +145,7 @@ Sample response
 {
   "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZTQ3YTk2MDBjYWM4NTE3OTBmMjk2NjMiLCJ1c2VySWQiOiI1ZTQ3YTk2MDBjYWM4NTE3OTBmMjk2NjIiLCJpYXQiOjE1ODE4MDk2ODYsImV4cCI6MTU4Njk5MzY4Nn0.6rjee9HpGVP-IsKfGBAiqU8Y6FHuuBN25odKZExig7liOhJd2lq_eUn8JUOtz7QpRX5RvGYzbzlxdRED0boNVA",
   "expiresAt": 1586993686,
+  "signedInWith": "local",
   "user": {
     "_id": "5e47a9600cac851790f29662",
     "username": "user",
@@ -131,6 +156,139 @@ Sample response
     "role": "user",
     "permissions": {
       "debug": false
+    },
+    "provider": {
+      "local": {
+        "userId": "5e47a9600cac851790f29662"
+      }
+    },
+    "createdAt": "2020-02-15T08:18:40.429Z",
+    "updatedAt": "2020-02-15T08:18:40.429Z"
+  }
+}
+```
+
+### Sign In With Facebook
+
+- **Method:** `POST`
+- **Content-Type:** `application/json`
+- **Endpoint**
+
+```
+/api/auth/facebook
+```
+
+- **Resquest Body Payload**
+
+| Property Name   | Type     | Required | Description                |
+| --------------- | -------- | -------- | -------------------------- |
+| `access_token`  | _string_ | Yes      | The Facebook access token  |
+| `refresh_token` | _string_ | No       | The Facebook refresh token |
+
+Sample request body payload
+
+```
+{
+  "access_token": "EAAx0076n7rwBAE76vGbLS0y5kK01uZB7urxtWC1eh30NIZBO4G0XH1gA2CSRGtNFxaZBKiUlT0nZAPk8AzyiK1DGg47HOaWnkfaG4FyZCPhiEQZByPbP9dWB6JZBw6GiIXPGmnSdkIAzuT5MEK5slyAEs8jZCazvs4wziZBdx2eIsWeSN5Hhxy9RRrZCSHrWGm8hvI9DrxZCkeR4BWVxLN6YItOuZC1A80VctLAZD"
+}
+```
+
+- **Response Payload**
+
+| Property Name  | Type     | Description                                          |
+| -------------- | -------- | ---------------------------------------------------- |
+| `token`        | _string_ | JWT token                                            |
+| `expiresAt`    | _number_ | Expires at time (seconds)                            |
+| `signedInWith` | _string_ | The auth provider that the user used to sign in with |
+| `user`         | _object_ | User info                                            |
+
+Sample response
+
+```
+{
+  "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZTQ3YTk2MDBjYWM4NTE3OTBmMjk2NjMiLCJ1c2VySWQiOiI1ZTQ3YTk2MDBjYWM4NTE3OTBmMjk2NjIiLCJpYXQiOjE1ODE4MDk2ODYsImV4cCI6MTU4Njk5MzY4Nn0.6rjee9HpGVP-IsKfGBAiqU8Y6FHuuBN25odKZExig7liOhJd2lq_eUn8JUOtz7QpRX5RvGYzbzlxdRED0boNVA",
+  "expiresAt": 1586993686,
+  "signedInWith": "facebook",
+  "user": {
+    "_id": "5e47a9600cac851790f29662",
+    "username": "user",
+    "email": "user@tdev.app",
+    "status": "active",
+    "firstName": "User",
+    "lastName": "Account",
+    "role": "user",
+    "permissions": {
+      "debug": false
+    },
+    "provider": {
+      "facebook": {
+        "userId": "197154714957030",
+        "picture": "picture-url.jpg"
+      }
+    },
+    "createdAt": "2020-02-15T08:18:40.429Z",
+    "updatedAt": "2020-02-15T08:18:40.429Z"
+  }
+}
+```
+
+### Sign In With Google
+
+- **Method:** `POST`
+- **Content-Type:** `application/json`
+- **Endpoint**
+
+```
+/api/auth/google
+```
+
+- **Resquest Body Payload**
+
+| Property Name   | Type     | Required | Description              |
+| --------------- | -------- | -------- | ------------------------ |
+| `access_token`  | _string_ | Yes      | The Google access token  |
+| `refresh_token` | _string_ | No       | The Google refresh token |
+
+Sample request body payload
+
+```
+{
+  "access_token": "ya29.ImC_B0mUYTJfjnd7fCgZvIc6WWjj3GxMC0LwiOyhqDIQBJyAJN9eSRCLNDcr6bXCtHn5oSNOsB-Es2AIIOso-ZMBe0w31K2Ud85dpq3ep4tZI6uftTq_Vjjnzf4esuVO73c"
+}
+```
+
+- **Response Payload**
+
+| Property Name  | Type     | Description                                          |
+| -------------- | -------- | ---------------------------------------------------- |
+| `token`        | _string_ | JWT token                                            |
+| `expiresAt`    | _number_ | Expires at time (seconds)                            |
+| `signedInWith` | _string_ | The auth provider that the user used to sign in with |
+| `user`         | _object_ | User info                                            |
+
+Sample response
+
+```
+{
+  "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZTQ3YTk2MDBjYWM4NTE3OTBmMjk2NjMiLCJ1c2VySWQiOiI1ZTQ3YTk2MDBjYWM4NTE3OTBmMjk2NjIiLCJpYXQiOjE1ODE4MDk2ODYsImV4cCI6MTU4Njk5MzY4Nn0.6rjee9HpGVP-IsKfGBAiqU8Y6FHuuBN25odKZExig7liOhJd2lq_eUn8JUOtz7QpRX5RvGYzbzlxdRED0boNVA",
+  "expiresAt": 1586993686,
+  "signedInWith": "google",
+  "user": {
+    "_id": "5e47a9600cac851790f29662",
+    "username": "user",
+    "email": "user@tdev.app",
+    "status": "active",
+    "firstName": "User",
+    "lastName": "Account",
+    "role": "user",
+    "permissions": {
+      "debug": false
+    },
+    "provider": {
+      "google": {
+        "userId": "114383861774342288272",
+        "picture": "picture-url.jpg"
+      }
     },
     "createdAt": "2020-02-15T08:18:40.429Z",
     "updatedAt": "2020-02-15T08:18:40.429Z"
@@ -324,6 +482,8 @@ Sample response
 }
 ```
 
+## Profile
+
 ### Get User Profile
 
 - **Method:** `GET`
@@ -360,6 +520,11 @@ Sample response
     "role": "user",
     "permissions": {
       "debug": false
+    },
+    "provider": {
+      "local": {
+        "userId": "5e47a9600cac851790f29662"
+      }
     },
     "createdAt": "2020-02-15T08:18:40.429Z",
     "updatedAt": "2020-02-15T08:18:40.429Z"
@@ -508,6 +673,11 @@ Sample response
       "permissions": {
         "debug": false
       },
+      "provider": {
+        "local": {
+          "userId": "5e24d42cf7dddf012cd496b2"
+        }
+      },
       "createdAt": "2020-01-19T22:11:56.779Z",
       "updatedAt": "2020-01-19T23:18:47.897Z"
     },
@@ -521,6 +691,11 @@ Sample response
       "role": "user",
       "permissions": {
         "debug": false
+      },
+      "provider": {
+        "local": {
+          "userId": "5e24db1d560ba309f0b0b5a8"
+        }
       },
       "createdAt": "2020-01-20T20:44:44.634Z",
       "updatedAt": "2020-01-22T01:28:03.783Z"
@@ -548,9 +723,9 @@ Authorization: Bearer {JWT Token}
 
 - **Response Payload**
 
-| Property Name | Type           | Description     |
-| ------------- | -------------- | --------------- |
-| `user`        | _object array_ | A list of users |
+| Property Name | Type     | Description |
+| ------------- | -------- | ----------- |
+| `user`        | _object_ | User info   |
 
 Sample response
 
@@ -566,6 +741,11 @@ Sample response
     "role": "root",
     "permissions": {
       "debug": false
+    },
+    "provider": {
+      "local": {
+        "userId": "5e24d42cf7dddf012cd496b2"
+      }
     },
     "createdAt": "2020-01-19T22:11:56.779Z",
     "updatedAt": "2020-01-19T23:18:47.897Z"
