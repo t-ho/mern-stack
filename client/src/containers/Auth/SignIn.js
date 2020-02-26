@@ -4,7 +4,12 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { Link } from 'react-router-dom';
 import requireAnonymous from '../../hoc/requireAnonymous';
-import { signIn, unloadAuthPage, oauthSignIn } from '../../store/actions';
+import {
+  signIn,
+  facebookSignIn,
+  googleSignIn,
+  unloadAuthPage
+} from '../../store/actions';
 import { getProcessing, getError } from '../../store/selectors';
 import { email, minLength, required } from '../../utils/formValidator';
 import GoogleLogin from 'react-google-login';
@@ -43,11 +48,11 @@ class SignIn extends React.Component {
     });
   };
 
-  onGoogleResponse = response => {
+  onFacebookResponse = response => {
     const payload = {
-      access_token: response.tokenObj.access_token
+      access_token: response.accessToken
     };
-    this.props.oauthSignIn('google', payload).then(() => {
+    this.props.facebookSignIn(payload).then(() => {
       // FIXME:
       if (this.props.errorMessage) {
         console.log(this.props.errorMessage);
@@ -55,11 +60,11 @@ class SignIn extends React.Component {
     });
   };
 
-  onFacebookResponse = response => {
+  onGoogleResponse = response => {
     const payload = {
-      access_token: response.accessToken
+      access_token: response.tokenObj.access_token
     };
-    this.props.oauthSignIn('facebook', payload).then(() => {
+    this.props.googleSignIn(payload).then(() => {
       // FIXME:
       if (this.props.errorMessage) {
         console.log(this.props.errorMessage);
@@ -156,6 +161,7 @@ class SignIn extends React.Component {
                   appId="1538677846308680" // TODO: Add your Facebook app Id
                   fields="name,email,picture"
                   scope="public_profile,email"
+                  version="6.0"
                   callback={this.onFacebookResponse}
                   textButton="Facebook Login"
                   icon={<i className="facebook icon"></i>}
@@ -190,6 +196,11 @@ const validate = values => {
 
 export default compose(
   requireAnonymous(),
-  connect(maptStateToProps, { signIn, unloadAuthPage, oauthSignIn }),
+  connect(maptStateToProps, {
+    signIn,
+    facebookSignIn,
+    googleSignIn,
+    unloadAuthPage
+  }),
   reduxForm({ form: 'signIn', validate })
 )(SignIn);

@@ -14,7 +14,8 @@ const INITIAL_STATE = {
 const authReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case actionTypes.SIGN_IN:
-    case actionTypes.OAUTH_SIGN_IN:
+    case actionTypes.FACEBOOK_SIGN_IN:
+    case actionTypes.GOOGLE_SIGN_IN:
     case actionTypes.SIGN_OUT:
     case actionTypes.SIGN_UP:
     case actionTypes.VERIFY_EMAIL:
@@ -23,7 +24,8 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case actionTypes.RESET_PASSWORD:
       return { ...state, processed: false, processing: true, error: null };
     case actionTypes.SIGN_IN_SUCCESS:
-    case actionTypes.OAUTH_SIGN_IN_SUCCESS:
+    case actionTypes.FACEBOOK_SIGN_IN_SUCCESS:
+    case actionTypes.GOOGLE_SIGN_IN_SUCCESS:
       return {
         ...state,
         processing: false,
@@ -54,7 +56,8 @@ const authReducer = (state = INITIAL_STATE, action) => {
         processed: true
       };
     case actionTypes.SIGN_IN_FAIL:
-    case actionTypes.OAUTH_SIGN_IN_FAIL:
+    case actionTypes.FACEBOOK_SIGN_IN_FAIL:
+    case actionTypes.GOOGLE_SIGN_IN_FAIL:
     case actionTypes.SIGN_UP_FAIL:
     case actionTypes.VERIFY_EMAIL_FAIL:
     case actionTypes.REQUEST_VERIFICATION_EMAIL_FAIL:

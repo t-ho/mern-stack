@@ -6,9 +6,13 @@ export const SIGN_IN = '[Auth] Sign In';
 export const SIGN_IN_SUCCESS = '[Auth] Sign In Success';
 export const SIGN_IN_FAIL = '[Auth] Sign In Fail';
 
-export const OAUTH_SIGN_IN = '[Auth] OAuth Sign In';
-export const OAUTH_SIGN_IN_SUCCESS = '[Auth] OAuth Sign In Success';
-export const OAUTH_SIGN_IN_FAIL = '[Auth] OAuth Sign In Fail';
+export const FACEBOOK_SIGN_IN = '[Auth] Facebook Sign In';
+export const FACEBOOK_SIGN_IN_SUCCESS = '[Auth] Facebook Sign In Success';
+export const FACEBOOK_SIGN_IN_FAIL = '[Auth] Facebook Sign In Fail';
+
+export const GOOGLE_SIGN_IN = '[Auth] Google Sign In';
+export const GOOGLE_SIGN_IN_SUCCESS = '[Auth] Google Sign In Success';
+export const GOOGLE_SIGN_IN_FAIL = '[Auth] Google Sign In Fail';
 
 export const TRY_LOCAL_SIGN_IN = '[Auth] Try Local Sign In';
 export const TRY_LOCAL_SIGN_IN_SUCCESS = '[Auth] Try Local Sign In Success';

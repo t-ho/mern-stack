@@ -22,15 +22,14 @@ const signUpFail = payload => {
 
 export const signIn = formValues => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.SIGN_IN });
-  return mernApi.post('/auth/signin', formValues).then(
-    response => {
-      dispatch(signInSuccess(response.data));
-      redirectAfterSignIn(dispatch, getState);
-      setAuthInfo(response.data, mernApi);
-    },
-    err => {
-      dispatch(signInFail(err.response.data.error));
-    }
+  return signInHelper(
+    '/auth/sign',
+    formValues,
+    signInSuccess,
+    signInFail,
+    dispatch,
+    getState,
+    mernApi
   );
 };
 
@@ -48,45 +47,62 @@ const signInFail = payload => {
   };
 };
 
-export const oauthSignIn = (provider, formValues) => (
+export const facebookSignIn = formValues => (
   dispatch,
   getState,
   { mernApi }
 ) => {
-  dispatch({ type: actionTypes.OAUTH_SIGN_IN });
-  return mernApi.post(`/auth/${provider}`, formValues).then(
-    response => {
-      dispatch(oauthSignInSuccess(response.data));
-      redirectAfterSignIn(dispatch, getState);
-      setAuthInfo(response.data, mernApi);
-    },
-    err => {
-      dispatch(oauthSignInFail(err.response.data.error));
-    }
+  dispatch({ type: actionTypes.FACEBOOK_SIGN_IN });
+  return signInHelper(
+    '/auth/facebook',
+    formValues,
+    facebookSignInSuccess,
+    facebookSignInFail,
+    dispatch,
+    getState,
+    mernApi
   );
 };
 
-const oauthSignInSuccess = payload => {
+const facebookSignInSuccess = payload => {
   return {
-    type: actionTypes.OAUTH_SIGN_IN_SUCCESS,
+    type: actionTypes.FACEBOOK_SIGN_IN_SUCCESS,
     payload
   };
 };
 
-const oauthSignInFail = payload => {
+const facebookSignInFail = payload => {
   return {
-    type: actionTypes.OAUTH_SIGN_IN_FAIL,
+    type: actionTypes.FACEBOOK_SIGN_IN_FAIL,
     payload
   };
 };
 
-const redirectAfterSignIn = (dispatch, getState) => {
-  if (getState().auth.attemptedPath) {
-    dispatch(replace(getState().auth.attemptedPath));
-    dispatch(setAttemptedPath(null));
-  } else {
-    dispatch(replace(getState().auth.defaultPath));
-  }
+export const googleSignIn = formValues => (dispatch, getState, { mernApi }) => {
+  dispatch({ type: actionTypes.GOOGLE_SIGN_IN });
+  return signInHelper(
+    '/auth/google',
+    formValues,
+    googleSignInSuccess,
+    googleSignInFail,
+    dispatch,
+    getState,
+    mernApi
+  );
+};
+
+const googleSignInSuccess = payload => {
+  return {
+    type: actionTypes.GOOGLE_SIGN_IN_SUCCESS,
+    payload
+  };
+};
+
+const googleSignInFail = payload => {
+  return {
+    type: actionTypes.GOOGLE_SIGN_IN_FAIL,
+    payload
+  };
 };
 
 export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
@@ -141,16 +157,6 @@ export const setAttemptedPath = path => {
     type: actionTypes.SET_ATTEMPTED_PATH,
     payload: path
   };
-};
-
-const setAuthInfo = (authInfo, mernApi) => {
-  mernApi.setAuthToken(authInfo.token);
-  localStorage.setItem('authInfo', JSON.stringify(authInfo));
-};
-
-const clearAuthInfo = mernApi => {
-  mernApi.setAuthToken('');
-  localStorage.removeItem('authInfo');
 };
 
 export const signOut = () => (dispatch, getState, { mernApi }) => {
@@ -243,4 +249,44 @@ export const unloadAuthPage = () => {
   return {
     type: actionTypes.UNLOAD_AUTH_PAGE
   };
+};
+
+const signInHelper = (
+  endpoint,
+  payload,
+  actionSuccess,
+  actionFail,
+  dispatch,
+  getState,
+  mernApi
+) => {
+  return mernApi.post(endpoint, payload).then(
+    response => {
+      dispatch(actionSuccess(response.data));
+      redirectAfterSignIn(dispatch, getState);
+      setAuthInfo(response.data, mernApi);
+    },
+    err => {
+      dispatch(actionFail(err.response.data.error));
+    }
+  );
+};
+
+const setAuthInfo = (authInfo, mernApi) => {
+  mernApi.setAuthToken(authInfo.token);
+  localStorage.setItem('authInfo', JSON.stringify(authInfo));
+};
+
+const clearAuthInfo = mernApi => {
+  mernApi.setAuthToken('');
+  localStorage.removeItem('authInfo');
+};
+
+const redirectAfterSignIn = (dispatch, getState) => {
+  if (getState().auth.attemptedPath) {
+    dispatch(replace(getState().auth.attemptedPath));
+    dispatch(setAttemptedPath(null));
+  } else {
+    dispatch(replace(getState().auth.defaultPath));
+  }
 };
