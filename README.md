@@ -1,3 +1,7 @@
+[![CI Testing](https://github.com/t-ho/mern/workflows/CI%20Testing/badge.svg?branch=master)](https://github.com/t-ho/mern/actions)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![license](https://img.shields.io/npm/l/ngx-ui-loader.svg)](https://github.com/t-ho/mern/blob/master/LICENSE)
+
 # MERN Stack
 
 ### MongoDB - Express - React - Redux - React Native - NodeJS

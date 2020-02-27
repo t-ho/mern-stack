@@ -1,4 +1,4 @@
-name: Node.js CI
+name: CI Testing
 
 on: [push]
 
@@ -9,8 +9,8 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x]
-        
+        node-version: [10.x, 12.x, 13.x]
+
     services:
       mongo:
         image: mongo:latest
@@ -32,7 +32,7 @@ jobs:
             ${{ runner.OS }}-node-${{ matrix.node-version }}-
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
-            
+
       - run: npm install
       - run: npm test
         env:

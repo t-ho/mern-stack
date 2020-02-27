@@ -23,7 +23,7 @@ const signUpFail = payload => {
 export const signIn = formValues => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.SIGN_IN });
   return signInHelper(
-    '/auth/sign',
+    '/auth/signin',
     formValues,
     signInSuccess,
     signInFail,
