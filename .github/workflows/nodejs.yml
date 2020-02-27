@@ -1,0 +1,48 @@
+name: Node.js CI
+
+on: [push]
+
+jobs:
+  test:
+    name: Test on Node ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x]
+        
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Cache Node.js modules
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+          key: ${{ runner.OS }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-${{ matrix.node-version }}-
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+            
+      - run: npm install
+      - run: npm test
+        env:
+          CI: true
+          FACEBOOK_ID: FACEBOOK-APP-ID
+          FACEBOOK_SECRET: FACEBOOK-APP-SECRET
+          GOOGLE_ID: GOOGLE-CLIENT-ID
+          GOOGLE_SECRET: GOOGLE-CLIENT-SECRET
+          JWT_SECRET: 3c531590-c347-4d6d-ba6e-7392cf2ee92d-YOUR-KEY
+          MAILGUN_API_KEY: YOUR-MAILGUN-API-KEY
+          MONGO_URI: mongodb://localhost:27017/mern
+          NODE_ENV: development
+          SERVER_PORT: 8080
