@@ -1,6 +1,13 @@
 name: CI Testing
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+      - dev
+  pull_request:
+    branches:
+      - master
 
 jobs:
   test:
@@ -37,12 +44,12 @@ jobs:
       - run: npm test
         env:
           CI: true
-          FACEBOOK_ID: FACEBOOK-APP-ID
-          FACEBOOK_SECRET: FACEBOOK-APP-SECRET
-          GOOGLE_ID: GOOGLE-CLIENT-ID
-          GOOGLE_SECRET: GOOGLE-CLIENT-SECRET
-          JWT_SECRET: 3c531590-c347-4d6d-ba6e-7392cf2ee92d-YOUR-KEY
-          MAILGUN_API_KEY: YOUR-MAILGUN-API-KEY
+          FACEBOOK_ID: 1538677846308680
+          FACEBOOK_SECRET: ${{ secrets.FACEBOOK_SECRET }}
+          GOOGLE_ID: 134675062003-8rtdt9qeg4o2gmeckeoe65s2i9lq9cks.apps.googleusercontent.com
+          GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
           MONGO_URI: mongodb://localhost:27017/mern
           NODE_ENV: development
           SERVER_PORT: 8080
