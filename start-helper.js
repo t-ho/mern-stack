@@ -72,19 +72,21 @@ const start = () => {
   if (command.name === 'mobile') {
     runMobile(command);
   } else {
-    run(command);
+    process.exit(run(command));
   }
 };
 
 const run = command => {
   const cmd = command.command;
   if (_.isArray(command.workingDirs)) {
+    status = 0;
     command.workingDirs.forEach(dir => {
       const opts = { cwd: dir, shell: true, stdio: 'inherit' };
       console.log(chalk.cyan(`\n[*] ${command.message} ${dir}...\n`));
-      spawnSync(cmd, command.arguments, opts);
+      const child = spawnSync(cmd, command.arguments, opts);
+      status += child.status;
     });
-    return null;
+    return status;
   } else {
     const opts = { cwd: command.workingDirs, shell: true, stdio: 'inherit' };
     console.log(chalk.cyan(`[*] ${command.message}`));

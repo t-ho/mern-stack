@@ -90,7 +90,13 @@ const run = () => {
     options.raw = true;
   }
 
-  concurently(commands, options).then((success, failure) => {});
+  concurently(commands, options)
+    .then((success, failure) => {})
+    .catch(err => {
+      if (err) {
+        process.exit(1);
+      }
+    });
 };
 
 run();
