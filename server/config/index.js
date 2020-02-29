@@ -1,89 +1,74 @@
 const fspath = require('path');
 const dotenv = require('dotenv');
 const _ = require('lodash');
+const Joi = require('@hapi/joi');
+const chalk = require('chalk');
 
 dotenv.config({ path: fspath.resolve(__dirname, '../../.env') });
 
-let config = {
-  env: process.env.NODE_ENV,
-  app: {
-    name: 'mern', // TODO: Lowercase, URL compatible name
-    title: 'MERN Stack' // TODO: Human friendly name
-  },
-  auth: {
-    // require verify email when signing up
-    verifyEmail: false // Note: If true, please specify your mailgun API key
-  },
-  email: {
-    from: 'no-reply@mern.com', // TODO
-    to: '',
-    signature: 'The MERN Team' // TODO
-  },
+/**
+ * Joi schema for validating environment variables
+ */
+const envVarsSchema = Joi.object({
+  FACEBOOK_APP_ID: Joi.string().required(),
+  FACEBOOK_APP_SECRET: Joi.string().required(),
+  GOOGLE_CLIENT_ID: Joi.string().required(),
+  GOOGLE_CLIENT_SECRET: Joi.string().required(),
+  JWT_SECRET: Joi.string().required(),
+  MAILGUN_API_KEY: Joi.string(),
+  MONGO_URI: Joi.string()
+    .uri()
+    .required(),
+  NODE_ENV: Joi.string().valid('development', 'production', 'test'),
+  SERVER_PORT: Joi.number().required()
+}).unknown();
+
+const { value, error } = envVarsSchema.validate(process.env);
+if (error) {
+  console.log(
+    chalk.red(
+      '\n[-] Invalid environment variables. Please edit the ".env" file and restart the process.'
+    )
+  );
+  throw new Error(error.message);
+}
+
+let envConfig = {
+  env: value.NODE_ENV,
   mailgun: {
-    apiKey: process.env.MAILGUN_API_KEY, // TODO: edit .env file
-    domain: 'sandbox4f20bd7a5b3a451e99ad609946b1db5d.mailgun.org' // TODO:
+    apiKey: value.MAILGUN_API_KEY
   },
   jwt: {
-    algorithm: 'HS512',
-    secret: process.env.JWT_SECRET,
-    expiresIn: 60 * 24 * 60 * 60 // seconds
+    secret: value.JWT_SECRET
   },
   mongo: {
-    uri: process.env.MONGO_URI // TODO: edit .env file
+    uri: value.MONGO_URI
   },
   server: {
-    port: process.env.SERVER_PORT, // TODO: edit .env file
-    url: 'http://localhost' // TODO:
-  },
-  paths: {
-    root: fspath.normalize(`${__dirname}/..`)
+    port: value.SERVER_PORT
   },
   oauth: {
-    storeToken: false, // If true, the OAuth access_token and refresh_token will be stored in database
-    google: {
-      clientId: process.env.GOOGLE_ID, // TODO: edit .env file
-      clientSecret: process.env.GOOGLE_SECRET // TODO: edit .env file
-    },
     facebook: {
-      clientId: process.env.FACEBOOK_ID, // TODO: edit .env file
-      clientSecret: process.env.FACEBOOK_SECRET // TODO: edit .env file
+      clientId: value.FACEBOOK_APP_ID,
+      clientSecret: value.FACEBOOK_APP_SECRET
+    },
+    google: {
+      clientId: value.GOOGLE_CLIENT_ID,
+      clientSecret: value.GOOGLE_CLIENT_SECRET
     }
-  },
-  seed: {
-    logging: true,
-    users: [
-      {
-        username: 'root',
-        email: 'root@tdev.app',
-        password: 'password',
-        firstName: 'Root',
-        lastName: 'Account',
-        role: 'root'
-      },
-      {
-        username: 'admin',
-        email: 'admin@tdev.app',
-        password: 'password',
-        firstName: 'Admin',
-        lastName: 'Account',
-        role: 'admin'
-      },
-      {
-        username: 'user',
-        email: 'user@tdev.app',
-        password: 'password',
-        firstName: 'User',
-        lastName: 'Account',
-        role: 'user'
-      }
-    ]
   }
 };
 
-if (config.env === 'test') {
-  config.seed.logging = false;
-  config.mongo.uri = `mongodb://localhost/${config.app.name}_test`;
-  config.server.port = 7357; // 7357 = TEST
+let config = {};
+
+if (envConfig.env === 'development') {
+  config = require('./config.dev');
+} else if (envConfig.env === 'production') {
+  config = require('./config.prod');
+} else if (envConfig.env === 'test') {
+  config = require('./config.test');
 }
+
+config = _.merge({}, config, envConfig);
 
 module.exports = config;

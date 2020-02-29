@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const createError = require('http-errors');
 const Joi = require('@hapi/joi');
 const passport = require('passport');
-const sendMailAsync = require('../config/nodemailer');
+const sendMailAsync = require('../core/nodemailer');
 const config = require('../config');
 const constants = require('./constants');
 

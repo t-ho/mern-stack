@@ -3,10 +3,10 @@ const chalk = require('chalk');
 const config = require('./config');
 
 // Load mongoose and models
-require('./config/mongoose');
+require('./core/mongoose');
 
 // Load express
-const app = require('./config/express');
+const app = require('./core/express');
 
 // Server Setup
 const server = http.createServer(app);

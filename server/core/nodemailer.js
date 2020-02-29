@@ -5,7 +5,7 @@ const nodemailerMailgun = require('nodemailer-mailgun-transport');
 const Handlebars = require('handlebars');
 const createError = require('http-errors');
 const _ = require('lodash');
-const config = require('./index');
+const config = require('../config/index');
 
 const transporter = nodemailer.createTransport(
   nodemailerMailgun({

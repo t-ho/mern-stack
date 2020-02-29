@@ -1,0 +1,62 @@
+const fspath = require('path');
+
+/**
+ * Default configuration
+ */
+let defaultConfig = {
+  app: {
+    name: 'mern', // TODO: Lowercase, URL compatible name
+    title: 'MERN Stack' // TODO: Human friendly name
+  },
+  auth: {
+    // require email verification when signing up
+    // if false, the password reset functionality is also disabled.
+    verifyEmail: false
+  },
+  email: {
+    from: 'no-reply@localhost', // TODO
+    to: '',
+    signature: 'The MERN Team' // TODO
+  },
+  mailgun: {
+    apiKey: 'This will be overriden by environment variable MAILGUN_API_KEY',
+    domain: 'sandbox4f20bd7a5b3a451e99ad609946b1db5d.mailgun.org' // TODO
+  },
+  jwt: {
+    secret: 'This will be overriden by environment variable JWT_SECRET',
+    algorithm: 'HS512',
+    expiresIn: 60 * 24 * 60 * 60 // seconds
+  },
+  mongo: {
+    uri: 'This will be overriden by environment variable MONGO_URI',
+    testUri: 'mongodb://localhost:27017/mern_test'
+  },
+  server: {
+    port: 'This will be overriden by environment variable SERVER_PORT',
+    url: 'http://localhost' // TODO:
+  },
+  paths: {
+    root: fspath.normalize(`${__dirname}/..`)
+  },
+  oauth: {
+    storeToken: false, // If true, the OAuth access_token and refresh_token will be stored in database
+    google: {
+      clientId:
+        'This will be overriden by environment variable GOOGLE_CLIENT_ID',
+      clientSecret:
+        'This will be overriden by environment variable GOOGLE_CLIENT_SECRET'
+    },
+    facebook: {
+      clientId:
+        'This will be overriden by environment variable FACEBOOK_APP_ID',
+      clientSecret:
+        'This will be overriden by environment variable FACEBOOK_APP_SECRET'
+    }
+  },
+  seed: {
+    logging: true,
+    users: []
+  }
+};
+
+module.exports = defaultConfig;

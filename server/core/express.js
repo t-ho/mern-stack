@@ -9,7 +9,7 @@ const morgan = require('morgan');
 const createError = require('http-errors');
 const routes = require('../routes');
 const passport = require('./passport');
-const config = require('./index');
+const config = require('../config/index');
 
 // App Setup
 const app = express();

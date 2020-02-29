@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const chalk = require('chalk');
-const config = require('./index');
+const config = require('../config/index');
 
 /**
  * @function createUsers
@@ -11,11 +11,6 @@ const config = require('./index');
  */
 module.exports.createUsers = users => {
   const User = mongoose.model('User');
-  // Only seed root and admin in production mode
-  if (config.env === 'production') {
-    users = users.filter(user => user.role !== 'user');
-  }
-
   let addedUsers = [];
 
   return users
