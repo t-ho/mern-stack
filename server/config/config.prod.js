@@ -10,9 +10,8 @@ let prodConfig = {
     title: 'MERN Stack' // TODO: Human friendly name
   },
   auth: {
-    // require email verification when signing up
-    // if false, the password reset functionality is also disabled.
-    verifyEmail: true
+    verifyEmail: false, // If true, require email verification when signing up
+    resetPassword: false // If true, be able to reset password via email
   },
   email: {
     from: 'no-reply@mern.tdev.app', // TODO
@@ -41,7 +40,7 @@ let prodConfig = {
       {
         username: 'root',
         email: 'root@tdev.app',
-        password: 'password',
+        password: 'qweasdzxc',
         firstName: 'Root',
         lastName: 'Account',
         role: 'root'
@@ -49,7 +48,7 @@ let prodConfig = {
       {
         username: 'admin',
         email: 'admin@tdev.app',
-        password: 'password',
+        password: 'qweasdzxc',
         firstName: 'Admin',
         lastName: 'Account',
         role: 'admin'

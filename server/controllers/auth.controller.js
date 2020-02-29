@@ -85,6 +85,10 @@ const resetPasswordSchema = Joi.object({
  * @param {string} req.body.password The new password
  */
 module.exports.resetPassword = (req, res, next) => {
+  if (!config.auth.resetPassword) {
+    return next(createError(404, 'Unknown request.'));
+  }
+
   if (!req.params.token) {
     return next(createError(422, 'No token provided'));
   }
@@ -146,9 +150,16 @@ module.exports.sendToken = (req, res, next) => {
     .then(payload => {
       req.body = payload;
       if (req.body.tokenPurpose === 'resetPassword') {
+        if (!config.auth.resetPassword) {
+          return next(createError(404, 'Unknown request.'));
+        }
         return sendPasswordResetToken(req, res, next);
       }
       if (req.body.tokenPurpose === 'verifyEmail') {
+        if (!config.auth.verifyEmail) {
+          return next(createError(404, 'Unknown request.'));
+        }
+
         return sendVerificationEmailToken(req, res, next);
       }
     })
@@ -281,6 +292,7 @@ const signUpSchema = Joi.object({
  */
 module.exports.signUp = (req, res, next) => {
   let newUser;
+  let isOauthAccount = false;
   signUpSchema
     .validateAsync(req.body)
     .then(payload => {
@@ -296,6 +308,7 @@ module.exports.signUp = (req, res, next) => {
             throw createError(422, 'Email is already in use.');
           } else {
             newUser = existingUser;
+            isOauthAccount = true;
           }
         } else {
           throw createError(422, 'Username is already in use.');
@@ -311,14 +324,14 @@ module.exports.signUp = (req, res, next) => {
       return newUser.setPasswordAsync(req.body.password);
     })
     .then(() => {
-      if (config.auth.verifyEmail) {
+      if (config.auth.verifyEmail && !isOauthAccount) {
         newUser.setToken('verifyEmail');
         newUser.status = 'unverifiedEmail';
       }
       return newUser.save();
     })
     .then(user => {
-      if (config.auth.verifyEmail) {
+      if (config.auth.verifyEmail && !isOauthAccount) {
         return sendVerificationEmailAsync(user).then(result => {
           res.status(201).json({
             success: true,
@@ -342,6 +355,10 @@ module.exports.signUp = (req, res, next) => {
  * @param {string} req.params.token The verification email token
  */
 module.exports.verifyEmail = (req, res, next) => {
+  if (!config.auth.verifyEmail) {
+    return next(createError(404, 'Unknown request.'));
+  }
+
   if (!req.params.token) {
     return next(createError(422, 'No token provided.'));
   }
@@ -413,10 +430,6 @@ const sendPasswordResetToken = (req, res, next) => {
  * @param {function} next
  */
 const sendVerificationEmailToken = (req, res, next) => {
-  if (!config.auth.verifyEmail) {
-    return next(createError(404, 'Unknown request.'));
-  }
-
   User.findOne({ email: req.body.email })
     .then(user => {
       if (!user) {
@@ -434,7 +447,7 @@ const sendVerificationEmailToken = (req, res, next) => {
     .then(result => {
       res.status(200).json({
         success: true,
-        message: 'A verification email has been sent to your email'
+        message: 'A verification email has been sent to your email.'
       });
     })
     .catch(next);

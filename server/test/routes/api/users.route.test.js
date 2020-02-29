@@ -90,13 +90,29 @@ describe('ENDPOINT: GET /api/users/', function() {
           );
           expect(user).to.have.property('createdAt');
           expect(user).to.have.property('updatedAt');
+          expect(user.provider).to.deep.equal({
+            local: {
+              userId: app.locals.existing[[user.role]]._id.toString()
+            },
+            google: {
+              // not have property "accessToken" and "refreshToken"
+              userId: app.locals.existing[[user.role]].provider.google.userId,
+              picture: app.locals.existing[[user.role]].provider.google.picture
+            },
+            facebook: {
+              // not have property "accessToken" and "refreshToken"
+              userId: app.locals.existing[[user.role]].provider.facebook.userId,
+              picture:
+                app.locals.existing[[user.role]].provider.facebook.picture
+            }
+          });
           expect(user).to.not.have.property('hashedPassword');
           expect(user).to.not.have.property('password');
           expect(user).to.not.have.property('subId');
           expect(user).to.not.have.property('token');
           expect(user).to.not.have.property('tokenPurpose');
           expect(user).to.deep.include(
-            _.pick(app.locals.existing[[user.role]].toJSON(), [
+            _.pick(app.locals.existing[[user.role]].toObject(), [
               'username',
               'email',
               'status',
@@ -217,13 +233,34 @@ describe('ENDPOINT: GET /api/users/:id', function() {
         );
         expect(res.body.user).to.have.property('createdAt');
         expect(res.body.user).to.have.property('updatedAt');
+        expect(res.body.user.provider).to.deep.equal({
+          local: {
+            userId: app.locals.existing[[res.body.user.role]]._id.toString()
+          },
+          google: {
+            // not have property "accessToken" and "refreshToken"
+            userId:
+              app.locals.existing[[res.body.user.role]].provider.google.userId,
+            picture:
+              app.locals.existing[[res.body.user.role]].provider.google.picture
+          },
+          facebook: {
+            // not have property "accessToken" and "refreshToken"
+            userId:
+              app.locals.existing[[res.body.user.role]].provider.facebook
+                .userId,
+            picture:
+              app.locals.existing[[res.body.user.role]].provider.facebook
+                .picture
+          }
+        });
         expect(res.body.user).to.not.have.property('hashedPassword');
         expect(res.body.user).to.not.have.property('password');
         expect(res.body.user).to.not.have.property('subId');
         expect(res.body.user).to.not.have.property('token');
         expect(res.body.user).to.not.have.property('tokenPurpose');
         expect(res.body.user).to.deep.include(
-          _.pick(app.locals.existing[[res.body.user.role]].toJSON(), [
+          _.pick(app.locals.existing[[res.body.user.role]].toObject(), [
             'username',
             'email',
             'status',
@@ -470,6 +507,15 @@ describe('ENDPOINT: PUT /api/users/:userId', function() {
         // this will be updated
         debug: true
       },
+      provider: {
+        // this will be updated
+        google: {
+          userId: 'new-google-user-id',
+          picture: 'new-google-avatar-url',
+          accessToken: 'new-google-access-token',
+          refreshToken: 'new-google-refresh-token'
+        }
+      },
       createdAt: '2020-01-20T20:44:45.634Z',
       updatedAt: '2020-01-22T01:28:09.783Z'
     };
@@ -484,8 +530,8 @@ describe('ENDPOINT: PUT /api/users/:userId', function() {
       })
       .then(res => User.findById(targetUser._id))
       .then(updatedUser => {
-        expect(updatedUser.toJSON()).to.deep.include(
-          _.pick(targetUser.toJSON(), [
+        expect(updatedUser.toObject()).to.deep.include(
+          _.pick(targetUser.toObject(), [
             '_id',
             'username',
             'email',
@@ -495,7 +541,8 @@ describe('ENDPOINT: PUT /api/users/:userId', function() {
             'token',
             'tokenPurpose',
             'subId',
-            'hashedPassword'
+            'hashedPassword',
+            'provider'
           ])
         );
         expect(updatedUser.status).to.be.equal(payload.status);

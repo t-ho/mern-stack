@@ -6,9 +6,8 @@ const defaultConfig = require('./config.default');
  */
 let testConfig = {
   auth: {
-    // require email verification when signing up
-    // if false, the password reset functionality is also disabled.
-    verifyEmail: false
+    verifyEmail: false, // If true, require email verification when signing up
+    resetPassword: false // If true, be able to reset password via email
   },
   mongo: {
     testUri: `mongodb://localhost:27017/${defaultConfig.app.name}_test`
@@ -31,7 +30,21 @@ let testConfig = {
         password: 'password',
         firstName: 'Root',
         lastName: 'Account',
-        role: 'root'
+        role: 'root',
+        provider: {
+          google: {
+            userId: 'google-user-id-01',
+            picture: 'google-avatar-url',
+            accessToken: 'google-access-token',
+            refreshToken: 'google-refresh-token'
+          },
+          facebook: {
+            userId: 'facebook-user-id-01',
+            picture: 'facebook-avatar-url',
+            accessToken: 'facebook-access-token',
+            refreshToken: 'facebook-refresh-token'
+          }
+        }
       },
       {
         username: 'admin',
@@ -39,7 +52,21 @@ let testConfig = {
         password: 'password',
         firstName: 'Admin',
         lastName: 'Account',
-        role: 'admin'
+        role: 'admin',
+        provider: {
+          google: {
+            userId: 'google-user-id-02',
+            picture: 'google-avatar-url',
+            accessToken: 'google-access-token',
+            refreshToken: 'google-refresh-token'
+          },
+          facebook: {
+            userId: 'facebook-user-id-02',
+            picture: 'facebook-avatar-url',
+            accessToken: 'facebook-access-token',
+            refreshToken: 'facebook-refresh-token'
+          }
+        }
       },
       {
         username: 'user',
@@ -47,7 +74,21 @@ let testConfig = {
         password: 'password',
         firstName: 'User',
         lastName: 'Account',
-        role: 'user'
+        role: 'user',
+        provider: {
+          google: {
+            userId: 'google-user-id-03',
+            picture: 'google-avatar-url',
+            accessToken: 'google-access-token',
+            refreshToken: 'google-refresh-token'
+          },
+          facebook: {
+            userId: 'facebook-user-id-03',
+            picture: 'facebook-avatar-url',
+            accessToken: 'facebook-access-token',
+            refreshToken: 'facebook-refresh-token'
+          }
+        }
       }
     ]
   }

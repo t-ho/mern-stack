@@ -78,13 +78,28 @@ describe('ENDPOINT: GET /api/profiles/', function() {
         expect(res.body.profile._id).to.be.equal(existingAdmin._id.toString());
         expect(res.body.profile).to.have.property('createdAt');
         expect(res.body.profile).to.have.property('updatedAt');
+        expect(res.body.profile.provider).to.deep.equal({
+          local: {
+            userId: existingAdmin._id.toString()
+          },
+          google: {
+            // not have property "accessToken" and "refreshToken"
+            userId: existingAdmin.provider.google.userId,
+            picture: existingAdmin.provider.google.picture
+          },
+          facebook: {
+            // not have property "accessToken" and "refreshToken"
+            userId: existingAdmin.provider.facebook.userId,
+            picture: existingAdmin.provider.facebook.picture
+          }
+        });
         expect(res.body.profile).to.not.have.property('hashedPassword');
         expect(res.body.profile).to.not.have.property('password');
         expect(res.body.profile).to.not.have.property('subId');
         expect(res.body.profile).to.not.have.property('token');
         expect(res.body.profile).to.not.have.property('tokenPurpose');
         expect(res.body.profile).to.deep.include(
-          _.pick(existingAdmin.toJSON(), [
+          _.pick(existingAdmin.toObject(), [
             'username',
             'email',
             'status',
@@ -174,6 +189,14 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
       permissions: {
         debug: true
       },
+      provider: {
+        google: {
+          userId: 'new-google-user-id',
+          picture: 'new-google-avatar-url',
+          accessToken: 'new-google-access-token',
+          refreshToken: 'new-google-refresh-token'
+        }
+      },
       createdAt: '2020-01-20T20:44:44.634Z',
       updatedAt: '2020-01-22T01:28:03.783Z'
     };
@@ -188,8 +211,8 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
       })
       .then(res => User.findById(existingAdmin._id))
       .then(updatedUser => {
-        expect(updatedUser.toJSON()).to.deep.include(
-          _.pick(existingAdmin.toJSON(), [
+        expect(updatedUser.toObject()).to.deep.include(
+          _.pick(existingAdmin.toObject(), [
             '_id',
             'username',
             'email',
@@ -198,7 +221,8 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
             'permissions',
             'createdAt',
             'token',
-            'tokenPurpose'
+            'tokenPurpose',
+            'provider'
           ])
         );
         expect(updatedUser.firstName).to.be.equal(payload.firstName);
@@ -208,6 +232,7 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
         expect(updatedUser.hashedPassword).to.not.equal(
           existingAdmin.hashedPassword
         );
+        expect(mongoose.Types.ObjectId.isValid(updatedUser.subId)).to.be.true;
         expect(updatedUser.subId).to.not.equal(payload.subId);
         expect(updatedUser.subId).to.not.equal(existingAdmin.subId);
 
@@ -235,8 +260,8 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
       })
       .then(res => User.findById(existingAdmin._id))
       .then(updatedUser => {
-        expect(updatedUser.toJSON()).to.deep.include(
-          _.pick(existingAdmin.toJSON(), [
+        expect(updatedUser.toObject()).to.deep.include(
+          _.pick(existingAdmin.toObject(), [
             '_id',
             'username',
             'email',
@@ -247,7 +272,8 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
             'token',
             'tokenPurpose',
             'subId',
-            'hashedPassword'
+            'hashedPassword',
+            'provider'
           ])
         );
         expect(updatedUser.firstName).to.be.equal(payload.firstName);
@@ -300,6 +326,7 @@ describe('ENDPOINT: GET /api/profiles/:userId', function() {
         expect(res.body.profile).to.not.have.property('token');
         expect(res.body.profile).to.not.have.property('tokenPurpose');
         expect(res.body.profile).to.not.have.property('hashedPassword');
+        expect(res.body.profile).to.not.have.property('provider');
         done();
       })
       .catch(done);

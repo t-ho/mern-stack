@@ -6,9 +6,8 @@ const defaultConfig = require('./config.default');
  */
 let devConfig = {
   auth: {
-    // require email verification when signing up
-    // if false, the password reset functionality is also disabled.
-    verifyEmail: false
+    verifyEmail: false, // If true, require email verification when signing up
+    resetPassword: false // If true, be able to reset password via email
   },
   mailgun: {
     domain: 'sandbox4f20bd7a5b3a451e99ad609946b1db5d.mailgun.org' // TODO:

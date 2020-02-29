@@ -9,12 +9,11 @@ let defaultConfig = {
     title: 'MERN Stack' // TODO: Human friendly name
   },
   auth: {
-    // require email verification when signing up
-    // if false, the password reset functionality is also disabled.
-    verifyEmail: false
+    verifyEmail: false, // If true, require email verification when signing up
+    resetPassword: false // If true, be able to reset password via email
   },
   email: {
-    from: 'no-reply@localhost', // TODO
+    from: 'no-reply@tdev.app', // TODO
     to: '',
     signature: 'The MERN Team' // TODO
   },
