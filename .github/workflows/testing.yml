@@ -45,9 +45,9 @@ jobs:
         env:
           CI: true
           FACEBOOK_APP_ID: 1538677846308680
-          FACEBOOK_APP_SECRET: ${{ secrets.FACEBOOK_SECRET }}
+          FACEBOOK_APP_SECRET: ${{ secrets.FACEBOOK_APP_SECRET }}
           GOOGLE_CLIENT_ID: 134675062003-8rtdt9qeg4o2gmeckeoe65s2i9lq9cks.apps.googleusercontent.com
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_SECRET }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
           MONGO_URI: mongodb://localhost:27017/mern
