@@ -17,10 +17,6 @@ let defaultConfig = {
     to: '',
     signature: 'The MERN Team' // TODO
   },
-  mailgun: {
-    apiKey: 'This will be overriden by environment variable MAILGUN_API_KEY',
-    domain: 'sandbox4f20bd7a5b3a451e99ad609946b1db5d.mailgun.org' // TODO
-  },
   jwt: {
     secret: 'This will be overriden by environment variable JWT_SECRET',
     algorithm: 'HS512',
@@ -29,6 +25,9 @@ let defaultConfig = {
   mongo: {
     uri: 'This will be overriden by environment variable MONGO_URI',
     testUri: 'mongodb://localhost:27017/mern_test'
+  },
+  sendgrid: {
+    apiKey: 'This will be overriden by environment variable SENDGRID_API_KEY'
   },
   server: {
     port: 'This will be overriden by environment variable SERVER_PORT',

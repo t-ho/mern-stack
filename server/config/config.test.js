@@ -12,9 +12,6 @@ let testConfig = {
   mongo: {
     testUri: `mongodb://localhost:27017/${defaultConfig.app.name}_test`
   },
-  mailgun: {
-    domain: 'sandbox4f20bd7a5b3a451e99ad609946b1db5d.mailgun.org' // TODO:
-  },
   server: {
     url: 'http://localhost' // TODO:
   },

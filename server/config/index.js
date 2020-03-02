@@ -15,12 +15,12 @@ const envVarsSchema = Joi.object({
   GOOGLE_CLIENT_ID: Joi.string().required(),
   GOOGLE_CLIENT_SECRET: Joi.string().required(),
   JWT_SECRET: Joi.string().required(),
-  MAILGUN_API_KEY: Joi.string(),
   MONGO_URI: Joi.string()
     .uri()
     .required(),
   NODE_ENV: Joi.string().valid('development', 'production', 'test'),
-  SERVER_PORT: Joi.number().required()
+  SERVER_PORT: Joi.number().required(),
+  SENDGRID_API_KEY: Joi.string()
 }).unknown();
 
 const { value, error } = envVarsSchema.validate(process.env);
@@ -35,14 +35,14 @@ if (error) {
 
 let envConfig = {
   env: value.NODE_ENV,
-  mailgun: {
-    apiKey: value.MAILGUN_API_KEY
-  },
   jwt: {
     secret: value.JWT_SECRET
   },
   mongo: {
     uri: value.MONGO_URI
+  },
+  sendgrid: {
+    apiKey: value.SENDGRID_API_KEY
   },
   server: {
     port: value.SERVER_PORT

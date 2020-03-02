@@ -10,16 +10,13 @@ let prodConfig = {
     title: 'MERN Stack' // TODO: Human friendly name
   },
   auth: {
-    verifyEmail: false, // If true, require email verification when signing up
-    resetPassword: false // If true, be able to reset password via email
+    verifyEmail: true, // If true, require email verification when signing up
+    resetPassword: true // If true, be able to reset password via email
   },
   email: {
     from: 'no-reply@mern.tdev.app', // TODO
     to: '',
     signature: 'The MERN Team' // TODO
-  },
-  mailgun: {
-    domain: 'sandbox4f20bd7a5b3a451e99ad609946b1db5d.mailgun.org' // TODO:
   },
   jwt: {
     algorithm: 'HS512',

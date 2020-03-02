@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const createError = require('http-errors');
 const Joi = require('@hapi/joi');
 const passport = require('passport');
-const sendMailAsync = require('../core/nodemailer');
+const email = require('../core/sendgrid');
 const config = require('../config');
 const constants = require('./constants');
 
@@ -495,13 +495,13 @@ const sendEmailHelperAsync = (
   buttonText,
   url
 ) => {
-  return sendMailAsync({
+  return email.send({
     to: user.email,
     from: `${config.app.title} <${config.email.from}>`,
     subject: `${config.app.title} - ${subject}`,
-    template: `${config.paths.root}/templates/email.html`,
-    templateParams: {
-      title: title,
+    templatePath: `${config.paths.root}/templates/email.html`,
+    dynamicTemplateData: {
+      boxTitle: title,
       firstName: user.firstName,
       content,
       buttonText,
