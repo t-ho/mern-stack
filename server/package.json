@@ -46,7 +46,7 @@
     "passport-google-token": "^0.1.2",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "sendgrid-template-helper": "0.0.2",
+    "sendgrid-template-helper": "0.0.3",
     "supertest": "^4.0.2",
     "uuid": "^3.4.0"
   },
