@@ -338,19 +338,41 @@ describe('ENDPOINT: POST /api/auth/send-token', function() {
       );
     });
   } else {
-    // config.auth.verifyEmail === false && config.auth.resetPassword === false
-    it(`POST ${endpoint} - Unknow request as email verification is turn off`, function(done) {
-      let existingUser = app.locals.existing.user;
-      const payload = {
-        email: existingUser.email,
-        tokenPurpose: 'verifyEmail'
-      };
-      request(app)
-        .post(endpoint)
-        .send(payload)
-        .expect(404)
-        .expect({ error: 'Unknown request.' }, done);
-    });
+    // config.auth.verifyEmail === false
+    if (!config.auth.verifyEmail) {
+      it(`POST ${endpoint} - Email verification functionality is not available`, function(done) {
+        let existingUser = app.locals.existing.user;
+        const payload = {
+          email: existingUser.email,
+          tokenPurpose: 'verifyEmail'
+        };
+        request(app)
+          .post(endpoint)
+          .send(payload)
+          .expect(422)
+          .expect(
+            { error: 'Email verification functionality is not available.' },
+            done
+          );
+      });
+    } else {
+      // config.auth.resetPassword === false
+      it(`POST ${endpoint} - Password reset functionality is not available`, function(done) {
+        let existingUser = app.locals.existing.user;
+        const payload = {
+          email: existingUser.email,
+          tokenPurpose: 'resetPassword'
+        };
+        request(app)
+          .post(endpoint)
+          .send(payload)
+          .expect(422)
+          .expect(
+            { error: 'Password reset functionality is not available.' },
+            done
+          );
+      });
+    }
   }
 
   const testSendTokenSucceeded = (tokenPurpose, existingUser, done) => {
@@ -552,7 +574,7 @@ describe('ENDPOINT: POST /api/auth/reset-password/:token', function() {
     });
   } else {
     // config.auth.resetPassword === false
-    it(`POST ${endpoint} - Unknow request as email verification is turn off`, function(done) {
+    it(`POST ${endpoint} - Password reset functionality is not available`, function(done) {
       let existingAdmin = app.locals.existing.admin;
       const payload = {
         email: existingAdmin.email,
@@ -561,8 +583,11 @@ describe('ENDPOINT: POST /api/auth/reset-password/:token', function() {
       request(app)
         .post(endpoint)
         .send(payload)
-        .expect(404)
-        .expect({ error: 'Unknown request.' }, done);
+        .expect(422)
+        .expect(
+          { error: 'Password reset functionality is not available.' },
+          done
+        );
     });
   }
 });
@@ -651,11 +676,14 @@ describe('ENDPOINT: POST /api/auth/verify-email/:token', function() {
     });
   } else {
     // config.auth.verifyEmail === false
-    it(`POST ${endpoint} - Unknow request as email verification is turn off`, function(done) {
+    it(`POST ${endpoint} - Email verification functionality is not available`, function(done) {
       request(app)
         .post(endpoint)
-        .expect(404)
-        .expect({ error: 'Unknown request.' }, done);
+        .expect(422)
+        .expect(
+          { error: 'Email verification functionality is not available.' },
+          done
+        );
     });
   }
 });

@@ -86,7 +86,9 @@ const resetPasswordSchema = Joi.object({
  */
 module.exports.resetPassword = (req, res, next) => {
   if (!config.auth.resetPassword) {
-    return next(createError(404, 'Unknown request.'));
+    return next(
+      createError(422, 'Password reset functionality is not available.')
+    );
   }
 
   if (!req.params.token) {
@@ -151,13 +153,20 @@ module.exports.sendToken = (req, res, next) => {
       req.body = payload;
       if (req.body.tokenPurpose === 'resetPassword') {
         if (!config.auth.resetPassword) {
-          return next(createError(404, 'Unknown request.'));
+          return next(
+            createError(422, 'Password reset functionality is not available.')
+          );
         }
         return sendPasswordResetToken(req, res, next);
       }
       if (req.body.tokenPurpose === 'verifyEmail') {
         if (!config.auth.verifyEmail) {
-          return next(createError(404, 'Unknown request.'));
+          return next(
+            createError(
+              422,
+              'Email verification functionality is not available.'
+            )
+          );
         }
 
         return sendVerificationEmailToken(req, res, next);
@@ -356,7 +365,9 @@ module.exports.signUp = (req, res, next) => {
  */
 module.exports.verifyEmail = (req, res, next) => {
   if (!config.auth.verifyEmail) {
-    return next(createError(404, 'Unknown request.'));
+    return next(
+      createError(422, 'Email verification functionality is not available.')
+    );
   }
 
   if (!req.params.token) {
