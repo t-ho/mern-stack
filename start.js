@@ -31,8 +31,10 @@ const getUppercaseArgs = () => {
     'server:mobile'
   ];
 
-  if (process.argv.length !== 3) {
-    throw new Error(`[-] Invalid command. Please specify the argument`);
+  if (process.argv.length === 2) {
+    process.argv.push('server:client:mobile');
+  } else if (process.argv.length > 3) {
+    throw new Error(`[-] Invalid command. Please specify only one argument`);
   }
 
   if (_.findIndex(validArgs, arg => arg === process.argv[2]) === -1) {

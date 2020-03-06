@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/t-ho/mern/issues"
   },
-  "homepage": "https://github.com/t-ho/mern#readme",
+  "homepage": "https://github.tdev.app/mern",
   "dependencies": {
     "@hapi/joi": "^17.1.0",
     "bcrypt": "^3.0.7",
@@ -46,7 +46,7 @@
     "passport-google-token": "^0.1.2",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "sendgrid-template-helper": "0.0.3",
+    "sendgrid-template-helper": "^1.0.0",
     "supertest": "^4.0.2",
     "uuid": "^3.4.0"
   },

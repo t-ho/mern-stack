@@ -2,7 +2,7 @@
   "name": "mern",
   "version": "1.0.0",
   "description": "MERN stack - MongoDB - Express - React - Redux - React Native - NodeJs",
-  "main": "start-server.js",
+  "main": "start.js",
   "scripts": {
     "postinstall": "node start install-children",
     "start": "node start server:client:mobile",
@@ -22,7 +22,7 @@
   "bugs": {
     "url": "https://github.com/t-ho/mern/issues"
   },
-  "homepage": "https://github.com/t-ho/mern#readme",
+  "homepage": "https://github.tdev.app/mern",
   "devDependencies": {
     "chalk": "^3.0.0",
     "concurrently": "^5.1.0",
