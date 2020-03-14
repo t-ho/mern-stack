@@ -10,17 +10,21 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
 
 [![mern-workflow](https://raw.githubusercontent.com/t-ho/mern/assets/assets/mern-workflow.gif)](https://github.com/t-ho/mern)
 
-## The server API documentation can be found [here](./server/README.md)
+## Server API documentation
+
+The full documentation of the server API can be found [here](/mern/server)
 
 ## Getting started
 
-### 1. Install `expo-cli` globally for developing mobile app
+### 1. Install `expo-cli`
+
+To develop the mobile app, install `expo-cli` globally:
 
 ```bash
 npm install -g expo-cli
 ```
 
-### 2. Clone the `mern` repository:
+### 2. Clone the `mern` repository
 
 ```bash
 git clone https://github.com/t-ho/mern.git
@@ -29,7 +33,7 @@ cp .env.example .env
 # Edit .env file to meet your requirements
 ```
 
-### 3. Install package dependencies:
+### 3. Install package dependencies
 
 In the `root` directory, run:
 
@@ -37,7 +41,9 @@ In the `root` directory, run:
 npm install
 ```
 
-### 4. To start `server`, `client` and `mobile`, run:
+### 4. Start development servers
+
+To start `server`, `client`, and `mobile`, run:
 
 ```bash
 # In the root directory (mern):
@@ -70,7 +76,7 @@ npm run server:client
 # Web client is running at http://localhost:3000
 ```
 
-Or to start `server` and `mobile` only, run
+Or to start `server` and `mobile` only, run:
 
 ```bash
 # In the root directory (mern):
@@ -79,19 +85,19 @@ npm run server:mobile
 # Mobile - Expo DevTools is running at http://localhost:19002
 ```
 
-### 5. To run the mobile app on your mobile devices:
+### 5. Run the mobile app on your mobile devices
 
 - On iOS devices, install [Expo Client](https://apps.apple.com/us/app/expo-client/id982107779)
 - On Android devices, install [Expo](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US)
 - Then scan QR code displayed on your terminal to launch the app.
 
-### 6. To debug mobile app with `react-native-debugger`:
+### 6. Debug mobile app with `react-native-debugger`
 
 - Install [react-native-debugger](https://github.com/jhen0409/react-native-debugger/releases).
 - Open React Native Debugger window instance with port `19001` (`Debugger` > `New Window`).
 - Enable [Debugging mode](https://facebook.github.io/react-native/docs/debugging.html#accessing-the-in-app-developer-menu) on your iOS simulator or Android emulator.
 
-### 7. To debug web app with `Redux DevTools`:
+### 7. Debug web app with `Redux DevTools`
 
 - On Chrome, install [redux-devtools-extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd)
 - On Firefox, install [redux-devtools-add-ons](https://addons.mozilla.org/en-US/firefox/addon/reduxdevtools/)
