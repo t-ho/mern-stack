@@ -6,7 +6,7 @@ const INITIAL_STATE = {
   expiresAt: null,
   processing: false,
   processed: false,
-  error: null
+  error: null,
 };
 
 const authReducer = (state = INITIAL_STATE, action) => {
@@ -31,7 +31,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
         token: action.payload.token,
         expiresAt: action.payload.expiresAt,
         signedInWith: action.payload.signedInWith,
-        user: { ...action.payload.user }
+        user: { ...action.payload.user },
       };
     case actionTypes.SIGN_UP_SUCCESS:
     case actionTypes.REQUEST_VERIFICATION_EMAIL_SUCCESS:
@@ -39,11 +39,11 @@ const authReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         processing: false,
-        processed: true
+        processed: true,
       };
     case actionTypes.SIGN_IN_FAIL:
     case actionTypes.FACEBOOK_SIGN_IN_FAIL:
-    case actionTypes.GOOGLE_IN_FAIL:
+    case actionTypes.GOOGLE_SIGN_IN_FAIL:
     case actionTypes.SIGN_UP_FAIL:
     case actionTypes.REQUEST_VERIFICATION_EMAIL_FAIL:
     case actionTypes.REQUEST_PASSWORD_RESET_FAIL:
@@ -51,7 +51,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
         ...state,
         processing: false,
         processed: true,
-        error: action.payload
+        error: action.payload,
       };
     case actionTypes.TRY_LOCAL_SIGN_IN_FAIL:
     case actionTypes.SIGN_OUT_SUCCESS:
@@ -61,14 +61,14 @@ const authReducer = (state = INITIAL_STATE, action) => {
         processed: true,
         token: null,
         user: {},
-        expiresAt: null
+        expiresAt: null,
       };
     case actionTypes.UNLOAD_AUTH_SCREEN:
       return {
         ...state,
         processing: false,
         processed: false,
-        error: null
+        error: null,
       };
     default:
       return state;
