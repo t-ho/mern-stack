@@ -31,7 +31,7 @@
     "husky": "^4.2.3",
     "lodash": "^4.17.15",
     "ngrok": "^3.2.7",
-    "prettier": "^1.19.1",
+    "prettier": "^2.0.2",
     "pretty-quick": "^2.0.1",
     "tree-kill": "^1.2.2"
   },
