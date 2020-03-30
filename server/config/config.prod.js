@@ -1,3 +1,4 @@
+const fspath = require('path');
 const _ = require('lodash');
 const defaultConfig = require('./config.default');
 

@@ -1,4 +1,4 @@
-const { spawn, spawnSync } = require('child_process');
+const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const ngrok = require('ngrok');
@@ -23,36 +23,36 @@ const options = [
     command: 'npm',
     arguments: ['start'],
     workingDirs: 'server',
-    message: 'Starting API server...'
+    message: 'Starting API server...',
   },
   {
     name: 'client',
     command: 'npm',
     arguments: ['start'],
     workingDirs: 'client',
-    message: 'Starting web client...'
+    message: 'Starting web client...',
   },
   {
     name: 'mobile',
     command: 'npm',
     arguments: ['start'],
     workingDirs: 'mobile',
-    message: 'Starting mobile...'
+    message: 'Starting mobile...',
   },
   {
     name: 'test',
     command: 'npm',
     arguments: ['run', 'test'],
     workingDirs: ['server'],
-    message: 'Running tests for'
+    message: 'Running tests for',
   },
   {
     name: 'install-children',
     command: 'npm',
     arguments: ['install'],
     workingDirs: ['server', 'client', 'mobile'],
-    message: 'Installing dependencies for'
-  }
+    message: 'Installing dependencies for',
+  },
 ];
 
 const start = () => {
@@ -60,7 +60,7 @@ const start = () => {
     throw new Error(`[-] Invalid command. Please specify the argument`);
   }
 
-  let command = _.find(options, opt => {
+  let command = _.find(options, (opt) => {
     if (opt.name === process.argv[2]) {
       return opt;
     }
@@ -76,11 +76,11 @@ const start = () => {
   }
 };
 
-const run = command => {
+const run = (command) => {
   const cmd = command.command;
   if (_.isArray(command.workingDirs)) {
     status = 0;
-    command.workingDirs.forEach(dir => {
+    command.workingDirs.forEach((dir) => {
       const opts = { cwd: dir, shell: true, stdio: 'inherit' };
       console.log(chalk.cyan(`\n[*] ${command.message} ${dir}...\n`));
       const child = spawnSync(cmd, command.arguments, opts);
@@ -90,11 +90,11 @@ const run = command => {
   } else {
     const opts = { cwd: command.workingDirs, shell: true, stdio: 'inherit' };
     console.log(chalk.cyan(`[*] ${command.message}`));
-    return spawn(cmd, command.arguments, opts);
+    return spawnSync(cmd, command.arguments, opts);
   }
 };
 
-const runMobile = command => {
+const runMobile = (command) => {
   const apisDir = path.resolve(__dirname, './mobile/src/store/apis');
   const prodApiFile = 'api.prod.js';
   const devApiFile = 'api.dev.js';
@@ -109,7 +109,7 @@ const runMobile = command => {
    */
   ngrok
     .connect({ proto: 'http', addr: process.env.SERVER_PORT, bind_tls: false })
-    .then(ngrokUrl => {
+    .then((ngrokUrl) => {
       let content = fs.readFileSync(`${apisDir}/${prodApiFile}`, 'utf-8');
       content = content.replace(/baseURL.*/, `baseURL: '${ngrokUrl}/api'`);
       content = addWarningHeader(content);
@@ -134,7 +134,7 @@ const runMobile = command => {
     });
 };
 
-const printExpiredUrlMessage = ngrokUrl => {
+const printExpiredUrlMessage = (ngrokUrl) => {
   const artText = figlet.textSync('Ngrok URL expired', { font: 'Big' });
   console.log(chalk.red(`\n\n${artText}`));
   console.log(chalk.red(`\n[-] The ngrok URL "${ngrokUrl}" is expired`));
@@ -143,7 +143,7 @@ const printExpiredUrlMessage = ngrokUrl => {
   console.log(chalk.cyan('[*] Then, run `npm start` or `npm run mobile`\n'));
 };
 
-const addWarningHeader = content => {
+const addWarningHeader = (content) => {
   return (content = `/**
 *
 * DO NOT MODIFY THIS FILE
