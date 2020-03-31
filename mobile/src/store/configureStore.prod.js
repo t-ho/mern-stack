@@ -1,9 +1,9 @@
 import { applyMiddleware, createStore } from 'redux';
 import reduxThunk from 'redux-thunk';
 import rootReducer from './reducers';
-import mernApi from './apis/api.prod';
+import mernApi from './apis/api';
 
-const configureStore = initialState => {
+const configureStore = (initialState) => {
   const store = createStore(
     rootReducer,
     initialState,

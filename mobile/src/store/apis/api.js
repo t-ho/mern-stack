@@ -1,10 +1,11 @@
 import axios from 'axios';
+import serverUrl from './server-url';
 
 const mernApi = axios.create({
-  baseURL: 'http://localhost/api' // TODO:
+  baseURL: `${serverUrl}/api`,
 });
 
-mernApi.setAuthToken = jwtToken => {
+mernApi.setAuthToken = (jwtToken) => {
   mernApi.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
 };
 
