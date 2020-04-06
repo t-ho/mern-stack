@@ -1,10 +1,21 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-navigation';
-import { Text, Button, Input } from 'react-native-elements';
+import { StyleSheet, View } from 'react-native';
+import {
+  Button,
+  IconButton,
+  Snackbar,
+  TextInput,
+  Title,
+  withTheme,
+} from 'react-native-paper';
+import { withNavigation } from 'react-navigation';
+import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { getError, getProcessed } from '../store/selectors';
+import { getError, getProcessed, getProcessing } from '../store/selectors';
+import { clearErrorMessage } from '../store/actions';
 import Spacer from './Spacer';
+import DismissKeyboardView from '../hoc/DismissKeyboardView';
+import Logo from './Logo';
 
 class RequestTokenForm extends React.Component {
   state = { email: '', password: '' };
@@ -12,73 +23,94 @@ class RequestTokenForm extends React.Component {
   onSubmit = () => {
     this.props.onSubmit({
       email: this.state.email,
-      tokenPurpose: this.props.tokenPurpose
+      tokenPurpose: this.props.tokenPurpose,
     });
   };
 
   render() {
-    const { title, errorMessage, isProcessed } = this.props;
+    const { title, errorMessage, isProcessed, isProcessing } = this.props;
+    const { colors } = this.props.theme;
     return (
-      <SafeAreaView forceInset={{ top: 'always' }} style={styles.container}>
-        <Spacer>
-          <Text h4 style={styles.title}>
-            {title}
-          </Text>
-        </Spacer>
-        {(isProcessed && errorMessage) || !isProcessed ? (
+      <View style={styles.container}>
+        <DismissKeyboardView style={styles.container}>
+          <IconButton
+            icon="chevron-left"
+            color={this.props.theme.colors.primary}
+            size={30}
+            accessibilityLabel="Back to sign in"
+            onPress={() => this.props.navigation.goBack()}
+          />
+          <Logo />
+          <Spacer>
+            <Title style={{ alignSelf: 'center', color: colors.primary }}>
+              {title}
+            </Title>
+          </Spacer>
           <>
-            <Input
-              label="Email"
-              value={this.state.email}
-              autoCapitalize="none"
-              autoCorrect={false}
-              onChangeText={email => this.setState({ email })}
-            />
-            <Spacer />
-            {errorMessage && (
-              <Text style={styles.errorMessage}>{errorMessage}</Text>
-            )}
             <Spacer>
-              <Button title="Submit" onPress={this.onSubmit} />
+              <TextInput
+                label="Email"
+                mode="outlined"
+                dense
+                value={this.state.email}
+                autoCapitalize="none"
+                autoCorrect={false}
+                onChangeText={(email) => this.setState({ email })}
+                disabled={isProcessing || (isProcessed && !errorMessage)}
+              />
+            </Spacer>
+            <Spacer vertical={16}>
+              <Button
+                mode="contained"
+                accessibilityLabel="Submit"
+                onPress={this.onSubmit}
+                loading={isProcessing}
+                disabled={isProcessing || (isProcessed && !errorMessage)}
+              >
+                Submit
+              </Button>
             </Spacer>
           </>
-        ) : (
-          <Text style={styles.successMessage}>
+          <Snackbar
+            visible={errorMessage}
+            onDismiss={this.props.clearErrorMessage}
+            style={{ backgroundColor: colors.error }}
+          >
+            {errorMessage}
+          </Snackbar>
+          <Snackbar
+            visible={isProcessed && !errorMessage}
+            onDismiss={() => this.props.navigation.goBack()}
+            action={{
+              label: 'Go Back',
+              accessibilityLabel: 'Go Back',
+              onPress: () => this.props.navigation.goBack(),
+            }}
+          >
             An email has been sent to your email.
-          </Text>
-        )}
-      </SafeAreaView>
+          </Snackbar>
+        </DismissKeyboardView>
+      </View>
     );
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     isProcessed: getProcessed(state),
-    errorMessage: getError(state)
+    isProcessing: getProcessing(state),
+    errorMessage: getError(state),
   };
 };
 
 const styles = StyleSheet.create({
-  errorMessage: {
-    alignSelf: 'center',
-    color: 'red',
-    fontSize: 16,
-    marginTop: 15
-  },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    marginBottom: 180
   },
-  successMessage: {
-    alignSelf: 'center',
-    fontSize: 16,
-    marginTop: 15
-  },
-  title: {
-    alignSelf: 'center'
-  }
 });
 
-export default connect(mapStateToProps)(RequestTokenForm);
+export default compose(
+  connect(mapStateToProps, { clearErrorMessage }),
+  withTheme,
+  withNavigation
+)(RequestTokenForm);

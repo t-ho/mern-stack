@@ -33,3 +33,5 @@ export const REQUEST_PASSWORD_RESET_SUCCESS =
 export const REQUEST_PASSWORD_RESET_FAIL = '[Auth] Request Password Reset Fail';
 
 export const UNLOAD_AUTH_SCREEN = '[Auth] Unload Auth Screen';
+
+export const CLEAR_ERROR_MESSAGE = '[Auth] Clear Error Message';

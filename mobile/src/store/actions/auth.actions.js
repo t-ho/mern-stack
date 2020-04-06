@@ -5,7 +5,7 @@ import NavService from '../../navigation/NavigationService';
 import * as actionTypes from './types';
 
 export const signUp = (formValues) => (dispatch, getState, { mernApi }) => {
-  dispatch({ type: actionTypes.SIGN_UP });
+  dispatch({ type: actionTypes.SIGN_UP, payload: { type: 'email' } });
   return mernApi.post('/auth/signup', formValues).then(
     (response) => {
       dispatch({ type: actionTypes.SIGN_UP_SUCCESS });
@@ -25,7 +25,7 @@ const signUpFail = (payload) => {
 };
 
 export const signIn = (formValues) => (dispatch, getState, { mernApi }) => {
-  dispatch({ type: actionTypes.SIGN_IN });
+  dispatch({ type: actionTypes.SIGN_IN, payload: { type: 'email' } });
   return signInHelper(
     '/auth/signin',
     formValues,
@@ -51,7 +51,10 @@ const signInFail = (payload) => {
 };
 
 export const facebookSignIn = () => (dispatch, getState, { mernApi }) => {
-  dispatch({ type: actionTypes.FACEBOOK_SIGN_IN });
+  dispatch({
+    type: actionTypes.FACEBOOK_SIGN_IN,
+    payload: { type: 'facebook' },
+  });
   return Facebook.initializeAsync('1538677846308680') // TODO: Add your Facebook app ID
     .then(() => {
       return Facebook.logInWithReadPermissionsAsync({
@@ -94,7 +97,7 @@ const facebookSignInFail = (payload) => {
 };
 
 export const googleSignIn = () => (dispatch, getState, { mernApi }) => {
-  dispatch({ type: actionTypes.GOOGLE_SIGN_IN });
+  dispatch({ type: actionTypes.GOOGLE_SIGN_IN, payload: { type: 'google' } });
   return Google.logInAsync({
     iosClientId:
       '134675062003-f1j19fs02f57g2pol76s1l63bo8bh065.apps.googleusercontent.com', // TODO: Add your Google iosClientId
@@ -198,6 +201,12 @@ export const signOut = () => (dispatch, getState, { mernApi }) => {
   clearAuthInfoAsync(mernApi);
   dispatch({ type: actionTypes.SIGN_OUT_SUCCESS });
   NavService.navigate('SignInOptions');
+};
+
+export const clearErrorMessage = () => {
+  return {
+    type: actionTypes.CLEAR_ERROR_MESSAGE,
+  };
 };
 
 export const requestVerificationEmail = (formValues) => {

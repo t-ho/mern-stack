@@ -1,14 +1,12 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 
-const Spacer = ({ children }) => {
-  return <View style={styles.spacer}>{children}</View>;
+const Spacer = ({ children, vertical, horizontal }) => {
+  const style = {
+    marginHorizontal: horizontal ? horizontal : 16,
+    marginVertical: vertical ? vertical : 8,
+  };
+  return <View style={style}>{children}</View>;
 };
-
-const styles = StyleSheet.create({
-  spacer: {
-    margin: 15
-  }
-});
 
 export default Spacer;
