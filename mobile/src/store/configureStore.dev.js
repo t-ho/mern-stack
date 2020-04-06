@@ -3,11 +3,11 @@ import { applyMiddleware, createStore } from 'redux';
 import reduxThunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import rootReducer from './reducers';
-import mernApi from './apis/api.dev';
+import mernApi from './apis/api';
 
 YellowBox.ignoreWarnings(['Remote debugger']);
 
-const configureStore = initialState => {
+const configureStore = (initialState) => {
   const store = createStore(
     rootReducer,
     initialState,

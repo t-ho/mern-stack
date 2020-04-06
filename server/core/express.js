@@ -38,7 +38,9 @@ app.use(passport.initialize());
 
 app.use(routes);
 
-// Serve static assets in production mode
+app.use('/public', express.static(path.resolve(__dirname, '../public')));
+
+// Serve web-client static assets in production mode
 if (config.env === 'production') {
   const buildDir = path.resolve(__dirname, '../../client/build');
   if (!fs.existsSync(buildDir)) {

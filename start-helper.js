@@ -96,24 +96,20 @@ const run = (command) => {
 
 const runMobile = (command) => {
   const apisDir = path.resolve(__dirname, './mobile/src/store/apis');
-  const prodApiFile = 'api.prod.js';
-  const devApiFile = 'api.dev.js';
+  const devUrlFile = 'server-url.dev.js';
 
   console.log(chalk.cyan('[*] Creating Ngrok tunnel...'));
 
   /**
-   * Use ngrok to create public URL for server API. Then assign this public URL to
-   * axios instance's baseURL in the file `mobile/src/store/apis/api.dev.js`.
-   * By default, the `api.dev.js` does not exist, create one by clone api.prod.js.
-   * The `api.dev.js` is not committed to the repo.
+   * Use ngrok to create public URL for server API. Then export this public URL in
+   * the file `mobile/src/store/apis/server-url.dev.js`.
    */
   ngrok
     .connect({ proto: 'http', addr: process.env.SERVER_PORT, bind_tls: false })
     .then((ngrokUrl) => {
-      let content = fs.readFileSync(`${apisDir}/${prodApiFile}`, 'utf-8');
-      content = content.replace(/baseURL.*/, `baseURL: '${ngrokUrl}/api'`);
+      let content = `export default serverUrl = '${ngrokUrl}'`;
       content = addWarningHeader(content);
-      fs.writeFileSync(`${apisDir}/${devApiFile}`, content);
+      fs.writeFileSync(`${apisDir}/${devUrlFile}`, content);
 
       console.log(
         chalk.greenBright(
@@ -121,7 +117,7 @@ const runMobile = (command) => {
         )
       );
       console.log(
-        chalk.greenBright(`[+] Created the file "${apisDir}/${devApiFile}"\n`)
+        chalk.greenBright(`[+] Created the file "${apisDir}/${devUrlFile}"\n`)
       );
 
       const mobileProcess = run(command);
