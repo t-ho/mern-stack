@@ -158,7 +158,7 @@ export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
             authInfo.token = response.data.token;
             authInfo.expiresAt = response.data.expiresAt;
             dispatch(tryLocalSignInSuccess(authInfo));
-            NavService.navigate('Main');
+            NavService.navigate('Home');
             setAuthInfoAsync(authInfo, mernApi);
           },
           (err) => {
@@ -168,7 +168,7 @@ export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
         );
       } else {
         dispatch(tryLocalSignInSuccess(authInfo));
-        NavService.navigate('Main');
+        NavService.navigate('Home');
         return Promise.resolve();
       }
     },
@@ -269,7 +269,7 @@ const signInHelper = (
     .post(endpoint, payload)
     .then((response) => {
       dispatch(actionSuccess(response.data));
-      NavService.navigate('Main');
+      NavService.navigate('Home');
       setAuthInfoAsync(response.data, mernApi);
     })
     .catch((err) => {

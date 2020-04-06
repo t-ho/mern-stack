@@ -1,11 +1,13 @@
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import SignInScreen from '../screens/SignInScreen';
 import SignUpScreen from '../screens/SignUpScreen';
-import MainScreen from '../screens/MainScreen';
 import RequestPasswordResetScreen from '../screens/RequestPasswordResetScreen';
 import RequestVerificationEmailScreen from '../screens/RequestVerificationEmailScreen';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
+import HomeScreen from '../screens/HomeScreen';
+import SettingsScreen from '../screens/SettingsScreen';
 
 const authStack = createStackNavigator(
   {
@@ -17,18 +19,19 @@ const authStack = createStackNavigator(
   { initialRouteName: 'SignIn' }
 );
 
-const mainSwitch = createSwitchNavigator(
+const mainBottomTabs = createMaterialBottomTabNavigator(
   {
-    Main: MainScreen,
+    Home: { screen: HomeScreen },
+    Settings: { screen: SettingsScreen },
   },
-  { initialRouteName: 'Main' }
+  { initialRouteName: 'Home' }
 );
 
 const switchNavigator = createSwitchNavigator(
   {
     AuthLoading: AuthLoadingScreen,
     authStack,
-    mainSwitch,
+    mainBottomTabs,
   },
   {
     initialRouteName: 'AuthLoading',

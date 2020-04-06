@@ -18,7 +18,7 @@ const theme = {
   colors: {
     ...DefaultTheme.colors,
     primary: Colors.teal500,
-    accent: Colors.orange900,
+    accent: Colors.pink500,
     onSurface: Colors.green500,
   },
 };
