@@ -40,11 +40,13 @@ class RegisterScreen extends React.Component {
 
   onEmailRegister = () => {
     Keyboard.dismiss();
-    const email = this.state.email.trim();
-    const firstName = this.state.firstName.trim();
-    const lastName = this.state.lastName.trim();
-    const password = this.state.password;
-    this.props.signUp({ email, firstName, lastName, password });
+    this.props.signUp({
+      username: this.state.username.trim(),
+      email: this.state.email.trim(),
+      firstName: this.state.firstName.trim(),
+      lastName: this.state.lastName.trim(),
+      password: this.state.password,
+    });
   };
 
   onSnackbarDismiss = () => {

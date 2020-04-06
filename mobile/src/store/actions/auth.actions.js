@@ -147,7 +147,7 @@ export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
       const now = Math.floor(Date.now() / 1000);
       if (!authInfo || (authInfo && authInfo.expiresAt <= now)) {
         dispatch(tryLocalSignInFail());
-        NavService.navigate('SignInOptions');
+        NavService.navigate('SignIn');
         return Promise.resolve();
       }
       // if token age > 30 days, then refresh token
@@ -200,7 +200,7 @@ export const signOut = () => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.SIGN_OUT });
   clearAuthInfoAsync(mernApi);
   dispatch({ type: actionTypes.SIGN_OUT_SUCCESS });
-  NavService.navigate('SignInOptions');
+  NavService.navigate('SignIn');
 };
 
 export const clearErrorMessage = () => {
