@@ -1,6 +1,6 @@
-[![CI Testing](https://github.com/t-ho/mern/workflows/CI%20Testing/badge.svg?branch=master)](https://github.com/t-ho/mern/actions)
+[![CI Testing](https://github.com/t-ho/mern-stack/workflows/CI%20Testing/badge.svg?branch=master)](https://github.com/t-ho/mern-stack/actions)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![license](https://img.shields.io/github/license/t-ho/mern)](https://github.com/t-ho/mern/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/t-ho/mern-stack)](https://github.com/t-ho/mern-stack/blob/master/LICENSE)
 
 # MERN Stack
 
@@ -8,11 +8,11 @@
 
 MERN stack is intended to provide a starting point for building full-stack JavaScript applications, including dynamic web and mobile apps. The stack is made of MongoDB, Express, React, Redux, React Native and NodeJS.
 
-[![mern-workflow](https://raw.githubusercontent.com/t-ho/mern/assets/assets/mern-workflow.gif)](https://github.com/t-ho/mern)
+[![mern-workflow](https://raw.githubusercontent.com/t-ho/mern-stack/assets/assets/mern-workflow.gif)](https://github.com/t-ho/mern-stack)
 
 ## Server API documentation
 
-The full documentation of the server API can be found [here](/mern/server)
+The full documentation of the server API can be found [here](https://tdev.app/mern-stack/server)
 
 ## Getting started
 
@@ -24,10 +24,10 @@ To develop the mobile app, install `expo-cli` globally:
 npm install -g expo-cli
 ```
 
-### 2. Clone the `mern` repository
+### 2. Clone the `mern-stack` repository
 
 ```bash
-git clone https://github.com/t-ho/mern.git
+git clone https://github.com/t-ho/mern-stack.git
 cd mern
 cp .env.example .env
 # Edit .env file to meet your requirements
@@ -56,9 +56,9 @@ npm start
 **NOTE:**
 
 - **For the sake of simplicity, we use free service [ngrok](https://ngrok.com/) to create a public API URL for mobile development. The downside of this approach is that the public URL is only available for 8 hours, so we need to restart the npm process every 8 hours.**
-- **After 8 hours, the `mobile` process will be terminated and a warning message will be displayed in your terminal to remind you to restart npm process.**
+- **After 8 hours, the `mobile` process will be terminated, and a warning message will be displayed in your terminal to remind you to restart npm process.**
 
-To restart npm process (_If you don't start mobile development process, simply ignore this step_):
+To restart npm process (_If you don't start the mobile development process, ignore this step_):
 
 ```bash
 # In your current terminal, press Ctrl + C to exit. Then run
@@ -104,7 +104,7 @@ npm run server:mobile
 
 ## Testing
 
-In the root (`mern`) directory, run:
+In the root (`mern-stack`) directory, run:
 
 ```bash
 npm run test
