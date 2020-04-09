@@ -30,6 +30,7 @@ npm install -g expo-cli
 git clone https://github.com/t-ho/mern-stack.git
 cd mern
 cp .env.example .env
+cp client/.env.example client/.env
 # Edit .env file to meet your requirements
 ```
 

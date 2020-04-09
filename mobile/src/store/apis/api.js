@@ -2,7 +2,7 @@ import axios from 'axios';
 import serverUrl from './server-url';
 
 const mernApi = axios.create({
-  baseURL: `${serverUrl}/api`,
+  baseURL: serverUrl,
 });
 
 mernApi.setAuthToken = (jwtToken) => {

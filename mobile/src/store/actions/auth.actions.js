@@ -6,7 +6,7 @@ import * as actionTypes from './types';
 
 export const signUp = (formValues) => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.SIGN_UP, payload: { type: 'email' } });
-  return mernApi.post('/auth/signup', formValues).then(
+  return mernApi.post('/api/auth/signup', formValues).then(
     (response) => {
       dispatch({ type: actionTypes.SIGN_UP_SUCCESS });
       NavService.navigate('SignIn');
@@ -27,7 +27,7 @@ const signUpFail = (payload) => {
 export const signIn = (formValues) => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.SIGN_IN, payload: { type: 'email' } });
   return signInHelper(
-    '/auth/signin',
+    '/api/auth/signin',
     formValues,
     signInSuccess,
     signInFail,
@@ -64,7 +64,7 @@ export const facebookSignIn = () => (dispatch, getState, { mernApi }) => {
     .then((response) => {
       if (response.type === 'success') {
         return signInHelper(
-          '/auth/facebook',
+          '/api/auth/facebook',
           { access_token: response.token },
           facebookSignInSuccess,
           facebookSignInFail,
@@ -108,7 +108,7 @@ export const googleSignIn = () => (dispatch, getState, { mernApi }) => {
     .then((response) => {
       if (response.type === 'success') {
         return signInHelper(
-          '/auth/google',
+          '/api/auth/google',
           { access_token: response.accessToken },
           googleSignInSuccess,
           googleSignInFail,
@@ -153,7 +153,7 @@ export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
       // if token age > 30 days, then refresh token
       if (authInfo.expiresAt <= now + 30 * 24 * 60 * 60) {
         mernApi.setAuthToken(authInfo.token);
-        return mernApi.post('auth/refresh-token').then(
+        return mernApi.post('/api/auth/refresh-token').then(
           (response) => {
             authInfo.token = response.data.token;
             authInfo.expiresAt = response.data.expiresAt;
@@ -203,16 +203,10 @@ export const signOut = () => (dispatch, getState, { mernApi }) => {
   NavService.navigate('SignIn');
 };
 
-export const clearErrorMessage = () => {
-  return {
-    type: actionTypes.CLEAR_ERROR_MESSAGE,
-  };
-};
-
 export const requestVerificationEmail = (formValues) => {
   return (dispatch, getState, { mernApi }) => {
     dispatch({ type: actionTypes.REQUEST_VERIFICATION_EMAIL });
-    return mernApi.post('/auth/send-token', formValues).then(
+    return mernApi.post('/api/auth/send-token', formValues).then(
       (response) => {
         dispatch({ type: actionTypes.REQUEST_VERIFICATION_EMAIL_SUCCESS });
       },
@@ -220,6 +214,12 @@ export const requestVerificationEmail = (formValues) => {
         dispatch(requestVerificationEmailFail(err.response.data.error));
       }
     );
+  };
+};
+
+export const clearErrorMessage = () => {
+  return {
+    type: actionTypes.CLEAR_ERROR_MESSAGE,
   };
 };
 
@@ -233,7 +233,7 @@ const requestVerificationEmailFail = (payload) => {
 export const requestPasswordReset = (formValues) => {
   return (dispatch, getState, { mernApi }) => {
     dispatch({ type: actionTypes.REQUEST_PASSWORD_RESET });
-    return mernApi.post('/auth/send-token', formValues).then(
+    return mernApi.post('/api/auth/send-token', formValues).then(
       (response) => {
         dispatch({ type: actionTypes.REQUEST_PASSWORD_RESET_SUCCESS });
       },
