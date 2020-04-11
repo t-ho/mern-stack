@@ -15,12 +15,11 @@ const envVarsSchema = Joi.object({
   GOOGLE_CLIENT_ID: Joi.string().required(),
   GOOGLE_CLIENT_SECRET: Joi.string().required(),
   JWT_SECRET: Joi.string().required(),
-  MONGO_URI: Joi.string()
-    .uri()
-    .required(),
+  MONGO_URI: Joi.string().uri().required(),
   NODE_ENV: Joi.string().valid('development', 'production', 'test'),
+  SERVER_HOST: Joi.string().required(),
   SERVER_PORT: Joi.number().required(),
-  SENDGRID_API_KEY: Joi.string()
+  SENDGRID_API_KEY: Joi.string(),
 }).unknown();
 
 const { value, error } = envVarsSchema.validate(process.env);
@@ -36,27 +35,28 @@ if (error) {
 let envConfig = {
   env: value.NODE_ENV,
   jwt: {
-    secret: value.JWT_SECRET
+    secret: value.JWT_SECRET,
   },
   mongo: {
-    uri: value.MONGO_URI
+    uri: value.MONGO_URI,
   },
   sendgrid: {
-    apiKey: value.SENDGRID_API_KEY
+    apiKey: value.SENDGRID_API_KEY,
   },
   server: {
-    port: value.SERVER_PORT
+    host: value.SERVER_HOST,
+    port: value.SERVER_PORT,
   },
   oauth: {
     facebook: {
       clientId: value.FACEBOOK_APP_ID,
-      clientSecret: value.FACEBOOK_APP_SECRET
+      clientSecret: value.FACEBOOK_APP_SECRET,
     },
     google: {
       clientId: value.GOOGLE_CLIENT_ID,
-      clientSecret: value.GOOGLE_CLIENT_SECRET
-    }
-  }
+      clientSecret: value.GOOGLE_CLIENT_SECRET,
+    },
+  },
 };
 
 let config = {};

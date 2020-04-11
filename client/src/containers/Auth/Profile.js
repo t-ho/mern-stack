@@ -41,10 +41,10 @@ class Profile extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     currentUser: getCurrentUser(state),
-    signedInWith: getSignedInWith(state)
+    signedInWith: getSignedInWith(state),
   };
 };
 

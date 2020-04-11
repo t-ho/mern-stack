@@ -14,10 +14,8 @@ const config = require('../config/index');
 // App Setup
 const app = express();
 
-if (config.env !== 'production') {
-  // Enable logger
-  app.use(morgan('dev'));
-}
+// Enable logger
+app.use(morgan(config.log.format));
 
 // Compress all responses
 app.use(compression());
@@ -40,30 +38,25 @@ app.use(routes);
 
 app.use('/public', express.static(path.resolve(__dirname, '../public')));
 
-// Serve web-client static assets in production mode
-if (config.env === 'production') {
-  const buildDir = path.resolve(__dirname, '../../client/build');
-  if (!fs.existsSync(buildDir)) {
-    throw new Error(
-      `The production build directory "${buildDir}" does not exist`
-    );
-  }
-  app.use(express.static(buildDir));
-  app.get('*', (req, res) => {
-    res.sendFile(`${buildDir}/index.html`);
-  });
-}
-
 // catch 404 errors and forward to error handler
 app.use((req, res, next) => next(createError(404, 'Not Found')));
 
 // error handler
-app.use((err, req, res, next) => {
-  res.status(err.status || 400).send({ error: err.message });
+// print stacktrace during development
+// and send stacktrace to client
+if (config.env === 'development') {
+  app.use((err, req, res, next) => {
+    console.log(err.stack);
+    res
+      .status(err.status || 400)
+      .json({ error: { message: err.message, details: err.stack } });
+  });
+}
 
-  // Only print stacktrace during development
-  // by passing error to built-in error handler
-  next(err);
+// error handler
+// no stracktrace sent to client
+app.use((err, req, res, next) => {
+  res.status(err.status || 400).json({ error: { message: err.message } });
 });
 
 module.exports = app;

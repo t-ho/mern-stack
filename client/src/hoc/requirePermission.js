@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {
   getCurrentUser,
   getIsSignedIn,
-  getDefaultPath
+  getDefaultPath,
 } from '../store/selectors';
 import { setAttemptedPath } from '../store/actions';
 
@@ -15,7 +15,7 @@ import { setAttemptedPath } from '../store/actions';
  * @param {Component} WrappedComponent The component to be wrapped
  * @param {string} action The action (see state.auth.permissions)
  */
-const requirePermission = action => WrappedComponent => {
+const requirePermission = (action) => (WrappedComponent) => {
   class ComposedComponent extends React.Component {
     componentDidMount() {
       this.shouldNavigateAway();
@@ -54,12 +54,12 @@ const requirePermission = action => WrappedComponent => {
     }
   }
 
-  const mapStateToProps = state => {
+  const mapStateToProps = (state) => {
     return {
       currentUser: getCurrentUser(state),
       isSignedIn: getIsSignedIn(state),
       defaultPath: getDefaultPath(state),
-      currentPath: state.router.location.pathname
+      currentPath: state.router.location.pathname,
     };
   };
 

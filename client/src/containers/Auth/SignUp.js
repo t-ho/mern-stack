@@ -8,7 +8,7 @@ import { getProcessing, getError } from '../../store/selectors';
 import { required, minLength, email } from '../../utils/formValidator';
 
 class SignUp extends React.Component {
-  renderInput = field => {
+  renderInput = (field) => {
     const className = `field ${
       field.meta.error && field.meta.touched ? 'error' : ''
     }`;
@@ -32,7 +32,7 @@ class SignUp extends React.Component {
     );
   };
 
-  onSubmit = formValues => {
+  onSubmit = (formValues) => {
     return this.props.signUp(formValues).then(() => {
       if (this.props.errorMessage) {
         throw new SubmissionError({ _error: this.props.errorMessage });
@@ -48,7 +48,7 @@ class SignUp extends React.Component {
       reset,
       submitting,
       valid,
-      error
+      error,
     } = this.props;
     return (
       <div className="ui centered grid">
@@ -112,14 +112,14 @@ class SignUp extends React.Component {
   }
 }
 
-const maptStateToProps = state => {
+const maptStateToProps = (state) => {
   return {
     isProcessing: getProcessing(state),
-    errorMessage: getError(state)
+    errorMessage: getError(state),
   };
 };
 
-const validate = values => {
+const validate = (values) => {
   const errors = {};
   errors.username = required(values.username) || minLength(4)(values.username);
   errors.email = required(values.email) || email(values.email);

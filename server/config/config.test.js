@@ -7,16 +7,16 @@ const defaultConfig = require('./config.default');
 let testConfig = {
   auth: {
     verifyEmail: false, // If true, require email verification when signing up
-    resetPassword: false // If true, be able to reset password via email
+    resetPassword: false, // If true, be able to reset password via email
+  },
+  log: {
+    format: 'dev', // TODO: possible values: combined, common, dev, short, tiny
   },
   mongo: {
-    testUri: `mongodb://localhost:27017/${defaultConfig.app.name}_test`
-  },
-  server: {
-    url: 'http://localhost' // TODO:
+    testUri: `mongodb://localhost:27017/${defaultConfig.app.name}_test`,
   },
   oauth: {
-    storeToken: true // If true, the OAuth access_token and refresh_token will be stored in database
+    storeToken: true, // If true, the OAuth access_token and refresh_token will be stored in database
   },
   seed: {
     logging: false,
@@ -33,15 +33,15 @@ let testConfig = {
             userId: 'google-user-id-01',
             picture: 'google-avatar-url',
             accessToken: 'google-access-token',
-            refreshToken: 'google-refresh-token'
+            refreshToken: 'google-refresh-token',
           },
           facebook: {
             userId: 'facebook-user-id-01',
             picture: 'facebook-avatar-url',
             accessToken: 'facebook-access-token',
-            refreshToken: 'facebook-refresh-token'
-          }
-        }
+            refreshToken: 'facebook-refresh-token',
+          },
+        },
       },
       {
         username: 'admin',
@@ -55,15 +55,15 @@ let testConfig = {
             userId: 'google-user-id-02',
             picture: 'google-avatar-url',
             accessToken: 'google-access-token',
-            refreshToken: 'google-refresh-token'
+            refreshToken: 'google-refresh-token',
           },
           facebook: {
             userId: 'facebook-user-id-02',
             picture: 'facebook-avatar-url',
             accessToken: 'facebook-access-token',
-            refreshToken: 'facebook-refresh-token'
-          }
-        }
+            refreshToken: 'facebook-refresh-token',
+          },
+        },
       },
       {
         username: 'user',
@@ -77,18 +77,18 @@ let testConfig = {
             userId: 'google-user-id-03',
             picture: 'google-avatar-url',
             accessToken: 'google-access-token',
-            refreshToken: 'google-refresh-token'
+            refreshToken: 'google-refresh-token',
           },
           facebook: {
             userId: 'facebook-user-id-03',
             picture: 'facebook-avatar-url',
             accessToken: 'facebook-access-token',
-            refreshToken: 'facebook-refresh-token'
-          }
-        }
-      }
-    ]
-  }
+            refreshToken: 'facebook-refresh-token',
+          },
+        },
+      },
+    ],
+  },
 };
 
 testConfig = _.merge({}, defaultConfig, testConfig);

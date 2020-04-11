@@ -1,10 +1,12 @@
 import axios from 'axios';
 
-const mernApi = axios.create({
-  baseURL: 'http://localhost:8080/api'
-});
+const mernApi = axios.create();
 
-mernApi.setAuthToken = jwtToken => {
+if (process.env.NODE_ENV !== 'production') {
+  mernApi.defaults.baseURL = `${process.env.REACT_APP_SERVER_HOST}:${process.env.REACT_APP_SERVER_PORT}`;
+}
+
+mernApi.setAuthToken = (jwtToken) => {
   mernApi.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
 };
 

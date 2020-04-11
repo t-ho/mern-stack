@@ -6,7 +6,7 @@ import { getError, getProcessed } from '../store/selectors';
 import { email, required } from '../utils/formValidator';
 
 class RequestTokenForm extends React.Component {
-  renderInput = field => {
+  renderInput = (field) => {
     const className = `field ${
       field.meta.error && field.meta.touched ? 'error' : ''
     }`;
@@ -30,7 +30,7 @@ class RequestTokenForm extends React.Component {
     );
   };
 
-  onSubmit = formValues => {
+  onSubmit = (formValues) => {
     formValues.tokenPurpose = this.props.tokenPurpose;
     return this.props.onSubmit(formValues).then(() => {
       if (this.props.errorMessage) {
@@ -49,7 +49,7 @@ class RequestTokenForm extends React.Component {
       error,
       title,
       isProcessed,
-      errorMessage
+      errorMessage,
     } = this.props;
     return (
       <div className="ui centered grid">
@@ -101,14 +101,14 @@ class RequestTokenForm extends React.Component {
   }
 }
 
-const maptStateToProps = state => {
+const maptStateToProps = (state) => {
   return {
     errorMessage: getError(state),
-    isProcessed: getProcessed(state)
+    isProcessed: getProcessed(state),
   };
 };
 
-const validate = values => {
+const validate = (values) => {
   const errors = {};
   errors.email = required(values.email) || email(values.email);
   return errors;

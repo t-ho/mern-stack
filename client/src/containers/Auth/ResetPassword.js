@@ -12,7 +12,7 @@ class ResetPassword extends React.Component {
     this.resetToken = this.props.match.params.token;
   }
 
-  renderInput = field => {
+  renderInput = (field) => {
     const className = `field ${
       field.meta.error && field.meta.touched ? 'error' : ''
     }`;
@@ -36,7 +36,7 @@ class ResetPassword extends React.Component {
     );
   };
 
-  onSubmit = formValues => {
+  onSubmit = (formValues) => {
     return this.props.resetPassword(formValues, this.resetToken).then(() => {
       if (this.props.errorMessage) {
         throw new SubmissionError({ _error: this.props.errorMessage });
@@ -53,7 +53,7 @@ class ResetPassword extends React.Component {
       valid,
       error,
       errorMessage,
-      isProcessed
+      isProcessed,
     } = this.props;
     return (
       <div className="ui centered grid">
@@ -116,14 +116,14 @@ class ResetPassword extends React.Component {
   }
 }
 
-const maptStateToProps = state => {
+const maptStateToProps = (state) => {
   return {
     isProcessed: getProcessed(state),
-    errorMessage: getError(state)
+    errorMessage: getError(state),
   };
 };
 
-const validate = values => {
+const validate = (values) => {
   const errors = {};
   errors.email = required(values.email) || email(values.email);
   errors.password = required(values.password) || minLength(8)(values.password);

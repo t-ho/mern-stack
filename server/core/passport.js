@@ -13,25 +13,25 @@ const User = mongoose.model('User');
 const localStrategy = new LocalStrategy(
   {
     usernameField: 'usernameOrEmail',
-    passwordField: 'password'
+    passwordField: 'password',
   },
-  function(usernameOrEmail, password, done) {
+  function (usernameOrEmail, password, done) {
     User.findOne({
-      $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }]
+      $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
     })
-      .then(user => {
+      .then((user) => {
         if (!user) {
           return done(null, false, {
-            message: 'Username or email does not exist.'
+            message: 'Username or email does not exist.',
           });
         }
         if (!user.provider.local) {
           // not a local account (email and password)
           return done(null, false, {
-            message: 'Username or email does not exist.'
+            message: 'Username or email does not exist.',
           });
         }
-        user.comparePasswordAsync(password).then(isMatch => {
+        user.comparePasswordAsync(password).then((isMatch) => {
           if (!isMatch) {
             return done(null, false, { message: 'Password is incorrect.' });
           }
@@ -44,7 +44,7 @@ const localStrategy = new LocalStrategy(
 
           if (user.status !== 'active') {
             return done(null, false, {
-              message: 'Your account is disabled.'
+              message: 'Your account is disabled.',
             });
           }
 
@@ -59,11 +59,11 @@ const localStrategy = new LocalStrategy(
 const jwtStrategy = new JwtStrategy(
   {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: config.jwt.secret
+    secretOrKey: config.jwt.secret,
   },
-  function(jwtPayload, done) {
+  function (jwtPayload, done) {
     User.findById(jwtPayload.userId)
-      .then(user => {
+      .then((user) => {
         if (!user) {
           return done(null, false, 'Invalid credentials.');
         }
@@ -86,9 +86,9 @@ const jwtStrategy = new JwtStrategy(
 const googleTokenStrategy = new GoogleTokenStrategy(
   {
     clientID: config.oauth.google.clientId,
-    clientSecret: config.oauth.google.clientSecret
+    clientSecret: config.oauth.google.clientSecret,
   },
-  function(accessToken, refreshToken, profile, done) {
+  function (accessToken, refreshToken, profile, done) {
     const userProfile = {
       provider: 'google',
       userId: profile.id,
@@ -102,11 +102,11 @@ const googleTokenStrategy = new GoogleTokenStrategy(
       lastName: profile._json.family_name,
       picture: profile._json.picture,
       accessToken,
-      refreshToken
+      refreshToken,
     };
 
     updateOrInsert(userProfile)
-      .then(user => {
+      .then((user) => {
         done(null, user);
       })
       .catch(done);
@@ -117,9 +117,9 @@ const googleTokenStrategy = new GoogleTokenStrategy(
 const facebookTokenStrategy = new FacebookTokenStrategy(
   {
     clientID: config.oauth.facebook.clientId,
-    clientSecret: config.oauth.facebook.clientSecret
+    clientSecret: config.oauth.facebook.clientSecret,
   },
-  function(accessToken, refreshToken, profile, done) {
+  function (accessToken, refreshToken, profile, done) {
     const userProfile = {
       provider: 'facebook',
       userId: profile.id,
@@ -133,11 +133,11 @@ const facebookTokenStrategy = new FacebookTokenStrategy(
       lastName: profile._json.last_name,
       picture: profile.photos[0].value,
       accessToken,
-      refreshToken
+      refreshToken,
     };
 
     updateOrInsert(userProfile)
-      .then(user => {
+      .then((user) => {
         done(null, user);
       })
       .catch(done);
@@ -179,8 +179,8 @@ const generateUsername = (email, firstName, lastName) => {
  *
  * @param {string} possibleUsername The possible username
  */
-const findUniqueUsername = possibleUsername => {
-  return User.findOne({ username: possibleUsername }).then(existingUser => {
+const findUniqueUsername = (possibleUsername) => {
+  return User.findOne({ username: possibleUsername }).then((existingUser) => {
     if (!existingUser) {
       return possibleUsername;
     }
@@ -195,40 +195,40 @@ const findUniqueUsername = possibleUsername => {
  *
  * @returns {Promise} Resolve with the updated user or newly created user
  */
-const updateOrInsert = userProfile => {
+const updateOrInsert = (userProfile) => {
   let query = {
     $or: [
       { email: userProfile.email },
       {
         [`provider.${userProfile.provider}`]: {
-          userId: userProfile.userId
-        }
-      }
-    ]
+          userId: userProfile.userId,
+        },
+      },
+    ],
   };
 
   let provider = {
     name: userProfile.provider,
     userId: userProfile.userId,
-    picture: userProfile.picture
+    picture: userProfile.picture,
   };
   if (config.oauth.storeToken) {
     provider.accessToken = userProfile.accessToken;
     provider.refreshToken = userProfile.refreshToken;
   }
 
-  return User.findOne(query).then(existingUser => {
+  return User.findOne(query).then((existingUser) => {
     if (!existingUser) {
       return findUniqueUsername(userProfile.username).then(
-        availableUsername => {
+        (availableUsername) => {
           let user = new User({
             email: userProfile.email,
             username: availableUsername,
             firstName: userProfile.firstName,
             lastName: userProfile.lastName,
             provider: {
-              [userProfile.provider]: provider
-            }
+              [userProfile.provider]: provider,
+            },
           });
           user.setSubId();
           return user.save();
@@ -239,7 +239,7 @@ const updateOrInsert = userProfile => {
     if (existingUser.provider[userProfile.provider]) {
       existingUser.provider[userProfile.provider] = {
         ...existingUser.provider[userProfile.provider],
-        ...provider
+        ...provider,
       };
     } else {
       existingUser.provider[userProfile.provider] = provider;

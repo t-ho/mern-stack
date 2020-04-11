@@ -1,29 +1,29 @@
 import { replace } from 'connected-react-router';
 import * as actionTypes from './types';
 
-export const signUp = formValues => (dispatch, getState, { mernApi }) => {
+export const signUp = (formValues) => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.SIGN_UP });
-  return mernApi.post('/auth/signup', formValues).then(
-    response => {
+  return mernApi.post('/api/auth/signup', formValues).then(
+    (response) => {
       dispatch({ type: actionTypes.SIGN_UP_SUCCESS });
     },
-    err => {
-      dispatch(signUpFail(err.response.data.error));
+    (err) => {
+      dispatch(signUpFail(err.response.data.error.message));
     }
   );
 };
 
-const signUpFail = payload => {
+const signUpFail = (payload) => {
   return {
     type: actionTypes.SIGN_UP_FAIL,
-    payload
+    payload,
   };
 };
 
-export const signIn = formValues => (dispatch, getState, { mernApi }) => {
+export const signIn = (formValues) => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.SIGN_IN });
   return signInHelper(
-    '/auth/signin',
+    '/api/auth/signin',
     formValues,
     signInSuccess,
     signInFail,
@@ -33,28 +33,28 @@ export const signIn = formValues => (dispatch, getState, { mernApi }) => {
   );
 };
 
-const signInSuccess = payload => {
+const signInSuccess = (payload) => {
   return {
     type: actionTypes.SIGN_IN_SUCCESS,
-    payload
+    payload,
   };
 };
 
-const signInFail = payload => {
+const signInFail = (payload) => {
   return {
     type: actionTypes.SIGN_IN_FAIL,
-    payload
+    payload,
   };
 };
 
-export const facebookSignIn = formValues => (
+export const facebookSignIn = (formValues) => (
   dispatch,
   getState,
   { mernApi }
 ) => {
   dispatch({ type: actionTypes.FACEBOOK_SIGN_IN });
   return signInHelper(
-    '/auth/facebook',
+    '/api/auth/facebook',
     formValues,
     facebookSignInSuccess,
     facebookSignInFail,
@@ -64,24 +64,28 @@ export const facebookSignIn = formValues => (
   );
 };
 
-const facebookSignInSuccess = payload => {
+const facebookSignInSuccess = (payload) => {
   return {
     type: actionTypes.FACEBOOK_SIGN_IN_SUCCESS,
-    payload
+    payload,
   };
 };
 
-const facebookSignInFail = payload => {
+const facebookSignInFail = (payload) => {
   return {
     type: actionTypes.FACEBOOK_SIGN_IN_FAIL,
-    payload
+    payload,
   };
 };
 
-export const googleSignIn = formValues => (dispatch, getState, { mernApi }) => {
+export const googleSignIn = (formValues) => (
+  dispatch,
+  getState,
+  { mernApi }
+) => {
   dispatch({ type: actionTypes.GOOGLE_SIGN_IN });
   return signInHelper(
-    '/auth/google',
+    '/api/auth/google',
     formValues,
     googleSignInSuccess,
     googleSignInFail,
@@ -91,17 +95,17 @@ export const googleSignIn = formValues => (dispatch, getState, { mernApi }) => {
   );
 };
 
-const googleSignInSuccess = payload => {
+const googleSignInSuccess = (payload) => {
   return {
     type: actionTypes.GOOGLE_SIGN_IN_SUCCESS,
-    payload
+    payload,
   };
 };
 
-const googleSignInFail = payload => {
+const googleSignInFail = (payload) => {
   return {
     type: actionTypes.GOOGLE_SIGN_IN_FAIL,
-    payload
+    payload,
   };
 };
 
@@ -118,14 +122,14 @@ export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
     if (authInfo.expiresAt <= now + 30 * 24 * 60 * 60) {
       mernApi.setAuthToken(authInfo.token);
       return mernApi.post('auth/refresh-token').then(
-        response => {
+        (response) => {
           authInfo.token = response.data.token;
           authInfo.expiresAt = response.data.expiresAt;
           dispatch(tryLocalSignInSuccess(authInfo));
           redirectAfterSignIn(dispatch, getState);
           setAuthInfo(authInfo, mernApi);
         },
-        err => {
+        (err) => {
           dispatch(tryLocalSignInFail());
         }
       );
@@ -139,11 +143,15 @@ export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
   }
 };
 
-const tryLocalSignInSuccess = payload => (dispatch, getState, { mernApi }) => {
+const tryLocalSignInSuccess = (payload) => (
+  dispatch,
+  getState,
+  { mernApi }
+) => {
   setAuthInfo(payload, mernApi);
   dispatch({
     type: actionTypes.TRY_LOCAL_SIGN_IN_SUCCESS,
-    payload
+    payload,
   });
 };
 
@@ -152,10 +160,10 @@ const tryLocalSignInFail = () => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.TRY_LOCAL_SIGN_IN_FAIL });
 };
 
-export const setAttemptedPath = path => {
+export const setAttemptedPath = (path) => {
   return {
     type: actionTypes.SET_ATTEMPTED_PATH,
-    payload: path
+    payload: path,
   };
 };
 
@@ -165,89 +173,89 @@ export const signOut = () => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.SIGN_OUT_SUCCESS });
 };
 
-export const verifyEmail = token => (dispatch, getState, { mernApi }) => {
+export const verifyEmail = (token) => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.VERIFY_EMAIL });
-  return mernApi.post(`/auth/verify-email/${token}`).then(
-    response => {
+  return mernApi.post(`/api/auth/verify-email/${token}`).then(
+    (response) => {
       dispatch({ type: actionTypes.VERIFY_EMAIL_SUCCESS });
     },
-    err => {
-      dispatch(verifyEmailFail(err.response.data.error));
+    (err) => {
+      dispatch(verifyEmailFail(err.response.data.error.message));
     }
   );
 };
 
-const verifyEmailFail = payload => {
+const verifyEmailFail = (payload) => {
   return {
     type: actionTypes.VERIFY_EMAIL_FAIL,
-    payload
+    payload,
   };
 };
 
-export const requestVerificationEmail = formValues => {
+export const requestVerificationEmail = (formValues) => {
   return (dispatch, getState, { mernApi }) => {
     dispatch({ type: actionTypes.REQUEST_VERIFICATION_EMAIL });
-    return mernApi.post('/auth/send-token', formValues).then(
-      response => {
+    return mernApi.post('/api/auth/send-token', formValues).then(
+      (response) => {
         dispatch({ type: actionTypes.REQUEST_VERIFICATION_EMAIL_SUCCESS });
       },
-      err => {
-        dispatch(requestVerificationEmailFail(err.response.data.error));
+      (err) => {
+        dispatch(requestVerificationEmailFail(err.response.data.error.message));
       }
     );
   };
 };
 
-const requestVerificationEmailFail = payload => {
+const requestVerificationEmailFail = (payload) => {
   return {
     type: actionTypes.REQUEST_VERIFICATION_EMAIL_FAIL,
-    payload
+    payload,
   };
 };
 
-export const requestPasswordReset = formValues => {
+export const requestPasswordReset = (formValues) => {
   return (dispatch, getState, { mernApi }) => {
     dispatch({ type: actionTypes.REQUEST_PASSWORD_RESET });
-    return mernApi.post('/auth/send-token', formValues).then(
-      response => {
+    return mernApi.post('/api/auth/send-token', formValues).then(
+      (response) => {
         dispatch({ type: actionTypes.REQUEST_PASSWORD_RESET_SUCCESS });
       },
-      err => {
-        dispatch(requestPasswordResetFail(err.response.data.error));
+      (err) => {
+        dispatch(requestPasswordResetFail(err.response.data.error.message));
       }
     );
   };
 };
 
-const requestPasswordResetFail = payload => {
+const requestPasswordResetFail = (payload) => {
   return {
     type: actionTypes.REQUEST_PASSWORD_RESET_FAIL,
-    payload
+    payload,
   };
 };
 
 export const resetPassword = (formValues, token) => {
   return (dispatch, getState, { mernApi }) => {
     dispatch({ type: actionTypes.RESET_PASSWORD });
-    return mernApi.post(`/auth/reset-password/${token}`, formValues).then(
-      response => {
+    return mernApi.post(`/api/auth/reset-password/${token}`, formValues).then(
+      (response) => {
         dispatch({ type: actionTypes.RESET_PASSWORD_SUCCESS });
       },
-      err => dispatch(resetPasswordFail(err.response.data.error))
+      (err) => dispatch(resetPasswordFail(err.response.data.error.message))
     );
   };
 };
 
-const resetPasswordFail = payload => {
+const resetPasswordFail = (payload) => {
   return {
     type: actionTypes.RESET_PASSWORD_FAIL,
-    payload
+    payload,
   };
 };
 
 export const unloadAuthPage = () => {
   return {
-    type: actionTypes.UNLOAD_AUTH_PAGE
+    type: actionTypes.UNLOAD_AUTH_PAGE,
   };
 };
 
@@ -261,13 +269,13 @@ const signInHelper = (
   mernApi
 ) => {
   return mernApi.post(endpoint, payload).then(
-    response => {
+    (response) => {
       dispatch(actionSuccess(response.data));
       redirectAfterSignIn(dispatch, getState);
       setAuthInfo(response.data, mernApi);
     },
-    err => {
-      dispatch(actionFail(err.response.data.error));
+    (err) => {
+      dispatch(actionFail(err.response.data.error.message));
     }
   );
 };
@@ -277,7 +285,7 @@ const setAuthInfo = (authInfo, mernApi) => {
   localStorage.setItem('authInfo', JSON.stringify(authInfo));
 };
 
-const clearAuthInfo = mernApi => {
+const clearAuthInfo = (mernApi) => {
   mernApi.setAuthToken('');
   localStorage.removeItem('authInfo');
 };

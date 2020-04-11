@@ -1,1 +1,1 @@
-This file can be accessed via `${config.server.url}/public/readme.txt`
+This file can be accessed via `${config.server.host}/public/readme.txt`

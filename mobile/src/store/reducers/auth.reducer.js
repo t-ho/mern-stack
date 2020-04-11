@@ -4,9 +4,11 @@ const INITIAL_STATE = {
   user: {},
   token: null,
   expiresAt: null,
+  signedInWith: null,
   processing: false,
   processed: false,
   error: null,
+  type: null,
 };
 
 const authReducer = (state = INITIAL_STATE, action) => {
@@ -19,7 +21,13 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case actionTypes.SIGN_UP:
     case actionTypes.REQUEST_VERIFICATION_EMAIL:
     case actionTypes.REQUEST_PASSWORD_RESET:
-      return { ...state, processed: false, processing: true, error: null };
+      return {
+        ...state,
+        processed: false,
+        processing: true,
+        error: null,
+        type: action.payload ? action.payload.type : null,
+      };
     case actionTypes.SIGN_IN_SUCCESS:
     case actionTypes.FACEBOOK_SIGN_IN_SUCCESS:
     case actionTypes.GOOGLE_SIGN_IN_SUCCESS:
@@ -67,6 +75,13 @@ const authReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         processing: false,
+        processed: false,
+        error: null,
+        type: null,
+      };
+    case actionTypes.CLEAR_ERROR_MESSAGE:
+      return {
+        ...state,
         processed: false,
         error: null,
       };

@@ -4,20 +4,20 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 const seed = require('../core/seed');
 
-const generateJwtToken = user => {
+const generateJwtToken = (user) => {
   const iat = Math.floor(Date.now() / 1000);
   const token = jwt.sign(
     { sub: user.subId, userId: user._id, iat },
     config.jwt.secret,
     {
       algorithm: config.jwt.algorithm,
-      expiresIn: config.jwt.expiresIn // seconds
+      expiresIn: config.jwt.expiresIn, // seconds
     }
   );
   return token;
 };
 
-before(function(done) {
+before(function (done) {
   if (config.env !== 'test') {
     throw new Error(
       chalk.red('[-] Test must be run in "test" environment (NODE_ENV=test)')
@@ -31,17 +31,17 @@ before(function(done) {
   });
 });
 
-beforeEach(function(done) {
+beforeEach(function (done) {
   const User = mongoose.model('User');
-  User.deleteMany({}).then(res => {
+  User.deleteMany({}).then((res) => {
     done();
   });
 });
 
-beforeEach(function(done) {
-  seed.createUsers(config.seed.users).then(users => {
+beforeEach(function (done) {
+  seed.createUsers(config.seed.users).then((users) => {
     app.locals.existing = {};
-    users.forEach(user => {
+    users.forEach((user) => {
       user.jwtToken = generateJwtToken(user);
       app.locals.existing[[user.role]] = user;
     });
@@ -49,8 +49,8 @@ beforeEach(function(done) {
   });
 });
 
-after(function(done) {
-  mongoose.connection.db.dropDatabase(function(err, result) {
+after(function (done) {
+  mongoose.connection.db.dropDatabase(function (err, result) {
     done();
   });
 });

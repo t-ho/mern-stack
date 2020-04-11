@@ -7,7 +7,7 @@ import { getIsSignedIn, getDefaultPath } from '../store/selectors';
  *
  * @param {Component} WrappedComponent The component to be wrapped
  */
-const requireAnonymous = () => WrappedComponent => {
+const requireAnonymous = () => (WrappedComponent) => {
   class ComposedComponent extends React.Component {
     componentDidMount() {
       this.shouldNavigateAway();
@@ -28,10 +28,10 @@ const requireAnonymous = () => WrappedComponent => {
     }
   }
 
-  const mapStateToProps = state => {
+  const mapStateToProps = (state) => {
     return {
       isSignedIn: getIsSignedIn(state),
-      defaultPath: getDefaultPath(state)
+      defaultPath: getDefaultPath(state),
     };
   };
 

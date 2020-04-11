@@ -34,9 +34,9 @@ class SignIn extends React.Component {
   }
 }
 
-const maptStateToProps = state => {
+const maptStateToProps = (state) => {
   return {
-    errorMessage: getError(state)
+    errorMessage: getError(state),
   };
 };
 

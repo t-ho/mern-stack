@@ -7,11 +7,11 @@ import createRootReducer from './reducers';
 import mernApi from './apis/mern';
 
 const composeEnhancer = composeWithDevTools({
-  actionsBlacklist: ['@@redux-form']
+  actionsBlacklist: ['@@redux-form'],
 });
 export const history = createBrowserHistory();
 
-const configureStore = initialState => {
+const configureStore = (initialState) => {
   const store = createStore(
     createRootReducer(history),
     initialState,

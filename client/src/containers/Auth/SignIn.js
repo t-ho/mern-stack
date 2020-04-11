@@ -8,7 +8,7 @@ import {
   signIn,
   facebookSignIn,
   googleSignIn,
-  unloadAuthPage
+  unloadAuthPage,
 } from '../../store/actions';
 import { getProcessing, getError } from '../../store/selectors';
 import { email, minLength, required } from '../../utils/formValidator';
@@ -16,7 +16,7 @@ import GoogleLogin from 'react-google-login';
 import FacebookLogin from 'react-facebook-login';
 
 class SignIn extends React.Component {
-  renderInput = field => {
+  renderInput = (field) => {
     const className = `field ${
       field.meta.error && field.meta.touched ? 'error' : ''
     }`;
@@ -40,7 +40,7 @@ class SignIn extends React.Component {
     );
   };
 
-  onSubmit = formValues => {
+  onSubmit = (formValues) => {
     return this.props.signIn(formValues).then(() => {
       if (this.props.errorMessage) {
         throw new SubmissionError({ _error: this.props.errorMessage });
@@ -48,9 +48,9 @@ class SignIn extends React.Component {
     });
   };
 
-  onFacebookResponse = response => {
+  onFacebookResponse = (response) => {
     const payload = {
-      access_token: response.accessToken
+      access_token: response.accessToken,
     };
     this.props.facebookSignIn(payload).then(() => {
       // FIXME:
@@ -60,9 +60,9 @@ class SignIn extends React.Component {
     });
   };
 
-  onGoogleResponse = response => {
+  onGoogleResponse = (response) => {
     const payload = {
-      access_token: response.tokenObj.access_token
+      access_token: response.tokenObj.access_token,
     };
     this.props.googleSignIn(payload).then(() => {
       // FIXME:
@@ -79,7 +79,7 @@ class SignIn extends React.Component {
       reset,
       submitting,
       valid,
-      error
+      error,
     } = this.props;
     return (
       <div className="ui centered grid">
@@ -140,11 +140,11 @@ class SignIn extends React.Component {
             <div className="ui stackable two column center aligned grid">
               <div className="column">
                 <GoogleLogin
-                  clientId="134675062003-8rtdt9qeg4o2gmeckeoe65s2i9lq9cks.apps.googleusercontent.com" // TODO: Add your Google client ID
+                  clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
                   buttonText="Google Login"
                   onSuccess={this.onGoogleResponse}
                   onFailure={this.onGoogleResponse}
-                  render={renderProps => (
+                  render={(renderProps) => (
                     <button
                       onClick={renderProps.onClick}
                       disabled={renderProps.disabled}
@@ -158,7 +158,7 @@ class SignIn extends React.Component {
               </div>
               <div className="column">
                 <FacebookLogin
-                  appId="1538677846308680" // TODO: Add your Facebook app Id
+                  appId={process.env.REACT_APP_FACEBOOK_APP_ID}
                   fields="name,email,picture"
                   scope="public_profile,email"
                   version="6.0"
@@ -180,14 +180,14 @@ class SignIn extends React.Component {
   }
 }
 
-const maptStateToProps = state => {
+const maptStateToProps = (state) => {
   return {
     isProcessing: getProcessing(state),
-    errorMessage: getError(state)
+    errorMessage: getError(state),
   };
 };
 
-const validate = values => {
+const validate = (values) => {
   const errors = {};
   errors.email = required(values.email) || email(values.email);
   errors.password = required(values.password) || minLength(8)(values.password);
@@ -200,7 +200,7 @@ export default compose(
     signIn,
     facebookSignIn,
     googleSignIn,
-    unloadAuthPage
+    unloadAuthPage,
   }),
   reduxForm({ form: 'signIn', validate })
 )(SignIn);

@@ -50,10 +50,10 @@ export class Header extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     isSignedIn: getIsSignedIn(state),
-    currentUser: getCurrentUser(state)
+    currentUser: getCurrentUser(state),
   };
 };
 
