@@ -12,19 +12,15 @@ const getUsersSchema = Joi.object({
   sort: Joi.string()
     .trim()
     .pattern(/^(-?[A-Za-z]+)( -?[A-Za-z]+)*$/), // matches "-descFieldName ascFieldName"
-  limit: Joi.number()
-    .integer()
-    .default(30),
-  skip: Joi.number()
-    .integer()
-    .default(0),
+  limit: Joi.number().integer().default(30),
+  skip: Joi.number().integer().default(0),
   username: Joi.string().trim(),
   email: Joi.string().email(),
   firstName: Joi.string().trim(),
   lastName: Joi.string().trim(),
   status: Joi.string().valid('active', 'disabled', 'unverifiedEmail'),
   role: Joi.string().valid('root', 'admin', 'user'),
-  permissions: Joi.string().trim()
+  permissions: Joi.string().trim(),
 });
 
 /**
@@ -47,7 +43,7 @@ const getUsersSchema = Joi.object({
 module.exports.getUsers = (req, res, next) => {
   getUsersSchema
     .validateAsync(req.query)
-    .then(payload => {
+    .then((payload) => {
       req.query = payload;
       const query = _.pick(req.query, [
         'username',
@@ -55,15 +51,15 @@ module.exports.getUsers = (req, res, next) => {
         'firstName',
         'lastName',
         'status',
-        'role'
+        'role',
       ]);
       if (req.query.permissions) {
         // Include root and admin
         query.$or = [
           {
-            [`permissions.${req.query.permissions}`]: true
+            [`permissions.${req.query.permissions}`]: true,
           },
-          { role: { $in: ['root', 'admin'] } }
+          { role: { $in: ['root', 'admin'] } },
         ];
       }
       return Promise.all([
@@ -72,14 +68,14 @@ module.exports.getUsers = (req, res, next) => {
           .limit(req.query.limit)
           .skip(req.query.skip)
           .exec(),
-        User.find(query).countDocuments()
+        User.find(query).countDocuments(),
       ]);
     })
-    .then(results => {
+    .then((results) => {
       const [users, usersCount] = results;
       res
         .status(200)
-        .json({ users: users.map(user => user.toProfileJson()), usersCount });
+        .json({ users: users.map((user) => user.toProfileJson()), usersCount });
     })
     .catch(next);
 };
@@ -96,7 +92,7 @@ module.exports.preloadTargetUser = (req, res, next, userId) => {
   }
 
   User.findById(userId)
-    .then(targetUser => {
+    .then((targetUser) => {
       if (!targetUser) {
         throw createError(422, 'User ID does not exist.');
       }
@@ -121,7 +117,7 @@ module.exports.getUser = (req, res, next) => {
 module.exports.deleteUser = (req, res, next) => {
   res.locals.targetUser
     .delete()
-    .then(deletedUser => {
+    .then((deletedUser) => {
       res.status(200).json({ success: true, message: 'User deleted' });
     })
     .catch(next);
@@ -133,7 +129,7 @@ module.exports.deleteUser = (req, res, next) => {
 const updateUserSchema = Joi.object({
   role: Joi.string().valid('root', 'admin', 'user'),
   status: Joi.string().valid('active', 'disabled', 'unverifiedEmail'),
-  permissions: Joi.object()
+  permissions: Joi.object(),
 });
 
 /**
@@ -147,7 +143,7 @@ const updateUserSchema = Joi.object({
 module.exports.updateUser = (req, res, next) => {
   updateUserSchema
     .validateAsync(req.body, { stripUnknown: true })
-    .then(payload => {
+    .then((payload) => {
       req.body = payload;
       if (req.body.role) {
         if (
@@ -160,7 +156,7 @@ module.exports.updateUser = (req, res, next) => {
       _.merge(res.locals.targetUser, req.body);
       return res.locals.targetUser.save();
     })
-    .then(updatedUser => {
+    .then((updatedUser) => {
       res.status(200).json({ success: true, updatedFields: _.keys(req.body) });
     })
     .catch(next);

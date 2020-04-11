@@ -7,10 +7,13 @@ const defaultConfig = require('./config.default');
 let devConfig = {
   auth: {
     verifyEmail: false, // If true, require email verification when signing up
-    resetPassword: false // If true, be able to reset password via email
+    resetPassword: false, // If true, be able to reset password via email
+  },
+  log: {
+    format: 'dev', // TODO: possible values: combined, common, dev, short, tiny
   },
   oauth: {
-    storeToken: false // If true, the OAuth access_token and refresh_token will be stored in database
+    storeToken: false, // If true, the OAuth access_token and refresh_token will be stored in database
   },
   seed: {
     logging: true,
@@ -21,7 +24,7 @@ let devConfig = {
         password: 'password',
         firstName: 'Root',
         lastName: 'Account',
-        role: 'root'
+        role: 'root',
       },
       {
         username: 'admin',
@@ -29,7 +32,7 @@ let devConfig = {
         password: 'password',
         firstName: 'Admin',
         lastName: 'Account',
-        role: 'admin'
+        role: 'admin',
       },
       {
         username: 'user',
@@ -37,10 +40,10 @@ let devConfig = {
         password: 'password',
         firstName: 'User',
         lastName: 'Account',
-        role: 'user'
-      }
-    ]
-  }
+        role: 'user',
+      },
+    ],
+  },
 };
 
 devConfig = _.merge({}, defaultConfig, devConfig);

@@ -5,17 +5,17 @@ const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const config = require('../../../config');
 
-const createJwtToken = payload => {
+const createJwtToken = (payload) => {
   return jwt.sign(payload, config.jwt.secret, {
-    algorithm: config.jwt.algorithm
+    algorithm: config.jwt.algorithm,
   });
 };
 
-const decodeJwtToken = jwtToken => {
+const decodeJwtToken = (jwtToken) => {
   return jwt.verify(jwtToken, config.jwt.secret);
 };
 
-describe('ENDPOINT: GET /api/profiles/', function() {
+describe('ENDPOINT: GET /api/profiles/', function () {
   let endpoint = '/api/profiles/';
 
   const testJwtTokenValidation = (jwtToken, done) => {
@@ -24,26 +24,26 @@ describe('ENDPOINT: GET /api/profiles/', function() {
       .set('Authorization', `Bearer ${jwtToken}`)
       .expect(401)
       .expect({})
-      .then(res => {
+      .then((res) => {
         expect(res.text).to.be.equal('Unauthorized');
         done();
       })
       .catch(done);
   };
 
-  it(`GET ${endpoint} - JWT token not provided`, function(done) {
+  it(`GET ${endpoint} - JWT token not provided`, function (done) {
     request(app)
       .get(endpoint)
       .expect(401)
       .expect({})
-      .then(res => {
+      .then((res) => {
         expect(res.text).to.be.equal('Unauthorized');
         done();
       })
       .catch(done);
   });
 
-  it(`GET ${endpoint} - JWT token - invalid subId`, function(done) {
+  it(`GET ${endpoint} - JWT token - invalid subId`, function (done) {
     const existingAdmin = app.locals.existing.admin;
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.sub = 'invalid-sub-id';
@@ -51,7 +51,7 @@ describe('ENDPOINT: GET /api/profiles/', function() {
     testJwtTokenValidation(invalidJwtToken, done);
   });
 
-  it(`GET ${endpoint} - JWT token - not exist userId`, function(done) {
+  it(`GET ${endpoint} - JWT token - not exist userId`, function (done) {
     const existingAdmin = app.locals.existing.admin;
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.userId = '5e24db1d560ba309f0b0b5a8';
@@ -59,7 +59,7 @@ describe('ENDPOINT: GET /api/profiles/', function() {
     testJwtTokenValidation(invalidJwtToken, done);
   });
 
-  it(`GET ${endpoint} - JWT token - expired token`, function(done) {
+  it(`GET ${endpoint} - JWT token - expired token`, function (done) {
     const existingAdmin = app.locals.existing.admin;
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.iat = decodedToken.iat - 100;
@@ -68,30 +68,30 @@ describe('ENDPOINT: GET /api/profiles/', function() {
     testJwtTokenValidation(invalidJwtToken, done);
   });
 
-  it(`GET ${endpoint} - Get profile succeeded`, function(done) {
+  it(`GET ${endpoint} - Get profile succeeded`, function (done) {
     let existingAdmin = app.locals.existing.admin;
     request(app)
       .get(endpoint)
       .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
       .expect(200)
-      .then(res => {
+      .then((res) => {
         expect(res.body.profile._id).to.be.equal(existingAdmin._id.toString());
         expect(res.body.profile).to.have.property('createdAt');
         expect(res.body.profile).to.have.property('updatedAt');
         expect(res.body.profile.provider).to.deep.equal({
           local: {
-            userId: existingAdmin._id.toString()
+            userId: existingAdmin._id.toString(),
           },
           google: {
             // not have property "accessToken" and "refreshToken"
             userId: existingAdmin.provider.google.userId,
-            picture: existingAdmin.provider.google.picture
+            picture: existingAdmin.provider.google.picture,
           },
           facebook: {
             // not have property "accessToken" and "refreshToken"
             userId: existingAdmin.provider.facebook.userId,
-            picture: existingAdmin.provider.facebook.picture
-          }
+            picture: existingAdmin.provider.facebook.picture,
+          },
         });
         expect(res.body.profile).to.not.have.property('hashedPassword');
         expect(res.body.profile).to.not.have.property('password');
@@ -106,7 +106,7 @@ describe('ENDPOINT: GET /api/profiles/', function() {
             'firstName',
             'lastName',
             'role',
-            'permissions'
+            'permissions',
           ])
         );
         done();
@@ -115,7 +115,7 @@ describe('ENDPOINT: GET /api/profiles/', function() {
   });
 });
 
-describe('ENDPOINT: PUT /api/profiles/', function() {
+describe('ENDPOINT: PUT /api/profiles/', function () {
   let endpoint = '/api/profiles/';
 
   const testJwtTokenValidation = (jwtToken, payload, done) => {
@@ -125,27 +125,27 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
       .set('Authorization', `Bearer ${jwtToken}`)
       .expect(401)
       .expect({})
-      .then(res => {
+      .then((res) => {
         expect(res.text).to.be.equal('Unauthorized');
         done();
       })
       .catch(done);
   };
 
-  it(`PUT ${endpoint} - JWT token not provided`, function(done) {
+  it(`PUT ${endpoint} - JWT token not provided`, function (done) {
     request(app)
       .put(endpoint)
       .send({ firstName: 'John', password: 'new-password' })
       .expect(401)
       .expect({})
-      .then(res => {
+      .then((res) => {
         expect(res.text).to.be.equal('Unauthorized');
         done();
       })
       .catch(done);
   });
 
-  it(`PUT ${endpoint} - JWT token - invalid subId`, function(done) {
+  it(`PUT ${endpoint} - JWT token - invalid subId`, function (done) {
     const existingAdmin = app.locals.existing.admin;
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.sub = 'invalid-sub-id';
@@ -154,7 +154,7 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
     testJwtTokenValidation(invalidJwtToken, payload, done);
   });
 
-  it(`PUT ${endpoint} - JWT token - not exist userId`, function(done) {
+  it(`PUT ${endpoint} - JWT token - not exist userId`, function (done) {
     const existingAdmin = app.locals.existing.admin;
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.userId = '5e24db1d560ba309f0b0b5a8';
@@ -163,7 +163,7 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
     testJwtTokenValidation(invalidJwtToken, payload, done);
   });
 
-  it(`PUT ${endpoint} - JWT token - expired token`, function(done) {
+  it(`PUT ${endpoint} - JWT token - expired token`, function (done) {
     const existingAdmin = app.locals.existing.admin;
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.iat = decodedToken.iat - 100;
@@ -173,7 +173,7 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
     testJwtTokenValidation(invalidJwtToken, payload, done);
   });
 
-  it(`PUT ${endpoint} - Can only update firstName, lastName and password`, function(done) {
+  it(`PUT ${endpoint} - Can only update firstName, lastName and password`, function (done) {
     const User = mongoose.model('User');
     let existingAdmin = app.locals.existing.admin;
     const payload = {
@@ -187,18 +187,18 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
       role: 'root',
       subId: '5e24db1d560ba309f0b0b5a8',
       permissions: {
-        debug: true
+        debug: true,
       },
       provider: {
         google: {
           userId: 'new-google-user-id',
           picture: 'new-google-avatar-url',
           accessToken: 'new-google-access-token',
-          refreshToken: 'new-google-refresh-token'
-        }
+          refreshToken: 'new-google-refresh-token',
+        },
       },
       createdAt: '2020-01-20T20:44:44.634Z',
-      updatedAt: '2020-01-22T01:28:03.783Z'
+      updatedAt: '2020-01-22T01:28:03.783Z',
     };
     request(app)
       .put(endpoint)
@@ -207,10 +207,10 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
       .expect(200)
       .expect({
         success: true,
-        updatedFields: ['firstName', 'lastName', 'password']
+        updatedFields: ['firstName', 'lastName', 'password'],
       })
-      .then(res => User.findById(existingAdmin._id))
-      .then(updatedUser => {
+      .then((res) => User.findById(existingAdmin._id))
+      .then((updatedUser) => {
         expect(updatedUser.toObject()).to.deep.include(
           _.pick(existingAdmin.toObject(), [
             '_id',
@@ -222,7 +222,7 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
             'createdAt',
             'token',
             'tokenPurpose',
-            'provider'
+            'provider',
           ])
         );
         expect(updatedUser.firstName).to.be.equal(payload.firstName);
@@ -241,13 +241,13 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
       .catch(done);
   });
 
-  it(`PUT ${endpoint} - Should not update subId`, function(done) {
+  it(`PUT ${endpoint} - Should not update subId`, function (done) {
     const User = mongoose.model('User');
     let existingAdmin = app.locals.existing.admin;
     const payload = {
       firstName: 'new-first-name',
       lastName: 'new-last-name',
-      subId: '5e24db1d560ba309f0b0b5a8'
+      subId: '5e24db1d560ba309f0b0b5a8',
     };
     request(app)
       .put(endpoint)
@@ -256,10 +256,10 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
       .expect(200)
       .expect({
         success: true,
-        updatedFields: ['firstName', 'lastName']
+        updatedFields: ['firstName', 'lastName'],
       })
-      .then(res => User.findById(existingAdmin._id))
-      .then(updatedUser => {
+      .then((res) => User.findById(existingAdmin._id))
+      .then((updatedUser) => {
         expect(updatedUser.toObject()).to.deep.include(
           _.pick(existingAdmin.toObject(), [
             '_id',
@@ -273,7 +273,7 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
             'tokenPurpose',
             'subId',
             'hashedPassword',
-            'provider'
+            'provider',
           ])
         );
         expect(updatedUser.firstName).to.be.equal(payload.firstName);
@@ -285,37 +285,37 @@ describe('ENDPOINT: PUT /api/profiles/', function() {
   });
 });
 
-describe('ENDPOINT: GET /api/profiles/:userId', function() {
+describe('ENDPOINT: GET /api/profiles/:userId', function () {
   let endpoint = '/api/profiles';
 
-  it(`GET ${endpoint}/:userId - Params - Invalid userId`, function(done) {
+  it(`GET ${endpoint}/:userId - Params - Invalid userId`, function (done) {
     let existingUser = app.locals.existing.user;
     request(app)
       .get(`${endpoint}/invalid-user-id`)
       .expect(422)
-      .expect({ error: 'Invalid user ID.' }, done);
+      .expect({ error: { message: 'Invalid user ID.' } }, done);
   });
 
-  it(`GET ${endpoint}/userId - Params - User ID not exist`, function(done) {
+  it(`GET ${endpoint}/userId - Params - User ID not exist`, function (done) {
     request(app)
       .get(`${endpoint}/5e24db1d560ba309f0b0b5a8`)
       .expect(422)
-      .expect({ error: 'User ID does not exist.' }, done);
+      .expect({ error: { message: 'User ID does not exist.' } }, done);
   });
 
-  it(`GET ${endpoint}/userId - Get public profile succeeded`, function(done) {
+  it(`GET ${endpoint}/userId - Get public profile succeeded`, function (done) {
     let existingAdmin = app.locals.existing.admin;
     request(app)
       .get(`${endpoint}/${existingAdmin._id}`)
       .expect(200)
-      .then(res => {
+      .then((res) => {
         expect(res.body.profile._id).to.be.equal(existingAdmin._id.toString());
         expect(res.body.profile).to.have.property('createdAt');
         expect(res.body.profile).to.be.deep.include(
           _.pick(existingAdmin.toString(), [
             'username',
             'firstName',
-            'lastName'
+            'lastName',
           ])
         );
         expect(res.body.profile).to.not.have.property('email');

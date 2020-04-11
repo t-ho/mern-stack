@@ -21,11 +21,9 @@ module.exports.getProfile = (req, res, next) => {
  * JOI schema for validating updateProfile payload
  */
 const updateProfileSchema = Joi.object({
-  password: Joi.string()
-    .min(8)
-    .messages(constants.PASSWORD_ERROR_MESSAGES),
+  password: Joi.string().min(8).messages(constants.PASSWORD_ERROR_MESSAGES),
   firstName: Joi.string().trim(),
-  lastName: Joi.string().trim()
+  lastName: Joi.string().trim(),
 });
 
 /**
@@ -43,7 +41,7 @@ module.exports.updateProfile = (req, res, next) => {
     }
     updateProfileSchema
       .validateAsync(req.body, { stripUnknown: true })
-      .then(payload => {
+      .then((payload) => {
         req.body = payload;
         const { password, ...others } = req.body;
         _.merge(req.user, others);
@@ -55,7 +53,7 @@ module.exports.updateProfile = (req, res, next) => {
       .then(() => {
         return req.user.save();
       })
-      .then(updatedUser => {
+      .then((updatedUser) => {
         res
           .status(200)
           .json({ success: true, updatedFields: _.keys(req.body) });
@@ -76,7 +74,7 @@ module.exports.getPublicProfile = (req, res, next) => {
   }
 
   User.findById(req.params.userId)
-    .then(user => {
+    .then((user) => {
       if (!user) {
         throw createError(422, 'User ID does not exist.');
       }

@@ -8,7 +8,7 @@ const INITIAL_STATE = {
   processed: false,
   error: null,
   defaultPath: '/', // Used as a default redirect path
-  attemptedPath: null // Used to redirect users to the page they visited before logging in
+  attemptedPath: null, // Used to redirect users to the page they visited before logging in
 };
 
 const authReducer = (state = INITIAL_STATE, action) => {
@@ -34,7 +34,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
         expiresAt: action.payload.expiresAt,
         signedInWith: action.payload.signedInWith,
         user: { ...action.payload.user },
-        defaultPath: '/profile'
+        defaultPath: '/profile',
       };
     case actionTypes.TRY_LOCAL_SIGN_IN_SUCCESS:
       return {
@@ -43,7 +43,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
         expiresAt: action.payload.expiresAt,
         signedInWith: action.payload.signedInWith,
         user: { ...action.payload.user },
-        defaultPath: '/profile'
+        defaultPath: '/profile',
       };
     case actionTypes.SIGN_UP_SUCCESS:
     case actionTypes.VERIFY_EMAIL_SUCCESS:
@@ -53,7 +53,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         processing: false,
-        processed: true
+        processed: true,
       };
     case actionTypes.SIGN_IN_FAIL:
     case actionTypes.FACEBOOK_SIGN_IN_FAIL:
@@ -67,7 +67,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
         ...state,
         processing: false,
         processed: true,
-        error: action.payload
+        error: action.payload,
       };
     case actionTypes.SIGN_OUT_SUCCESS:
       return {
@@ -77,7 +77,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
         token: null,
         user: {},
         expiresAt: null,
-        defaultPath: '/'
+        defaultPath: '/',
       };
     case actionTypes.TRY_LOCAL_SIGN_IN_FAIL:
       return {
@@ -85,24 +85,24 @@ const authReducer = (state = INITIAL_STATE, action) => {
         token: null,
         user: {},
         expiresAt: null,
-        defaultPath: '/'
+        defaultPath: '/',
       };
     case actionTypes.SET_DEFAULT_URL:
       return {
         ...state,
-        defaultPath: action.payload
+        defaultPath: action.payload,
       };
     case actionTypes.SET_ATTEMPTED_PATH:
       return {
         ...state,
-        attemptedPath: action.payload
+        attemptedPath: action.payload,
       };
     case actionTypes.UNLOAD_AUTH_PAGE:
       return {
         ...state,
         processing: false,
         processed: false,
-        error: null
+        error: null,
       };
     default:
       return state;

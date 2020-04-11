@@ -15,7 +15,7 @@ const User = mongoose.model('User');
  * @param {string} provider The authentication provider
  * @returns {string} The passport strategy name/type
  */
-const determineStrategy = provider => {
+const determineStrategy = (provider) => {
   switch (provider) {
     case 'local':
       return 'local';
@@ -35,9 +35,9 @@ const determineStrategy = provider => {
  * @param {string} provider The authentication provider
  * @returns {function} The function/controller to authenticate requests
  */
-const createAuthStrategy = provider => (req, res, next) => {
+const createAuthStrategy = (provider) => (req, res, next) => {
   const strategy = determineStrategy(provider);
-  passport.authenticate(strategy, { session: false }, function(
+  passport.authenticate(strategy, { session: false }, function (
     err,
     user,
     info
@@ -51,7 +51,7 @@ const createAuthStrategy = provider => (req, res, next) => {
     res.json({
       ...user.generateJwtToken(),
       signedInWith: provider,
-      user: user.toProfileJson()
+      user: user.toProfileJson(),
     });
   })(req, res, next);
 };
@@ -73,7 +73,7 @@ const resetPasswordSchema = Joi.object({
   password: Joi.string()
     .required()
     .min(8)
-    .messages(constants.PASSWORD_ERROR_MESSAGES)
+    .messages(constants.PASSWORD_ERROR_MESSAGES),
 });
 
 /**
@@ -99,16 +99,16 @@ module.exports.resetPassword = (req, res, next) => {
 
   resetPasswordSchema
     .validateAsync(req.body)
-    .then(payload => {
+    .then((payload) => {
       req.body = payload;
 
       return User.findOne({
         email: req.body.email,
         token: req.params.token,
-        tokenPurpose: 'resetPassword'
+        tokenPurpose: 'resetPassword',
       });
     })
-    .then(user => {
+    .then((user) => {
       existingUser = user;
       if (!existingUser) {
         throw createError(422, 'Token expired.');
@@ -120,7 +120,7 @@ module.exports.resetPassword = (req, res, next) => {
     .then(() => {
       return existingUser.save();
     })
-    .then(user => {
+    .then((user) => {
       res.status(200).json({ success: true, message: 'Password reset.' });
     })
     .catch(next);
@@ -134,9 +134,7 @@ const sendTokenSchema = Joi.object({
     .required()
     .email()
     .messages(constants.EMAIL_ERROR_MESSAGES),
-  tokenPurpose: Joi.string()
-    .required()
-    .valid('verifyEmail', 'resetPassword')
+  tokenPurpose: Joi.string().required().valid('verifyEmail', 'resetPassword'),
 });
 
 /**
@@ -149,7 +147,7 @@ const sendTokenSchema = Joi.object({
 module.exports.sendToken = (req, res, next) => {
   sendTokenSchema
     .validateAsync(req.body)
-    .then(payload => {
+    .then((payload) => {
       req.body = payload;
       if (req.body.tokenPurpose === 'resetPassword') {
         if (!config.auth.resetPassword) {
@@ -194,12 +192,8 @@ const signInSchema = Joi.object({
   username: Joi.string()
     .pattern(/^[a-zA-Z0-9.\-_]{4,30}$/)
     .messages(constants.USERNAME_ERROR_MESSAGE),
-  email: Joi.string()
-    .email()
-    .messages(constants.EMAIL_ERROR_MESSAGES),
-  password: Joi.string()
-    .required()
-    .messages(constants.PASSWORD_ERROR_MESSAGES)
+  email: Joi.string().email().messages(constants.EMAIL_ERROR_MESSAGES),
+  password: Joi.string().required().messages(constants.PASSWORD_ERROR_MESSAGES),
 })
   .xor('username', 'email')
   .messages({ 'object.missing': 'Either username or email must be provided.' });
@@ -215,14 +209,14 @@ const signInSchema = Joi.object({
 module.exports.localSignIn = (req, res, next) => {
   signInSchema
     .validateAsync(req.body)
-    .then(payload => {
+    .then((payload) => {
       req.body = payload;
 
       req.body.usernameOrEmail = req.body.username || req.body.email;
 
       localAuthenticate(req, res, next);
     })
-    .catch(err => {
+    .catch((err) => {
       next(err);
     });
 };
@@ -232,7 +226,7 @@ module.exports.localSignIn = (req, res, next) => {
  */
 const oauthSignInSchema = Joi.object({
   access_token: Joi.string().required(),
-  refresh_token: Joi.string()
+  refresh_token: Joi.string(),
 });
 
 /**
@@ -245,7 +239,7 @@ const oauthSignInSchema = Joi.object({
 module.exports.googleSignIn = (req, res, next) => {
   oauthSignInSchema
     .validateAsync(req.body)
-    .then(payload => {
+    .then((payload) => {
       req.body = payload;
       googleAuthenticate(req, res, next);
     })
@@ -262,7 +256,7 @@ module.exports.googleSignIn = (req, res, next) => {
 module.exports.facebookSignIn = (req, res, next) => {
   oauthSignInSchema
     .validateAsync(req.body)
-    .then(payload => {
+    .then((payload) => {
       req.body = payload;
       facebookAuthenticate(req, res, next);
     })
@@ -286,7 +280,7 @@ const signUpSchema = Joi.object({
     .min(8)
     .messages(constants.PASSWORD_ERROR_MESSAGES),
   firstName: Joi.string().trim(),
-  lastName: Joi.string().trim()
+  lastName: Joi.string().trim(),
 });
 
 /**
@@ -304,13 +298,13 @@ module.exports.signUp = (req, res, next) => {
   let isOauthAccount = false;
   signUpSchema
     .validateAsync(req.body)
-    .then(payload => {
+    .then((payload) => {
       req.body = payload;
       return User.findOne({
-        $or: [{ email: payload.email }, { username: payload.username }]
+        $or: [{ email: payload.email }, { username: payload.username }],
       });
     })
-    .then(existingUser => {
+    .then((existingUser) => {
       if (existingUser) {
         if (existingUser.email === req.body.email) {
           if (existingUser.provider.local) {
@@ -328,7 +322,7 @@ module.exports.signUp = (req, res, next) => {
       }
 
       newUser.provider.local = {
-        userId: newUser._id
+        userId: newUser._id,
       };
       return newUser.setPasswordAsync(req.body.password);
     })
@@ -339,19 +333,19 @@ module.exports.signUp = (req, res, next) => {
       }
       return newUser.save();
     })
-    .then(user => {
+    .then((user) => {
       if (config.auth.verifyEmail && !isOauthAccount) {
-        return sendVerificationEmailAsync(user).then(result => {
+        return sendVerificationEmailAsync(user).then((result) => {
           res.status(201).json({
             success: true,
-            message: 'A verification email has been sent to your email.'
+            message: 'A verification email has been sent to your email.',
           });
         });
       }
 
       res.status(201).json({
         success: true,
-        message: 'Your account has been created successfully.'
+        message: 'Your account has been created successfully.',
       });
     })
     .catch(next);
@@ -376,9 +370,9 @@ module.exports.verifyEmail = (req, res, next) => {
 
   return User.findOne({
     token: req.params.token,
-    tokenPurpose: 'verifyEmail'
+    tokenPurpose: 'verifyEmail',
   })
-    .then(user => {
+    .then((user) => {
       if (!user) {
         throw createError(422, 'Token expired.');
       }
@@ -386,7 +380,7 @@ module.exports.verifyEmail = (req, res, next) => {
       user.status = 'active';
       return user.save();
     })
-    .then(user => {
+    .then((user) => {
       res.status(200).json({ success: true, message: 'Email verified.' });
     })
     .catch(next);
@@ -402,14 +396,14 @@ module.exports.verifyEmail = (req, res, next) => {
  */
 const sendPasswordResetToken = (req, res, next) => {
   User.findOne({ email: req.body.email })
-    .then(user => {
+    .then((user) => {
       if (!user) {
         throw createError(422, 'Email not associated with any acount.');
       }
       user.setToken(req.body.tokenPurpose);
       return user.save();
     })
-    .then(user => {
+    .then((user) => {
       return sendEmailHelperAsync(
         user,
         'Password reset',
@@ -418,13 +412,13 @@ const sendPasswordResetToken = (req, res, next) => {
         If this was you, click button below to reset your password.
         Otherwise, ignore this email.`,
         'Reset Password',
-        `${config.server.url}:3000/reset-password/${user.token}` // FIXME: Fix port number
+        `${config.server.host}/reset-password/${user.token}` // FIXME: Fix port number
       );
     })
-    .then(result => {
+    .then((result) => {
       res.status(200).json({
         success: true,
-        message: 'A password-reset email has been sent to your email.'
+        message: 'A password-reset email has been sent to your email.',
       });
     })
     .catch(next);
@@ -442,7 +436,7 @@ const sendPasswordResetToken = (req, res, next) => {
  */
 const sendVerificationEmailToken = (req, res, next) => {
   User.findOne({ email: req.body.email })
-    .then(user => {
+    .then((user) => {
       if (!user) {
         throw createError(422, 'Email not associated with any acount.');
       }
@@ -452,13 +446,13 @@ const sendVerificationEmailToken = (req, res, next) => {
       user.setToken(req.body.tokenPurpose);
       return user.save();
     })
-    .then(user => {
+    .then((user) => {
       return sendVerificationEmailAsync(user);
     })
-    .then(result => {
+    .then((result) => {
       res.status(200).json({
         success: true,
-        message: 'A verification email has been sent to your email.'
+        message: 'A verification email has been sent to your email.',
       });
     })
     .catch(next);
@@ -473,14 +467,14 @@ const sendVerificationEmailToken = (req, res, next) => {
  * @param {object} user The user object who receives the email
  * @returns {Promise} Resolve with a sending result object
  */
-const sendVerificationEmailAsync = user => {
+const sendVerificationEmailAsync = (user) => {
   return sendEmailHelperAsync(
     user,
     'Verify your email',
     `Welcome to ${config.app.title}`,
     'Before you can start using your account, please verify it by following the link below:',
     'Verify Email',
-    `${config.server.url}:3000/verify-email/${user.token}` // FIXME: fix port number
+    `${config.server.host}/verify-email/${user.token}` // FIXME: fix port number
   );
 };
 
@@ -517,7 +511,7 @@ const sendEmailHelperAsync = (
       content,
       buttonText,
       url,
-      signature: config.email.signature
-    }
+      signature: config.email.signature,
+    },
   });
 };

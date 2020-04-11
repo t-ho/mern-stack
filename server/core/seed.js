@@ -9,7 +9,7 @@ const config = require('../config/index');
  * @param {string} users The array of user info to be created
  * @returns {Promise} Resolve with a list of newly added users
  */
-module.exports.createUsers = users => {
+module.exports.createUsers = (users) => {
   const User = mongoose.model('User');
   let addedUsers = [];
 
@@ -18,10 +18,10 @@ module.exports.createUsers = users => {
       return sequence
         .then(() => {
           return User.findOne({
-            $or: [{ username: userInfo.username }, { email: userInfo.email }]
+            $or: [{ username: userInfo.username }, { email: userInfo.email }],
           });
         })
-        .then(existingUser => {
+        .then((existingUser) => {
           if (existingUser) {
             throw new Error(
               chalk.yellow(
@@ -32,13 +32,13 @@ module.exports.createUsers = users => {
           const user = new User(userInfo);
           user.setSubId();
           user.provider.local = {
-            userId: user._id
+            userId: user._id,
           };
           return user.setPasswordAsync(userInfo.password).then(() => {
             return user.save();
           });
         })
-        .then(user => {
+        .then((user) => {
           if (config.seed.logging) {
             console.log(
               chalk.green(
@@ -48,7 +48,7 @@ module.exports.createUsers = users => {
           }
           addedUsers.push(user);
         })
-        .catch(err => {
+        .catch((err) => {
           if (config.seed.logging) {
             console.log(err.message);
           }

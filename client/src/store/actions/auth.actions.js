@@ -8,7 +8,7 @@ export const signUp = (formValues) => (dispatch, getState, { mernApi }) => {
       dispatch({ type: actionTypes.SIGN_UP_SUCCESS });
     },
     (err) => {
-      dispatch(signUpFail(err.response.data.error));
+      dispatch(signUpFail(err.response.data.error.message));
     }
   );
 };
@@ -180,7 +180,7 @@ export const verifyEmail = (token) => (dispatch, getState, { mernApi }) => {
       dispatch({ type: actionTypes.VERIFY_EMAIL_SUCCESS });
     },
     (err) => {
-      dispatch(verifyEmailFail(err.response.data.error));
+      dispatch(verifyEmailFail(err.response.data.error.message));
     }
   );
 };
@@ -200,7 +200,7 @@ export const requestVerificationEmail = (formValues) => {
         dispatch({ type: actionTypes.REQUEST_VERIFICATION_EMAIL_SUCCESS });
       },
       (err) => {
-        dispatch(requestVerificationEmailFail(err.response.data.error));
+        dispatch(requestVerificationEmailFail(err.response.data.error.message));
       }
     );
   };
@@ -221,7 +221,7 @@ export const requestPasswordReset = (formValues) => {
         dispatch({ type: actionTypes.REQUEST_PASSWORD_RESET_SUCCESS });
       },
       (err) => {
-        dispatch(requestPasswordResetFail(err.response.data.error));
+        dispatch(requestPasswordResetFail(err.response.data.error.message));
       }
     );
   };
@@ -241,7 +241,7 @@ export const resetPassword = (formValues, token) => {
       (response) => {
         dispatch({ type: actionTypes.RESET_PASSWORD_SUCCESS });
       },
-      (err) => dispatch(resetPasswordFail(err.response.data.error))
+      (err) => dispatch(resetPasswordFail(err.response.data.error.message))
     );
   };
 };
@@ -275,7 +275,7 @@ const signInHelper = (
       setAuthInfo(response.data, mernApi);
     },
     (err) => {
-      dispatch(actionFail(err.response.data.error));
+      dispatch(actionFail(err.response.data.error.message));
     }
   );
 };

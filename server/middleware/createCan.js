@@ -28,7 +28,7 @@ const User = mongoose.model('User');
  * NOTE: readUsers, insertUsers, updateUsers and deleteUsers are not listed in the
  * User Schema meaning normal users DO NOT have any permissions on User Collection at all.
  */
-const createCan = action => (req, res, next) => {
+const createCan = (action) => (req, res, next) => {
   res.locals.action = action;
 
   if (!req.user || (req.user && !req.user.can(action))) {

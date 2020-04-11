@@ -13,7 +13,6 @@ const server = http.createServer(app);
 server.listen(config.server.port);
 console.log(chalk.cyanBright(`\n--:[ ${config.app.title} ]:--`));
 console.log(chalk.greenBright(`[+] Environment: ${config.env}`));
-console.log(chalk.greenBright(`[+] Database URI: ${config.mongo.uri}`));
 console.log(
   chalk.greenBright(`[+] Email verification: ${config.auth.verifyEmail}`)
 );

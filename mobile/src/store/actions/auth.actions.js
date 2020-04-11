@@ -12,7 +12,7 @@ export const signUp = (formValues) => (dispatch, getState, { mernApi }) => {
       NavService.navigate('SignIn');
     },
     (err) => {
-      dispatch(signUpFail(err.response.data.error));
+      dispatch(signUpFail(err.response.data.error.message));
     }
   );
 };
@@ -211,7 +211,7 @@ export const requestVerificationEmail = (formValues) => {
         dispatch({ type: actionTypes.REQUEST_VERIFICATION_EMAIL_SUCCESS });
       },
       (err) => {
-        dispatch(requestVerificationEmailFail(err.response.data.error));
+        dispatch(requestVerificationEmailFail(err.response.data.error.message));
       }
     );
   };
@@ -238,7 +238,7 @@ export const requestPasswordReset = (formValues) => {
         dispatch({ type: actionTypes.REQUEST_PASSWORD_RESET_SUCCESS });
       },
       (err) => {
-        dispatch(requestPasswordResetFail(err.response.data.error));
+        dispatch(requestPasswordResetFail(err.response.data.error.message));
       }
     );
   };
@@ -273,7 +273,7 @@ const signInHelper = (
       setAuthInfoAsync(response.data, mernApi);
     })
     .catch((err) => {
-      dispatch(actionFail(err.response.data.error));
+      dispatch(actionFail(err.response.data.error.message));
     });
 };
 

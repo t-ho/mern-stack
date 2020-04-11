@@ -8,29 +8,29 @@ const defaultConfig = require('./config.default');
 let prodConfig = {
   app: {
     name: 'mern', // TODO: Lowercase, URL compatible name
-    title: 'MERN Stack' // TODO: Human friendly name
+    title: 'MERN Stack', // TODO: Human friendly name
   },
   auth: {
     verifyEmail: true, // If true, require email verification when signing up
-    resetPassword: true // If true, be able to reset password via email
+    resetPassword: true, // If true, be able to reset password via email
   },
   email: {
     from: 'no-reply@mern.tdev.app', // TODO
     to: '',
-    signature: 'The MERN Team' // TODO
+    signature: 'The MERN Team', // TODO
   },
   jwt: {
     algorithm: 'HS512',
-    expiresIn: 60 * 24 * 60 * 60 // seconds
+    expiresIn: 60 * 24 * 60 * 60, // seconds
   },
-  server: {
-    url: 'http://localhost' // TODO:
+  log: {
+    format: 'combined', // TODO: possible values: combined, common, dev, short, tiny
   },
   paths: {
-    root: fspath.normalize(`${__dirname}/..`)
+    root: fspath.normalize(`${__dirname}/..`),
   },
   oauth: {
-    storeToken: false // If true, the OAuth access_token and refresh_token will be stored in database
+    storeToken: false, // If true, the OAuth access_token and refresh_token will be stored in database
   },
   seed: {
     logging: true,
@@ -41,7 +41,7 @@ let prodConfig = {
         password: 'qweasdzxc',
         firstName: 'Root',
         lastName: 'Account',
-        role: 'root'
+        role: 'root',
       },
       {
         username: 'admin',
@@ -49,10 +49,10 @@ let prodConfig = {
         password: 'qweasdzxc',
         firstName: 'Admin',
         lastName: 'Account',
-        role: 'admin'
-      }
-    ]
-  }
+        role: 'admin',
+      },
+    ],
+  },
 };
 
 prodConfig = _.merge({}, defaultConfig, prodConfig);

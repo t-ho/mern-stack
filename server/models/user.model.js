@@ -9,17 +9,17 @@ const config = require('../config');
 const providerDataSchema = new mongoose.Schema({
   userId: {
     type: String,
-    required: [true, 'Provider userId is required']
+    required: [true, 'Provider userId is required'],
   },
   accessToken: {
-    type: String
+    type: String,
   },
   refreshToken: {
-    type: String
+    type: String,
   },
   picture: {
-    type: String
-  }
+    type: String,
+  },
 });
 
 // Define Schema
@@ -33,8 +33,8 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Username is required'],
       match: [
         /^[a-zA-Z0-9.\-_]{4,30}$/,
-        'Must be between 4 to 30 characters and may contain only alphanumeric chacracters, hyphen, dot or underscore'
-      ]
+        'Must be between 4 to 30 characters and may contain only alphanumeric chacracters, hyphen, dot or underscore',
+      ],
     },
     email: {
       type: String,
@@ -44,18 +44,18 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Email is required'],
       match: [
         /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        'Invalid email'
-      ]
+        'Invalid email',
+      ],
     },
     // Do NOT set directly, call user.setPasswordAsync(password)
     hashedPassword: {
-      type: String
+      type: String,
     },
     // subId is used to validate JWT token.
     // Do NOT set directly, call user.setSubId().
     subId: {
       type: String,
-      unique: true
+      unique: true,
     },
     firstName: { type: String, trim: true },
     lastName: { type: String, trim: true },
@@ -63,13 +63,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ['active', 'disabled', 'unverifiedEmail'],
       default: 'active',
-      index: true
+      index: true,
     },
     role: {
       type: String,
       enum: ['user', 'admin', 'root'],
       default: 'user',
-      index: true
+      index: true,
     },
     // The permissions field will allow a normal user to perform
     // admin-like actions.
@@ -81,7 +81,7 @@ const userSchema = new mongoose.Schema(
     // here which means that normal users DO NOT have any permissions on User
     // Collection at all.
     permissions: {
-      debug: { type: Boolean, default: false }
+      debug: { type: Boolean, default: false },
       // Example: permissions for Posts collection should be defined as below:
       // readPosts: { type: Boolean, default: false },
       // insertPosts: { type: Boolean, default: false },
@@ -95,29 +95,29 @@ const userSchema = new mongoose.Schema(
     tokenPurpose: { type: String, enum: ['verifyEmail', 'resetPassword'] },
     provider: {
       local: {
-        type: providerDataSchema
+        type: providerDataSchema,
       },
       google: {
-        type: providerDataSchema
+        type: providerDataSchema,
       },
       facebook: {
-        type: providerDataSchema
-      }
-    }
+        type: providerDataSchema,
+      },
+    },
   },
   { timestamps: true }
 );
 
-userSchema.virtual('fullName').get(function() {
+userSchema.virtual('fullName').get(function () {
   return `${this.firstName} ${this.lastName}`;
 });
 
 /**
  * @returns {object} The user profile object without sensitive info such as hashed password
  */
-userSchema.methods.toProfileJson = function() {
+userSchema.methods.toProfileJson = function () {
   const user = this.toObject();
-  user.provider = _.mapValues(user.provider, p => {
+  user.provider = _.mapValues(user.provider, (p) => {
     return _.pick(p, ['userId', 'picture']);
   });
   return _.pick(user, [
@@ -131,20 +131,20 @@ userSchema.methods.toProfileJson = function() {
     'permissions',
     'provider',
     'createdAt',
-    'updatedAt'
+    'updatedAt',
   ]);
 };
 
 /**
  * @returns {object} The user public profile object
  */
-userSchema.methods.toPublicProfileJson = function() {
+userSchema.methods.toPublicProfileJson = function () {
   return _.pick(this, [
     '_id',
     'username',
     'firstName',
     'lastName',
-    'createdAt'
+    'createdAt',
   ]);
 };
 
@@ -153,7 +153,7 @@ userSchema.methods.toPublicProfileJson = function() {
  * Invalidate all existing JWT tokens
  *
  */
-userSchema.methods.setSubId = function() {
+userSchema.methods.setSubId = function () {
   this.subId = new mongoose.Types.ObjectId().toHexString();
 };
 
@@ -165,9 +165,9 @@ userSchema.methods.setSubId = function() {
  *
  * @param {Promise} password Resolve with null value
  */
-userSchema.methods.setPasswordAsync = function(password) {
+userSchema.methods.setPasswordAsync = function (password) {
   const saltRounds = 10;
-  return bcrypt.hash(password, saltRounds).then(hash => {
+  return bcrypt.hash(password, saltRounds).then((hash) => {
     this.hashedPassword = hash;
   });
 };
@@ -177,7 +177,7 @@ userSchema.methods.setPasswordAsync = function(password) {
  *
  * @returns {Promise} Resolve with a boolean value
  */
-userSchema.methods.comparePasswordAsync = function(candidatePassword) {
+userSchema.methods.comparePasswordAsync = function (candidatePassword) {
   if (!this.hashedPassword) {
     return Promise.resolve(false);
   }
@@ -189,7 +189,7 @@ userSchema.methods.comparePasswordAsync = function(candidatePassword) {
  *
  * @returns {object} An object contains JWT token and expiresAt (seconds) property
  */
-userSchema.methods.generateJwtToken = function() {
+userSchema.methods.generateJwtToken = function () {
   const iat = Math.floor(Date.now() / 1000);
   const expiresAt = iat + config.jwt.expiresIn;
   const token = jwt.sign(
@@ -197,7 +197,7 @@ userSchema.methods.generateJwtToken = function() {
     config.jwt.secret,
     {
       algorithm: config.jwt.algorithm,
-      expiresIn: config.jwt.expiresIn // seconds
+      expiresIn: config.jwt.expiresIn, // seconds
     }
   );
   return { token, expiresAt };
@@ -208,7 +208,7 @@ userSchema.methods.generateJwtToken = function() {
  *
  * @param {string} purpose The purpose of the token.
  */
-userSchema.methods.setToken = function(purpose) {
+userSchema.methods.setToken = function (purpose) {
   this.token = uuidv4();
   this.tokenPurpose = purpose;
 };
@@ -216,7 +216,7 @@ userSchema.methods.setToken = function(purpose) {
 /**
  * Clear token and token purpose field
  */
-userSchema.methods.clearToken = function() {
+userSchema.methods.clearToken = function () {
   this.token = undefined;
   this.tokenPurpose = undefined;
 };
@@ -229,7 +229,7 @@ userSchema.methods.clearToken = function() {
  * @returns {boolean} True if this user has permission to perform the given action.
  * Otherwise, false
  */
-userSchema.methods.can = function(action) {
+userSchema.methods.can = function (action) {
   if (this.role === 'admin' || this.role === 'root') {
     return true;
   }
