@@ -271,8 +271,8 @@ const signInHelper = (
   return mernApi.post(endpoint, payload).then(
     (response) => {
       dispatch(actionSuccess(response.data));
-      redirectAfterSignIn(dispatch, getState);
       setAuthInfo(response.data, mernApi);
+      redirectAfterSignIn(dispatch, getState);
     },
     (err) => {
       dispatch(actionFail(err.response.data.error.message));

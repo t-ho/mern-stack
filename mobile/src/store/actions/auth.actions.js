@@ -269,8 +269,8 @@ const signInHelper = (
     .post(endpoint, payload)
     .then((response) => {
       dispatch(actionSuccess(response.data));
-      NavService.navigate('Home');
       setAuthInfoAsync(response.data, mernApi);
+      NavService.navigate('Home');
     })
     .catch((err) => {
       dispatch(actionFail(err.response.data.error.message));
