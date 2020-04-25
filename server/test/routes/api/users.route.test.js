@@ -18,45 +18,33 @@ const decodeJwtToken = (jwtToken) => {
 describe('ENDPOINT: GET /api/users/', function () {
   let endpoint = '/api/users/';
 
-  const testJwtTokenValidation = (jwtToken, done) => {
-    request(app)
-      .get(endpoint)
-      .set('Authorization', `Bearer ${jwtToken}`)
-      .expect(401)
-      .expect({})
-      .then((res) => {
-        expect(res.text).to.be.equal('Unauthorized');
-        done();
-      })
-      .catch(done);
-  };
-
   it(`GET ${endpoint} - JWT token not provided`, function (done) {
     request(app)
       .get(endpoint)
       .expect(401)
-      .expect({})
-      .then((res) => {
-        expect(res.text).to.be.equal('Unauthorized');
-        done();
-      })
-      .catch(done);
+      .expect({ error: { message: 'No auth token' } }, done);
   });
 
   it(`GET ${endpoint} - JWT token - invalid subId`, function (done) {
     const existingAdmin = app.locals.existing.admin;
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.sub = 'invalid-sub-id';
-    const invalidJwtToken = createJwtToken(decodedToken);
-    testJwtTokenValidation(invalidJwtToken, done);
+    request(app)
+      .get(endpoint)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'Invalid JWT token.' } }, done);
   });
 
   it(`GET ${endpoint} - JWT token - not exist userId`, function (done) {
     const existingAdmin = app.locals.existing.admin;
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.userId = '5e24db1d560ba309f0b0b5a8';
-    const invalidJwtToken = createJwtToken(decodedToken);
-    testJwtTokenValidation(invalidJwtToken, done);
+    request(app)
+      .get(endpoint)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'Invalid credentials.' } }, done);
   });
 
   it(`GET ${endpoint} - JWT token - expired token`, function (done) {
@@ -64,8 +52,11 @@ describe('ENDPOINT: GET /api/users/', function () {
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.iat = decodedToken.iat - 100;
     decodedToken.exp = decodedToken.iat - 50;
-    const invalidJwtToken = createJwtToken(decodedToken);
-    testJwtTokenValidation(invalidJwtToken, done);
+    request(app)
+      .get(endpoint)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'jwt expired' } }, done);
   });
 
   it(`GET ${endpoint} - Normal user cannot get a list of users`, function (done) {
@@ -142,47 +133,34 @@ describe('ENDPOINT: GET /api/users/', function () {
 describe('ENDPOINT: GET /api/users/:id', function () {
   let endpoint = '/api/users';
 
-  const testJwtTokenValidation = (jwtToken, done) => {
-    let existingUser = app.locals.existing.user;
-    request(app)
-      .get(`${endpoint}/${existingUser._id}`)
-      .set('Authorization', `Bearer ${jwtToken}`)
-      .expect(401)
-      .expect({})
-      .then((res) => {
-        expect(res.text).to.be.equal('Unauthorized');
-        done();
-      })
-      .catch(done);
-  };
-
   it(`GET ${endpoint}/:userId - JWT token not provided`, function (done) {
     let existingUser = app.locals.existing.user;
     request(app)
       .get(`${endpoint}/${existingUser._id}`)
       .expect(401)
-      .expect({})
-      .then((res) => {
-        expect(res.text).to.be.equal('Unauthorized');
-        done();
-      })
-      .catch(done);
+      .expect({ error: { message: 'No auth token' } }, done);
   });
 
   it(`GET ${endpoint}/:userId - JWT token - invalid subId`, function (done) {
     const existingAdmin = app.locals.existing.admin;
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.sub = 'invalid-sub-id';
-    const invalidJwtToken = createJwtToken(decodedToken);
-    testJwtTokenValidation(invalidJwtToken, done);
+    request(app)
+      .get(`${endpoint}/${app.locals.existing.user._id}`)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'Invalid JWT token.' } }, done);
   });
 
   it(`GET ${endpoint}/:userId - JWT token - not exist userId`, function (done) {
     const existingAdmin = app.locals.existing.admin;
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.userId = '5e24db1d560ba309f0b0b5a8';
-    const invalidJwtToken = createJwtToken(decodedToken);
-    testJwtTokenValidation(invalidJwtToken, done);
+    request(app)
+      .get(`${endpoint}/${app.locals.existing.user._id}`)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'Invalid credentials.' } }, done);
   });
 
   it(`GET ${endpoint}/:userId - JWT token - expired token`, function (done) {
@@ -190,8 +168,11 @@ describe('ENDPOINT: GET /api/users/:id', function () {
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.iat = decodedToken.iat - 100;
     decodedToken.exp = decodedToken.iat - 50;
-    const invalidJwtToken = createJwtToken(decodedToken);
-    testJwtTokenValidation(invalidJwtToken, done);
+    request(app)
+      .get(`${endpoint}/${app.locals.existing.user._id}`)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'jwt expired' } }, done);
   });
 
   it(`GET ${endpoint}/:userId - Params - Invalid userId`, function (done) {
@@ -289,60 +270,39 @@ describe('ENDPOINT: GET /api/users/:id', function () {
 describe('ENDPOINT: PUT /api/users/:userId', function () {
   let endpoint = '/api/users';
 
-  const testJwtTokenValidation = (endpoint, jwtToken, payload, done) => {
-    request(app)
-      .put(endpoint)
-      .set('Authorization', `Bearer ${jwtToken}`)
-      .send(payload)
-      .expect(401)
-      .expect({})
-      .then((res) => {
-        expect(res.text).to.be.equal('Unauthorized');
-        done();
-      })
-      .catch(done);
-  };
-
   it(`PUT ${endpoint}/:userId - JWT token not provided`, function (done) {
     let existingUser = app.locals.existing.user;
     request(app)
       .put(`${endpoint}/${existingUser._id}`)
       .send({ role: 'admin' })
       .expect(401)
-      .expect({})
-      .then((res) => {
-        expect(res.text).to.be.equal('Unauthorized');
-        done();
-      })
-      .catch(done);
+      .expect({ error: { message: 'No auth token' } }, done);
   });
 
   it(`PUT ${endpoint}/:userId - JWT token - invalid subId`, function (done) {
     let existingUser = app.locals.existing.user;
     let decodedToken = decodeJwtToken(existingUser.jwtToken);
     decodedToken.sub = 'invalid-sub-id';
-    const invalidJwtToken = createJwtToken(decodedToken);
     const payload = { role: 'admin' };
-    testJwtTokenValidation(
-      `${endpoint}/${existingUser._id}`,
-      invalidJwtToken,
-      payload,
-      done
-    );
+    request(app)
+      .put(`${endpoint}/${existingUser._id}`)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .send(payload)
+      .expect(401)
+      .expect({ error: { message: 'Invalid JWT token.' } }, done);
   });
 
   it(`PUT ${endpoint} - JWT token - not exist userId`, function (done) {
     let existingUser = app.locals.existing.user;
     let decodedToken = decodeJwtToken(existingUser.jwtToken);
     decodedToken.userId = '5e24db1d560ba309f0b0b5a8';
-    const invalidJwtToken = createJwtToken(decodedToken);
     const payload = { role: 'admin' };
-    testJwtTokenValidation(
-      `${endpoint}/${existingUser._id}`,
-      invalidJwtToken,
-      payload,
-      done
-    );
+    request(app)
+      .put(`${endpoint}/${existingUser._id}`)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .send(payload)
+      .expect(401)
+      .expect({ error: { message: 'Invalid credentials.' } }, done);
   });
 
   it(`PUT ${endpoint} - JWT token - expired token`, function (done) {
@@ -350,14 +310,13 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
     let decodedToken = decodeJwtToken(existingUser.jwtToken);
     decodedToken.iat = decodedToken.iat - 100;
     decodedToken.exp = decodedToken.iat - 50;
-    const invalidJwtToken = createJwtToken(decodedToken);
     const payload = { role: 'admin' };
-    testJwtTokenValidation(
-      `${endpoint}/${existingUser._id}`,
-      invalidJwtToken,
-      payload,
-      done
-    );
+    request(app)
+      .put(`${endpoint}/${existingUser._id}`)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .send(payload)
+      .expect(401)
+      .expect({ error: { message: 'jwt expired' } }, done);
   });
 
   it(`PUT ${endpoint}/:userId - Params - Invalid userId`, function (done) {
@@ -575,54 +534,34 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
 describe('ENDPOINT: DELETE /api/users/:userId', function () {
   let endpoint = '/api/users';
 
-  const testJwtTokenValidation = (endpoint, jwtToken, done) => {
-    request(app)
-      .delete(endpoint)
-      .set('Authorization', `Bearer ${jwtToken}`)
-      .expect(401)
-      .expect({})
-      .then((res) => {
-        expect(res.text).to.be.equal('Unauthorized');
-        done();
-      })
-      .catch(done);
-  };
-
   it(`DELETE ${endpoint}/:userId - JWT token not provided`, function (done) {
     let existingUser = app.locals.existing.user;
     request(app)
       .delete(`${endpoint}/${existingUser._id}`)
       .expect(401)
-      .expect({})
-      .then((res) => {
-        expect(res.text).to.be.equal('Unauthorized');
-        done();
-      })
-      .catch(done);
+      .expect({ error: { message: 'No auth token' } }, done);
   });
 
   it(`DELETE ${endpoint}/:userId - JWT token - invalid subId`, function (done) {
     let existingUser = app.locals.existing.user;
     let decodedToken = decodeJwtToken(existingUser.jwtToken);
     decodedToken.sub = 'invalid-sub-id';
-    const invalidJwtToken = createJwtToken(decodedToken);
-    testJwtTokenValidation(
-      `${endpoint}/${existingUser._id}`,
-      invalidJwtToken,
-      done
-    );
+    request(app)
+      .delete(`${endpoint}/${existingUser._id}`)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'Invalid JWT token.' } }, done);
   });
 
   it(`DELETE ${endpoint} - JWT token - not exist userId`, function (done) {
     let existingUser = app.locals.existing.user;
     let decodedToken = decodeJwtToken(existingUser.jwtToken);
     decodedToken.userId = '5e24db1d560ba309f0b0b5a8';
-    const invalidJwtToken = createJwtToken(decodedToken);
-    testJwtTokenValidation(
-      `${endpoint}/${existingUser._id}`,
-      invalidJwtToken,
-      done
-    );
+    request(app)
+      .delete(`${endpoint}/${existingUser._id}`)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'Invalid credentials.' } }, done);
   });
 
   it(`DELETE ${endpoint} - JWT token - expired token`, function (done) {
@@ -630,12 +569,11 @@ describe('ENDPOINT: DELETE /api/users/:userId', function () {
     let decodedToken = decodeJwtToken(existingUser.jwtToken);
     decodedToken.iat = decodedToken.iat - 100;
     decodedToken.exp = decodedToken.iat - 50;
-    const invalidJwtToken = createJwtToken(decodedToken);
-    testJwtTokenValidation(
-      `${endpoint}/${existingUser._id}`,
-      invalidJwtToken,
-      done
-    );
+    request(app)
+      .delete(`${endpoint}/${existingUser._id}`)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'jwt expired' } }, done);
   });
 
   it(`DELETE ${endpoint}/:userId - Params - Invalid userId`, function (done) {

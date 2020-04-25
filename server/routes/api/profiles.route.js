@@ -1,20 +1,14 @@
 const express = require('express');
-const passport = require('passport');
 const profilesCtrl = require('../../controllers/profiles.controller');
+const createAuthStrategy = require('../../middleware/createAuthStrategy');
 
 const router = express.Router();
 
-router.get(
-  '/',
-  passport.authenticate('jwt', { session: false }),
-  profilesCtrl.getProfile
-);
+const jwtAuthenticate = createAuthStrategy('jwt');
 
-router.put(
-  '/',
-  passport.authenticate('jwt', { session: false }),
-  profilesCtrl.updateProfile
-);
+router.get('/', jwtAuthenticate, profilesCtrl.getProfile);
+
+router.put('/', jwtAuthenticate, profilesCtrl.updateProfile);
 
 // get Public profile
 router.get('/:userId', profilesCtrl.getPublicProfile);

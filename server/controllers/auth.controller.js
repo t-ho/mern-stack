@@ -1,66 +1,11 @@
 const mongoose = require('mongoose');
 const createError = require('http-errors');
 const Joi = require('@hapi/joi');
-const passport = require('passport');
 const email = require('../core/sendgrid');
 const config = require('../config');
 const constants = require('./constants');
 
 const User = mongoose.model('User');
-
-/**
- * @function determineStrategy
- * Determine the authentication strategy based on the given provider
- *
- * @param {string} provider The authentication provider
- * @returns {string} The passport strategy name/type
- */
-const determineStrategy = (provider) => {
-  switch (provider) {
-    case 'local':
-      return 'local';
-    case 'google':
-      return 'google-token';
-    case 'facebook':
-      return 'facebook-token';
-    default:
-      throw new Error(`Unknown provider "${provider}".`);
-  }
-};
-
-/**
- * @function createAuthStrategy
- * Create a function/controller to authenticate requests based on the given provider
- *
- * @param {string} provider The authentication provider
- * @returns {function} The function/controller to authenticate requests
- */
-const createAuthStrategy = (provider) => (req, res, next) => {
-  const strategy = determineStrategy(provider);
-  passport.authenticate(strategy, { session: false }, function (
-    err,
-    user,
-    info
-  ) {
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-      return next(createError(401, info.message));
-    }
-    res.json({
-      ...user.generateJwtToken(),
-      signedInWith: provider,
-      user: user.toProfileJson(),
-    });
-  })(req, res, next);
-};
-
-const localAuthenticate = createAuthStrategy('local');
-
-const googleAuthenticate = createAuthStrategy('google');
-
-const facebookAuthenticate = createAuthStrategy('facebook');
 
 /**
  * JOI schema for validating resetPassword payload
@@ -199,14 +144,14 @@ const signInSchema = Joi.object({
   .messages({ 'object.missing': 'Either username or email must be provided.' });
 
 /**
- * @function localSignIn
- * Sign in using local strategy. Either email or username must be specified.
+ * @function validateLocalSignInPayload
+ * Validate local signin payload. Either email or username must be specified.
  *
  * @param {string} req.body.email The email to login
  * @param {string} req.body.username The username to login
  * @param {string} req.body.password The password to login
  */
-module.exports.localSignIn = (req, res, next) => {
+module.exports.validateLocalSignInPayload = (req, res, next) => {
   signInSchema
     .validateAsync(req.body)
     .then((payload) => {
@@ -214,11 +159,36 @@ module.exports.localSignIn = (req, res, next) => {
 
       req.body.usernameOrEmail = req.body.username || req.body.email;
 
-      localAuthenticate(req, res, next);
+      next();
     })
     .catch((err) => {
       next(err);
     });
+};
+
+/**
+ * @function createSignInResponse
+ * Create sign-in response payload
+ *
+ * @param {Object} user The user object
+ * @param {string} provider The sign-in provider. It could be facebook, local or google
+ */
+const createSignInResponse = (user, provider) => {
+  return {
+    ...user.generateJwtToken(),
+    signedInWith: provider,
+    user: user.toProfileJson(),
+  };
+};
+
+/**
+ * @function localSignIn
+ * Response with user info
+ */
+module.exports.localSignIn = (req, res, next) => {
+  if (req.user) {
+    res.json(createSignInResponse(req.user, 'local'));
+  }
 };
 
 /**
@@ -230,37 +200,57 @@ const oauthSignInSchema = Joi.object({
 });
 
 /**
- * @function googleSignIn
- * Sign in using Google token strategy
+ * @function validateGoogleSignInPayload
+ * Validate Google sign-in payload
  *
  * @param {string} req.body.access_token The Google access_token
  * @param {string} [req.body.refresh_token] The Google refresh_token
  */
-module.exports.googleSignIn = (req, res, next) => {
+module.exports.validateGoogleSignInPayload = (req, res, next) => {
   oauthSignInSchema
     .validateAsync(req.body)
     .then((payload) => {
       req.body = payload;
-      googleAuthenticate(req, res, next);
+      next();
+    })
+    .catch(next);
+};
+
+/**
+ * @function googleSignIn
+ * Response with user info
+ */
+module.exports.googleSignIn = (req, res, next) => {
+  if (req.user) {
+    res.json(createSignInResponse(req.user, 'google'));
+  }
+};
+
+/**
+ * @function validateFacebookSignInPayload
+ * Validate Facebook sign-in payload
+ *
+ * @param {string} req.body.access_token The Google access_token
+ * @param {string} [req.body.refresh_token] The Google refresh_token
+ */
+module.exports.validateFacebookSignInPayload = (req, res, next) => {
+  oauthSignInSchema
+    .validateAsync(req.body)
+    .then((payload) => {
+      req.body = payload;
+      next();
     })
     .catch(next);
 };
 
 /**
  * @function facebookSignIn
- * Sign in using Facebook token strategy
- *
- * @param {string} req.body.access_token The Google access_token
- * @param {string} [req.body.refresh_token] The Google refresh_token
+ * Response with user info
  */
 module.exports.facebookSignIn = (req, res, next) => {
-  oauthSignInSchema
-    .validateAsync(req.body)
-    .then((payload) => {
-      req.body = payload;
-      facebookAuthenticate(req, res, next);
-    })
-    .catch(next);
+  if (req.user) {
+    res.json(createSignInResponse(req.user, 'facebook'));
+  }
 };
 
 /**

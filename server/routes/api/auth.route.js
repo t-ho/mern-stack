@@ -1,24 +1,39 @@
 const express = require('express');
-const passport = require('passport');
 const authCtrl = require('../../controllers/auth.controller');
+const createAuthStrategy = require('../../middleware/createAuthStrategy');
 
 const router = express.Router();
-
-router.post('/facebook', authCtrl.facebookSignIn);
-
-router.post('/google', authCtrl.googleSignIn);
+const jwtAuthenticate = createAuthStrategy('jwt');
+const localAuthenticate = createAuthStrategy('local');
+const googleAuthenticate = createAuthStrategy('google-token');
+const facebookAuthenticate = createAuthStrategy('facebook-token');
 
 router.post(
-  '/refresh-token',
-  passport.authenticate('jwt', { session: false }),
-  authCtrl.refreshToken
+  '/facebook',
+  authCtrl.validateFacebookSignInPayload,
+  facebookAuthenticate,
+  authCtrl.facebookSignIn
 );
+
+router.post(
+  '/google',
+  authCtrl.validateGoogleSignInPayload,
+  googleAuthenticate,
+  authCtrl.googleSignIn
+);
+
+router.post('/refresh-token', jwtAuthenticate, authCtrl.refreshToken);
 
 router.post('/reset-password/:token', authCtrl.resetPassword);
 
 router.post('/send-token', authCtrl.sendToken);
 
-router.post('/signin', authCtrl.localSignIn);
+router.post(
+  '/signin',
+  authCtrl.validateLocalSignInPayload,
+  localAuthenticate,
+  authCtrl.localSignIn
+);
 
 router.post('/signup', authCtrl.signUp);
 

@@ -65,15 +65,17 @@ const jwtStrategy = new JwtStrategy(
     User.findById(jwtPayload.userId)
       .then((user) => {
         if (!user) {
-          return done(null, false, 'Invalid credentials.');
+          return done(null, false, { message: 'Invalid credentials.' });
         }
 
         if (user.status !== 'active') {
-          return done(null, false, 'Disabled or unverified account.');
+          return done(null, false, {
+            message: 'Disabled or unverified account.',
+          });
         }
 
         if (user.subId !== jwtPayload.sub) {
-          return done(null, false, 'Invalid JWT token.');
+          return done(null, false, { message: 'Invalid JWT token.' });
         }
 
         return done(null, user);
