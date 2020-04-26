@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const request = require('supertest');
 const expect = require('chai').expect;
 const _ = require('lodash');
-const uuidv4 = require('uuid/v4');
+const uuid = require('uuid');
 const jwt = require('jsonwebtoken');
 const config = require('../../../config');
 
@@ -464,7 +464,7 @@ describe('ENDPOINT: POST /api/auth/reset-password/:token', function () {
 
   beforeEach(function (done) {
     let existingAdmin = app.locals.existing.admin;
-    existingAdmin.token = uuidv4();
+    existingAdmin.token = uuid.v4();
     existingAdmin.tokenPurpose = 'resetPassword';
     existingAdmin
       .save()
@@ -604,7 +604,7 @@ describe('ENDPOINT: POST /api/auth/verify-email/:token', function () {
 
   beforeEach(function (done) {
     let existingAdmin = app.locals.existing.admin;
-    existingAdmin.token = uuidv4();
+    existingAdmin.token = uuid.v4();
     existingAdmin.tokenPurpose = 'verifyEmail';
     existingAdmin
       .save()

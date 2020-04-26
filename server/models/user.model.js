@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
-const uuidv4 = require('uuid/v4');
+const uuid = require('uuid');
 const config = require('../config');
 
 // By defaulf, we don't store oauth access_token and refresh_token
@@ -209,7 +209,7 @@ userSchema.methods.generateJwtToken = function () {
  * @param {string} purpose The purpose of the token.
  */
 userSchema.methods.setToken = function (purpose) {
-  this.token = uuidv4();
+  this.token = uuid.v4();
   this.tokenPurpose = purpose;
 };
 
