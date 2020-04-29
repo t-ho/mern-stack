@@ -66,7 +66,7 @@ describe('ENDPOINT: GET /api/profiles/', function () {
       .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
       .expect(200)
       .then((res) => {
-        expect(res.body.profile._id).to.be.equal(existingAdmin._id.toString());
+        expect(res.body.profile.id).to.be.equal(existingAdmin._id.toString());
         expect(res.body.profile).to.have.property('createdAt');
         expect(res.body.profile).to.have.property('updatedAt');
         expect(res.body.profile.provider).to.deep.equal({
@@ -293,7 +293,7 @@ describe('ENDPOINT: GET /api/profiles/:userId', function () {
       .get(`${endpoint}/${existingAdmin._id}`)
       .expect(200)
       .then((res) => {
-        expect(res.body.profile._id).to.be.equal(existingAdmin._id.toString());
+        expect(res.body.profile.id).to.be.equal(existingAdmin._id.toString());
         expect(res.body.profile).to.have.property('createdAt');
         expect(res.body.profile).to.be.deep.include(
           _.pick(existingAdmin.toString(), [

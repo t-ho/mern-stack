@@ -115,37 +115,35 @@ userSchema.virtual('fullName').get(function () {
 /**
  * @returns {object} The user profile object without sensitive info such as hashed password
  */
-userSchema.methods.toProfileJson = function () {
-  const user = this.toObject();
-  user.provider = _.mapValues(user.provider, (p) => {
-    return _.pick(p, ['userId', 'picture']);
-  });
-  return _.pick(user, [
-    '_id',
-    'username',
-    'email',
-    'status',
-    'firstName',
-    'lastName',
-    'role',
-    'permissions',
-    'provider',
-    'createdAt',
-    'updatedAt',
-  ]);
-};
-
-/**
- * @returns {object} The user public profile object
- */
-userSchema.methods.toPublicProfileJson = function () {
-  return _.pick(this, [
-    '_id',
-    'username',
-    'firstName',
-    'lastName',
-    'createdAt',
-  ]);
+userSchema.methods.toJsonFor = function (user) {
+  const userObj = this.toObject();
+  if (user && (user.can('readUsers') || user._id == this._id)) {
+    const provider = _.mapValues(userObj.provider, (p) => {
+      return _.pick(p, ['userId', 'picture']);
+    });
+    return {
+      id: userObj._id,
+      username: userObj.username,
+      email: userObj.email,
+      status: userObj.status,
+      firstName: userObj.firstName,
+      lastName: userObj.lastName,
+      role: userObj.role,
+      permissions: userObj.permissions,
+      provider,
+      createdAt: userObj.createdAt,
+      updatedAt: userObj.updatedAt,
+    };
+  } else {
+    // public profile
+    return {
+      id: userObj._id,
+      username: userObj.username,
+      firstName: userObj.firstName,
+      lastName: userObj.lastName,
+      createdAt: userObj.createdAt,
+    };
+  }
 };
 
 /**

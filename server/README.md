@@ -147,7 +147,7 @@ Sample response
   "expiresAt": 1586993686,
   "signedInWith": "local",
   "user": {
-    "_id": "5e47a9600cac851790f29662",
+    "id": "5e47a9600cac851790f29662",
     "username": "user",
     "email": "user@tdev.app",
     "status": "active",
@@ -210,7 +210,7 @@ Sample response
   "expiresAt": 1586993686,
   "signedInWith": "facebook",
   "user": {
-    "_id": "5e47a9600cac851790f29662",
+    "id": "5e47a9600cac851790f29662",
     "username": "user",
     "email": "user@tdev.app",
     "status": "active",
@@ -274,7 +274,7 @@ Sample response
   "expiresAt": 1586993686,
   "signedInWith": "google",
   "user": {
-    "_id": "5e47a9600cac851790f29662",
+    "id": "5e47a9600cac851790f29662",
     "username": "user",
     "email": "user@tdev.app",
     "status": "active",
@@ -511,7 +511,7 @@ Sample response
 ```
 {
   "profile": {
-    "_id": "5e47a9600cac851790f29662",
+    "id": "5e47a9600cac851790f29662",
     "username": "user",
     "email": "user@tdev.app",
     "status": "active",
@@ -554,7 +554,7 @@ Sample response
 ```
 {
   "profile": {
-    "_id": "5e24d42cf7dddf012cd496b2",
+    "id": "5e24d42cf7dddf012cd496b2",
     "username": "sarah",
     "firstName": "Sarah",
     "lastName": "Connor",
@@ -663,7 +663,7 @@ Sample response
 {
   "users": [
     {
-      "_id": "5e24d42cf7dddf012cd496b2",
+      "id": "5e24d42cf7dddf012cd496b2",
       "username": "tester",
       "email": "test@test.com",
       "status": "active",
@@ -682,7 +682,7 @@ Sample response
       "updatedAt": "2020-01-19T23:18:47.897Z"
     },
     {
-      "_id": "5e24db1d560ba309f0b0b5a8",
+      "id": "5e24db1d560ba309f0b0b5a8",
       "username": "tester2",
       "email": "test2@test.com",
       "status": "active",
@@ -732,7 +732,7 @@ Sample response
 ```
 {
   "user": {
-    "_id": "5e24d42cf7dddf012cd496b2",
+    "id": "5e24d42cf7dddf012cd496b2",
     "username": "tester",
     "email": "test@test.com",
     "status": "active",

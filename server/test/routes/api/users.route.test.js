@@ -76,7 +76,7 @@ describe('ENDPOINT: GET /api/users/', function () {
       .then((res) => {
         expect(res.body.usersCount).to.be.equal(3);
         res.body.users.forEach((user) => {
-          expect(user._id).to.be.equal(
+          expect(user.id).to.be.equal(
             app.locals.existing[[user.role]]._id.toString()
           );
           expect(user).to.have.property('createdAt');
@@ -209,7 +209,7 @@ describe('ENDPOINT: GET /api/users/:id', function () {
       .set('Authorization', `Bearer ${currentUser.jwtToken}`)
       .expect(200)
       .then((res) => {
-        expect(res.body.user._id).to.be.equal(
+        expect(res.body.user.id).to.be.equal(
           app.locals.existing[[res.body.user.role]]._id.toString()
         );
         expect(res.body.user).to.have.property('createdAt');

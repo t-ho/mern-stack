@@ -177,7 +177,7 @@ const createSignInResponse = (user, provider) => {
   return {
     ...user.generateJwtToken(),
     signedInWith: provider,
-    user: user.toProfileJson(),
+    user: user.toJsonFor(user),
   };
 };
 

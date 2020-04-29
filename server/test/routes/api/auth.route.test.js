@@ -244,7 +244,7 @@ describe('ENDPOINT: POST /api/auth/signin', function () {
         expect(decodedToken.iat).to.be.equal(
           decodedToken.exp - config.jwt.expiresIn
         );
-        expect(res.body.user._id).to.be.equal(existingAdmin._id.toString());
+        expect(res.body.user.id).to.be.equal(existingAdmin._id.toString());
         expect(res.body.user).to.have.property('createdAt');
         expect(res.body.user).to.have.property('updatedAt');
         expect(res.body.user.provider).to.deep.equal({
