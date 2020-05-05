@@ -37,8 +37,8 @@
     "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
-    "mocha": "^7.1.1",
-    "mongoose": "^5.9.10",
+    "mocha": "^7.1.2",
+    "mongoose": "^5.9.12",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.3",
     "passport": "^0.4.1",
@@ -46,9 +46,9 @@
     "passport-google-token": "^0.1.2",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "sendgrid-template-helper": "^1.0.0",
+    "sendgrid-template-helper": "^1.0.1",
     "supertest": "^4.0.2",
-    "uuid": "^7.0.3"
+    "uuid": "^8.0.0"
   },
   "devDependencies": {}
 }

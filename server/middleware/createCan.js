@@ -1,15 +1,15 @@
 const createError = require('http-errors');
 const mongoose = require('mongoose');
+const _ = require('lodash');
 
 const User = mongoose.model('User');
 
 /**
  * @function
  * Create a middleware to determine whether the current user has permission
- * to perform the given action.
- * The action type is attached to res.locals.action
+ * to perform the given actions.
  *
- * If the action is either "updateUsers" or "deleteUsers", it will check the
+ * If the actions contains either "updateUsers" or "deleteUsers", it will check the
  * role of the current user and target user (res.locals.targetUser).
  *
  * RULES for updating and deleting users
@@ -22,20 +22,23 @@ const User = mongoose.model('User');
  * * Root users cannot update or delete other root users.
  * * Admin users cannot update or delete root users.
  *
- * @param {string} action It could be [readUsers, insertUsers, updateUsers, deleteUsers, readPosts...].
+ * @param {string|array} actions An action or array of actions.
+ * @param {boolean=false} isAny If true, at least one action must pass to continue. Otherwise, ALL actions must be pass to continue.
  * See User Schema for a full list of permissions
  *
  * NOTE: readUsers, insertUsers, updateUsers and deleteUsers are not listed in the
  * User Schema meaning normal users DO NOT have any permissions on User Collection at all.
  */
-const createCan = (action) => (req, res, next) => {
-  res.locals.action = action;
-
-  if (!req.user || (req.user && !req.user.can(action))) {
+const createCan = (actions, isAny = false) => (req, res, next) => {
+  if (!req.user || (req.user && !req.user.can(actions, isAny))) {
     return next(createError(401, 'Unauthorized action.'));
   }
 
-  if (action !== 'updateUsers' && action !== 'deleteUsers') {
+  if (
+    _.castArray(actions).every(
+      (action) => action !== 'updateUsers' && action !== 'deleteUsers'
+    )
+  ) {
     return next();
   }
 

@@ -220,18 +220,23 @@ userSchema.methods.clearToken = function () {
 };
 
 /**
- * Determine whether this user has a permission to do given action
+ * Determine whether this user has permission to do given actions
  * based on user role and user permissions
  *
- * @param {string} action The action such as debug, deleteUsers,...
+ * @param {string|array} actions An action or array of actions.
+ * @param {boolean=false} isAny If true, at least one action must pass to continue. Otherwise, ALL actions must be pass to continue.
  * @returns {boolean} True if this user has permission to perform the given action.
  * Otherwise, false
  */
-userSchema.methods.can = function (action) {
+userSchema.methods.can = function (actions, isAny = false) {
   if (this.role === 'admin' || this.role === 'root') {
     return true;
   }
-  return !!this.permissions[action];
+  actions = _.castArray(actions);
+  if (isAny) {
+    return actions.some((action) => !!this.permissions[action]);
+  }
+  return actions.every((action) => !!this.permissions[action]);
 };
 
 mongoose.model('User', userSchema);
