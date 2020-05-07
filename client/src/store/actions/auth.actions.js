@@ -8,16 +8,12 @@ export const signUp = (formValues) => (dispatch, getState, { mernApi }) => {
       dispatch({ type: actionTypes.SIGN_UP_SUCCESS });
     },
     (err) => {
-      dispatch(signUpFail(err.response.data.error.message));
+      dispatch({
+        type: actionTypes.SIGN_UP_FAIL,
+        payload: err.response.data.error.message,
+      });
     }
   );
-};
-
-const signUpFail = (payload) => {
-  return {
-    type: actionTypes.SIGN_UP_FAIL,
-    payload,
-  };
 };
 
 export const signIn = (formValues) => (dispatch, getState, { mernApi }) => {
@@ -25,26 +21,11 @@ export const signIn = (formValues) => (dispatch, getState, { mernApi }) => {
   return signInHelper(
     '/api/auth/signin',
     formValues,
-    signInSuccess,
-    signInFail,
+    actionTypes.SIGN_IN_SUCCESS,
+    actionTypes.SIGN_IN_FAIL,
     dispatch,
-    getState,
     mernApi
   );
-};
-
-const signInSuccess = (payload) => {
-  return {
-    type: actionTypes.SIGN_IN_SUCCESS,
-    payload,
-  };
-};
-
-const signInFail = (payload) => {
-  return {
-    type: actionTypes.SIGN_IN_FAIL,
-    payload,
-  };
 };
 
 export const facebookSignIn = (formValues) => (
@@ -56,26 +37,11 @@ export const facebookSignIn = (formValues) => (
   return signInHelper(
     '/api/auth/facebook',
     formValues,
-    facebookSignInSuccess,
-    facebookSignInFail,
+    actionTypes.FACEBOOK_SIGN_IN_SUCCESS,
+    actionTypes.FACEBOOK_SIGN_IN_FAIL,
     dispatch,
-    getState,
     mernApi
   );
-};
-
-const facebookSignInSuccess = (payload) => {
-  return {
-    type: actionTypes.FACEBOOK_SIGN_IN_SUCCESS,
-    payload,
-  };
-};
-
-const facebookSignInFail = (payload) => {
-  return {
-    type: actionTypes.FACEBOOK_SIGN_IN_FAIL,
-    payload,
-  };
 };
 
 export const googleSignIn = (formValues) => (
@@ -87,26 +53,11 @@ export const googleSignIn = (formValues) => (
   return signInHelper(
     '/api/auth/google',
     formValues,
-    googleSignInSuccess,
-    googleSignInFail,
+    actionTypes.GOOGLE_SIGN_IN_SUCCESS,
+    actionTypes.GOOGLE_SIGN_IN_FAIL,
     dispatch,
-    getState,
     mernApi
   );
-};
-
-const googleSignInSuccess = (payload) => {
-  return {
-    type: actionTypes.GOOGLE_SIGN_IN_SUCCESS,
-    payload,
-  };
-};
-
-const googleSignInFail = (payload) => {
-  return {
-    type: actionTypes.GOOGLE_SIGN_IN_FAIL,
-    payload,
-  };
 };
 
 export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
@@ -115,8 +66,9 @@ export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
     const authInfo = JSON.parse(localStorage.getItem('authInfo'));
     const now = Math.floor(Date.now() / 1000);
     if (!authInfo || (authInfo && authInfo.expiresAt <= now)) {
-      dispatch(tryLocalSignInFail());
-      return Promise.resolve();
+      return Promise.resolve().then(() => {
+        dispatch(tryLocalSignInFail());
+      });
     }
     // if token age > 30 days, then refresh token
     if (authInfo.expiresAt <= now + 30 * 24 * 60 * 60) {
@@ -125,34 +77,34 @@ export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
         (response) => {
           authInfo.token = response.data.token;
           authInfo.expiresAt = response.data.expiresAt;
-          dispatch(tryLocalSignInSuccess(authInfo));
-          redirectAfterSignIn(dispatch, getState);
-          setAuthInfo(authInfo, mernApi);
+          dispatch(
+            signInSuccess(authInfo, actionTypes.TRY_LOCAL_SIGN_IN_SUCCESS)
+          );
         },
         (err) => {
           dispatch(tryLocalSignInFail());
         }
       );
     } else {
-      dispatch(tryLocalSignInSuccess(authInfo));
-      redirectAfterSignIn(dispatch, getState);
-      return Promise.resolve();
+      return Promise.resolve().then(() => {
+        dispatch(
+          signInSuccess(authInfo, actionTypes.TRY_LOCAL_SIGN_IN_SUCCESS)
+        );
+      });
     }
   } catch (err) {
     dispatch(tryLocalSignInFail(err));
   }
 };
 
-const tryLocalSignInSuccess = (payload) => (
+const signInSuccess = (payload, successType) => (
   dispatch,
   getState,
   { mernApi }
 ) => {
   setAuthInfo(payload, mernApi);
-  dispatch({
-    type: actionTypes.TRY_LOCAL_SIGN_IN_SUCCESS,
-    payload,
-  });
+  dispatch({ type: successType, payload });
+  redirectAfterSignIn(dispatch, getState);
 };
 
 const tryLocalSignInFail = () => (dispatch, getState, { mernApi }) => {
@@ -180,16 +132,12 @@ export const verifyEmail = (token) => (dispatch, getState, { mernApi }) => {
       dispatch({ type: actionTypes.VERIFY_EMAIL_SUCCESS });
     },
     (err) => {
-      dispatch(verifyEmailFail(err.response.data.error.message));
+      dispatch({
+        type: actionTypes.VERIFY_EMAIL_FAIL,
+        payload: err.response.data.error.message,
+      });
     }
   );
-};
-
-const verifyEmailFail = (payload) => {
-  return {
-    type: actionTypes.VERIFY_EMAIL_FAIL,
-    payload,
-  };
 };
 
 export const requestVerificationEmail = (formValues) => {
@@ -200,16 +148,12 @@ export const requestVerificationEmail = (formValues) => {
         dispatch({ type: actionTypes.REQUEST_VERIFICATION_EMAIL_SUCCESS });
       },
       (err) => {
-        dispatch(requestVerificationEmailFail(err.response.data.error.message));
+        dispatch({
+          type: actionTypes.REQUEST_VERIFICATION_EMAIL_FAIL,
+          payload: err.response.data.error.message,
+        });
       }
     );
-  };
-};
-
-const requestVerificationEmailFail = (payload) => {
-  return {
-    type: actionTypes.REQUEST_VERIFICATION_EMAIL_FAIL,
-    payload,
   };
 };
 
@@ -221,16 +165,12 @@ export const requestPasswordReset = (formValues) => {
         dispatch({ type: actionTypes.REQUEST_PASSWORD_RESET_SUCCESS });
       },
       (err) => {
-        dispatch(requestPasswordResetFail(err.response.data.error.message));
+        dispatch({
+          type: actionTypes.REQUEST_PASSWORD_RESET_FAIL,
+          payload: err.response.data.error.message,
+        });
       }
     );
-  };
-};
-
-const requestPasswordResetFail = (payload) => {
-  return {
-    type: actionTypes.REQUEST_PASSWORD_RESET_FAIL,
-    payload,
   };
 };
 
@@ -241,15 +181,12 @@ export const resetPassword = (formValues, token) => {
       (response) => {
         dispatch({ type: actionTypes.RESET_PASSWORD_SUCCESS });
       },
-      (err) => dispatch(resetPasswordFail(err.response.data.error.message))
+      (err) =>
+        dispatch({
+          type: actionTypes.RESET_PASSWORD_FAIL,
+          payload: err.response.data.error.message,
+        })
     );
-  };
-};
-
-const resetPasswordFail = (payload) => {
-  return {
-    type: actionTypes.RESET_PASSWORD_FAIL,
-    payload,
   };
 };
 
@@ -262,20 +199,17 @@ export const unloadAuthPage = () => {
 const signInHelper = (
   endpoint,
   payload,
-  actionSuccess,
-  actionFail,
+  successType,
+  failType,
   dispatch,
-  getState,
   mernApi
 ) => {
   return mernApi.post(endpoint, payload).then(
     (response) => {
-      dispatch(actionSuccess(response.data));
-      setAuthInfo(response.data, mernApi);
-      redirectAfterSignIn(dispatch, getState);
+      dispatch(signInSuccess(response.data, successType));
     },
     (err) => {
-      dispatch(actionFail(err.response.data.error.message));
+      dispatch({ type: failType, payload: err.response.data.error.message });
     }
   );
 };
