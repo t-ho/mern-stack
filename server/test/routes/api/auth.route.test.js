@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const request = require('supertest');
 const expect = require('chai').expect;
 const _ = require('lodash');
-const uuidv4 = require('uuid/v4');
+const uuid = require('uuid');
 const jwt = require('jsonwebtoken');
 const config = require('../../../config');
 
@@ -244,7 +244,7 @@ describe('ENDPOINT: POST /api/auth/signin', function () {
         expect(decodedToken.iat).to.be.equal(
           decodedToken.exp - config.jwt.expiresIn
         );
-        expect(res.body.user._id).to.be.equal(existingAdmin._id.toString());
+        expect(res.body.user.id).to.be.equal(existingAdmin._id.toString());
         expect(res.body.user).to.have.property('createdAt');
         expect(res.body.user).to.have.property('updatedAt');
         expect(res.body.user.provider).to.deep.equal({
@@ -464,7 +464,7 @@ describe('ENDPOINT: POST /api/auth/reset-password/:token', function () {
 
   beforeEach(function (done) {
     let existingAdmin = app.locals.existing.admin;
-    existingAdmin.token = uuidv4();
+    existingAdmin.token = uuid.v4();
     existingAdmin.tokenPurpose = 'resetPassword';
     existingAdmin
       .save()
@@ -604,7 +604,7 @@ describe('ENDPOINT: POST /api/auth/verify-email/:token', function () {
 
   beforeEach(function (done) {
     let existingAdmin = app.locals.existing.admin;
-    existingAdmin.token = uuidv4();
+    existingAdmin.token = uuid.v4();
     existingAdmin.tokenPurpose = 'verifyEmail';
     existingAdmin
       .save()
@@ -692,45 +692,33 @@ describe('ENDPOINT: POST /api/auth/verify-email/:token', function () {
 describe('ENDPOINT: POST /api/auth/refresh-token', function () {
   let endpoint = '/api/auth/refresh-token';
 
-  const testJwtTokenValidation = (jwtToken, done) => {
-    request(app)
-      .post(endpoint)
-      .set('Authorization', `Bearer ${jwtToken}`)
-      .expect(401)
-      .expect({})
-      .then((res) => {
-        expect(res.text).to.be.equal('Unauthorized');
-        done();
-      })
-      .catch(done);
-  };
-
   it(`POST ${endpoint} - JWT token not provided`, function (done) {
     request(app)
       .post(endpoint)
       .expect(401)
-      .expect({})
-      .then((res) => {
-        expect(res.text).to.be.equal('Unauthorized');
-        done();
-      })
-      .catch(done);
+      .expect({ error: { message: 'No auth token' } }, done);
   });
 
   it(`POST ${endpoint} - JWT token - invalid subId`, function (done) {
     const existingAdmin = app.locals.existing.admin;
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.sub = 'invalid-sub-id';
-    const invalidJwtToken = createJwtToken(decodedToken);
-    testJwtTokenValidation(invalidJwtToken, done);
+    request(app)
+      .post(endpoint)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'Invalid JWT token.' } }, done);
   });
 
   it(`POST ${endpoint} - JWT token - not exist userId`, function (done) {
     const existingAdmin = app.locals.existing.admin;
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.userId = '5e24db1d560ba309f0b0b5a8';
-    const invalidJwtToken = createJwtToken(decodedToken);
-    testJwtTokenValidation(invalidJwtToken, done);
+    request(app)
+      .post(endpoint)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'Invalid credentials.' } }, done);
   });
 
   it(`POST ${endpoint} - JWT token - expired token`, function (done) {
@@ -738,8 +726,11 @@ describe('ENDPOINT: POST /api/auth/refresh-token', function () {
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.iat = decodedToken.iat - 100;
     decodedToken.exp = decodedToken.iat - 50;
-    const invalidJwtToken = createJwtToken(decodedToken);
-    testJwtTokenValidation(invalidJwtToken, done);
+    request(app)
+      .post(endpoint)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'jwt expired' } }, done);
   });
 
   it(`POST ${endpoint} - JWT Token - refresh succeeded`, function (done) {

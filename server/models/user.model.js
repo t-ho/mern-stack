@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
-const uuidv4 = require('uuid/v4');
+const uuid = require('uuid');
 const config = require('../config');
 
 // By defaulf, we don't store oauth access_token and refresh_token
@@ -115,37 +115,35 @@ userSchema.virtual('fullName').get(function () {
 /**
  * @returns {object} The user profile object without sensitive info such as hashed password
  */
-userSchema.methods.toProfileJson = function () {
-  const user = this.toObject();
-  user.provider = _.mapValues(user.provider, (p) => {
-    return _.pick(p, ['userId', 'picture']);
-  });
-  return _.pick(user, [
-    '_id',
-    'username',
-    'email',
-    'status',
-    'firstName',
-    'lastName',
-    'role',
-    'permissions',
-    'provider',
-    'createdAt',
-    'updatedAt',
-  ]);
-};
-
-/**
- * @returns {object} The user public profile object
- */
-userSchema.methods.toPublicProfileJson = function () {
-  return _.pick(this, [
-    '_id',
-    'username',
-    'firstName',
-    'lastName',
-    'createdAt',
-  ]);
+userSchema.methods.toJsonFor = function (user) {
+  const userObj = this.toObject();
+  if (user && (user.can('readUsers') || user._id == this._id)) {
+    const provider = _.mapValues(userObj.provider, (p) => {
+      return _.pick(p, ['userId', 'picture']);
+    });
+    return {
+      id: userObj._id,
+      username: userObj.username,
+      email: userObj.email,
+      status: userObj.status,
+      firstName: userObj.firstName,
+      lastName: userObj.lastName,
+      role: userObj.role,
+      permissions: userObj.permissions,
+      provider,
+      createdAt: userObj.createdAt,
+      updatedAt: userObj.updatedAt,
+    };
+  } else {
+    // public profile
+    return {
+      id: userObj._id,
+      username: userObj.username,
+      firstName: userObj.firstName,
+      lastName: userObj.lastName,
+      createdAt: userObj.createdAt,
+    };
+  }
 };
 
 /**
@@ -209,7 +207,7 @@ userSchema.methods.generateJwtToken = function () {
  * @param {string} purpose The purpose of the token.
  */
 userSchema.methods.setToken = function (purpose) {
-  this.token = uuidv4();
+  this.token = uuid.v4();
   this.tokenPurpose = purpose;
 };
 
@@ -222,18 +220,23 @@ userSchema.methods.clearToken = function () {
 };
 
 /**
- * Determine whether this user has a permission to do given action
+ * Determine whether this user has permission to do given actions
  * based on user role and user permissions
  *
- * @param {string} action The action such as debug, deleteUsers,...
+ * @param {string|array} actions An action or array of actions.
+ * @param {boolean=false} isAny If true, at least one action must pass to continue. Otherwise, ALL actions must be pass to continue.
  * @returns {boolean} True if this user has permission to perform the given action.
  * Otherwise, false
  */
-userSchema.methods.can = function (action) {
+userSchema.methods.can = function (actions, isAny = false) {
   if (this.role === 'admin' || this.role === 'root') {
     return true;
   }
-  return !!this.permissions[action];
+  actions = _.castArray(actions);
+  if (isAny) {
+    return actions.some((action) => !!this.permissions[action]);
+  }
+  return actions.every((action) => !!this.permissions[action]);
 };
 
 mongoose.model('User', userSchema);

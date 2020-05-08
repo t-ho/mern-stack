@@ -73,9 +73,10 @@ module.exports.getUsers = (req, res, next) => {
     })
     .then((results) => {
       const [users, usersCount] = results;
-      res
-        .status(200)
-        .json({ users: users.map((user) => user.toProfileJson()), usersCount });
+      res.status(200).json({
+        users: users.map((user) => user.toJsonFor(req.user)),
+        usersCount,
+      });
     })
     .catch(next);
 };
@@ -107,7 +108,7 @@ module.exports.preloadTargetUser = (req, res, next, userId) => {
  * Get the target user
  */
 module.exports.getUser = (req, res, next) => {
-  res.status(200).json({ user: res.locals.targetUser.toProfileJson() });
+  res.status(200).json({ user: res.locals.targetUser.toJsonFor(req.user) });
 };
 
 /**

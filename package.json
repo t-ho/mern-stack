@@ -1,5 +1,5 @@
 {
-  "name": "mern",
+  "name": "mern-stack",
   "version": "1.0.0",
   "description": "MERN stack - MongoDB - Express - React - Redux - React Native - NodeJs",
   "main": "start.js",
@@ -15,23 +15,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/t-ho/mern.git"
+    "url": "git+https://github.com/t-ho/mern-stack.git"
   },
   "author": "t-ho <toan.hmt@protonmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/t-ho/mern/issues"
+    "url": "https://github.com/t-ho/mern-stack/issues"
   },
-  "homepage": "https://github.tdev.app/mern",
+  "homepage": "https://tdev.app/mern-stack",
   "devDependencies": {
-    "chalk": "^3.0.0",
-    "concurrently": "^5.1.0",
+    "chalk": "^4.0.0",
+    "concurrently": "^5.2.0",
     "dotenv": "^8.2.0",
     "figlet": "^1.3.0",
-    "husky": "^4.2.3",
+    "husky": "^4.2.5",
     "lodash": "^4.17.15",
     "ngrok": "^3.2.7",
-    "prettier": "^2.0.2",
+    "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
     "tree-kill": "^1.2.2"
   },

@@ -1,14 +1,15 @@
 const express = require('express');
-const passport = require('passport');
 const usersCtr = require('../../controllers/users.controller');
+const createAuthStrategy = require('../../middleware/createAuthStrategy');
 const createCan = require('../../middleware/createCan');
 
 const router = express.Router();
+const jwtAuthenticate = createAuthStrategy('jwt');
 const canDeleteUsers = createCan('deleteUsers');
 const canReadUsers = createCan('readUsers');
 const canUpdateUsers = createCan('updateUsers');
 
-router.use(passport.authenticate('jwt', { session: false }));
+router.use(jwtAuthenticate);
 
 // Preload user object on routes with ':userId'
 router.param('userId', usersCtr.preloadTargetUser);

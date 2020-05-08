@@ -13,7 +13,7 @@ const User = mongoose.model('User');
  */
 module.exports.getProfile = (req, res, next) => {
   if (req.user) {
-    res.status(200).send({ profile: req.user.toProfileJson() });
+    res.status(200).send({ profile: req.user.toJsonFor(req.user) });
   }
 };
 
@@ -78,7 +78,7 @@ module.exports.getPublicProfile = (req, res, next) => {
       if (!user) {
         throw createError(422, 'User ID does not exist.');
       }
-      res.status(200).send({ profile: user.toPublicProfileJson() });
+      res.status(200).send({ profile: user.toJsonFor() });
     })
     .catch(next);
 };
