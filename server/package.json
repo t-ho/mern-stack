@@ -38,7 +38,7 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "mocha": "^7.1.2",
-    "mongoose": "^5.9.12",
+    "mongoose": "^5.9.13",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.3",
     "passport": "^0.4.1",
