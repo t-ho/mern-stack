@@ -64,8 +64,8 @@ describe('ENDPOINT: GET /api/users/', function () {
     request(app)
       .get(endpoint)
       .set('Authorization', `Bearer ${existingUser.jwtToken}`)
-      .expect(401)
-      .expect({ error: { message: 'Unauthorized action.' } }, done);
+      .expect(403)
+      .expect({ error: { message: 'Forbidden action.' } }, done);
   });
 
   const testCanGetListOfUsers = (currentUser, done) => {
@@ -198,8 +198,8 @@ describe('ENDPOINT: GET /api/users/:id', function () {
     request(app)
       .get(`${endpoint}/${existingUser._id}`)
       .set('Authorization', `Bearer ${existingUser.jwtToken}`)
-      .expect(401)
-      .expect({ error: { message: 'Unauthorized action.' } }, done);
+      .expect(403)
+      .expect({ error: { message: 'Forbidden action.' } }, done);
   });
 
   const testCanGetUserDetails = (currentUser, done) => {
@@ -376,8 +376,8 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
       .put(`${endpoint}/${targetUser._id}`)
       .set('Authorization', `Bearer ${currentUser.jwtToken}`)
       .send(payload)
-      .expect(401)
-      .expect({ error: { message: 'Unauthorized action.' } }, done);
+      .expect(403)
+      .expect({ error: { message: 'Forbidden action.' } }, done);
   };
 
   it(`PUT ${endpoint}/:userId - Normal user cannot update itself and other normal user`, function (done) {
@@ -598,8 +598,8 @@ describe('ENDPOINT: DELETE /api/users/:userId', function () {
     request(app)
       .delete(`${endpoint}/${targetUser._id}`)
       .set('Authorization', `Bearer ${currentUser.jwtToken}`)
-      .expect(401)
-      .expect({ error: { message: 'Unauthorized action.' } }, done);
+      .expect(403)
+      .expect({ error: { message: 'Forbidden action.' } }, done);
   };
 
   it(`DELETE ${endpoint}/:userId - Normal user cannot delete itself and other normal user`, function (done) {

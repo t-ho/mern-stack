@@ -151,7 +151,7 @@ module.exports.updateUser = (req, res, next) => {
           (req.user.role === 'admin' && req.body.role !== 'user') ||
           (req.user.role === 'root' && req.body.role === 'root')
         ) {
-          throw createError(401, 'Unauthorized action.');
+          throw createError(403, 'Forbidden action.');
         }
       }
       _.merge(res.locals.targetUser, req.body);
