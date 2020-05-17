@@ -98,7 +98,7 @@ export const googleSignIn = () => (dispatch, getState, { mernApi }) => {
 
 export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.TRY_LOCAL_SIGN_IN });
-  getAuthInfoAsync().then(
+  return getAuthInfoAsync().then(
     (authInfo) => {
       const now = Math.floor(Date.now() / 1000);
       if (!authInfo || (authInfo && authInfo.expiresAt <= now)) {

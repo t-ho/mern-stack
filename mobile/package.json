@@ -24,7 +24,7 @@
     "react-native-web": "^0.11.7",
     "react-navigation": "^4.3.9",
     "react-navigation-material-bottom-tabs": "^2.2.12",
-    "react-navigation-stack": "^2.5.0",
+    "react-navigation-stack": "^2.5.1",
     "react-redux": "^7.2.0",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
