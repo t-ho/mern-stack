@@ -25,7 +25,7 @@ export const getCurrentUser = createSelector(getAuthState, (auth) => auth.user);
 
 export const getIsSignedIn = createSelector(
   getAuthState,
-  (auth) => auth.token !== null
+  (auth) => auth.isSignedIn
 );
 
 export const getDefaultPath = createSelector(

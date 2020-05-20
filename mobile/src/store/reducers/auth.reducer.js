@@ -2,7 +2,7 @@ import * as actionTypes from '../actions/types';
 
 const INITIAL_STATE = {
   user: {},
-  token: null,
+  isSignedIn: false,
   expiresAt: null,
   signedInWith: null,
   processing: false,
@@ -36,7 +36,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
         ...state,
         processing: false,
         processed: true,
-        token: action.payload.token,
+        isSignedIn: true,
         expiresAt: action.payload.expiresAt,
         signedInWith: action.payload.signedInWith,
         user: { ...action.payload.user },
@@ -67,7 +67,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
         ...state,
         processing: false,
         processed: true,
-        token: null,
+        isSignedIn: false,
         user: {},
         expiresAt: null,
       };
