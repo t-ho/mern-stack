@@ -17,7 +17,7 @@
   - [Verify Email Code - `POST /api/auth/verify-email/:token`](#verify-email-code)
   - [Send Password Reset Email - `POST /api/auth/send-token`](#send-password-reset-email)
   - [Confirm Password Reset - `POST /api/auth/password-reset/:token`](#confirm-password-reset)
-  - [Refresh JWT Token - `POST /api/auth/refresh-token`](#refresh-jwt-token)
+  - [Verify JWT Token - `POST /api/auth/verify-token`](#verify-jwt-token)
 - [Profile](#profile)
   - [Get User Profile - `GET /api/profiles`](#get-user-profile)
   - [Get User Public Profile - `GET /api/profiles/:userId`](#get-user-public-profile)
@@ -450,7 +450,7 @@ Sample response
 }
 ```
 
-### Refresh JWT Token
+### Verify JWT Token
 
 - **Method:** `POST`
 - **Content-Type:** `application/json`
@@ -463,13 +463,28 @@ Authorization: Bearer {JWT Token}
 - **Endpoint**
 
 ```
-/api/auth/refresh-token
+/api/auth/verify-token
+```
+
+- **Resquest Body Payload**
+
+| Property Name  | Type      | Required | Description                                                 |
+| -------------- | --------- | -------- | ----------------------------------------------------------- |
+| `refreshToken` | _boolean_ | No       | If `true`, a new JWT token will be included in the response |
+
+Sample request body payload
+
+```
+{
+  "refreshToken": true,
+}
 ```
 
 - **Response payload**
 
 | Property Name | Type     | Description               |
 | ------------- | -------- | ------------------------- |
+| `status`      | _string_ | The verification status   |
 | `token`       | _string_ | New JWT token             |
 | `expiresAt`   | _number_ | Expires at time (seconds) |
 
@@ -477,6 +492,7 @@ Sample response
 
 ```
 {
+  "status": "pass",
   "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZTI3ZTQ4OTY2OGEyYjQxZWUxNmY3NDIiLCJ1c2VySWQiOiI1ZTI0ZjhkM2M1ZGZmZjFmYzk1NDQ3ZDUiLCJpYXQiOjE1Nzk2NzY1OTgsImV4cCI6MTU4NDg2MDU5OH0.7DjINccJtzowF0Nf2DnMoBtKpWEzRKLqcpzzIByHuwnqXRHKduYHGfOgf1ak9t2qLHQzPwMw-FxOGtZGVvAucA",
   "expiresAt": 1584860598,
 }
