@@ -22,7 +22,7 @@ router.post(
   authCtrl.googleSignIn
 );
 
-router.post('/refresh-token', jwtAuthenticate, authCtrl.refreshToken);
+router.post('/verify-token', jwtAuthenticate, authCtrl.verifyToken);
 
 router.post('/reset-password/:token', authCtrl.resetPassword);
 

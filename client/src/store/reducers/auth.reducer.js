@@ -2,7 +2,7 @@ import * as actionTypes from '../actions/types';
 
 const INITIAL_STATE = {
   user: {},
-  token: null,
+  isSignedIn: false,
   expiresAt: null,
   processing: false,
   processed: false,
@@ -16,6 +16,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case actionTypes.SIGN_IN:
     case actionTypes.FACEBOOK_SIGN_IN:
     case actionTypes.GOOGLE_SIGN_IN:
+    case actionTypes.TRY_LOCAL_SIGN_IN:
     case actionTypes.SIGN_OUT:
     case actionTypes.SIGN_UP:
     case actionTypes.VERIFY_EMAIL:
@@ -26,20 +27,12 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case actionTypes.SIGN_IN_SUCCESS:
     case actionTypes.FACEBOOK_SIGN_IN_SUCCESS:
     case actionTypes.GOOGLE_SIGN_IN_SUCCESS:
+    case actionTypes.TRY_LOCAL_SIGN_IN_SUCCESS:
       return {
         ...state,
         processing: false,
         processed: true,
-        token: action.payload.token,
-        expiresAt: action.payload.expiresAt,
-        signedInWith: action.payload.signedInWith,
-        user: { ...action.payload.user },
-        defaultPath: '/profile',
-      };
-    case actionTypes.TRY_LOCAL_SIGN_IN_SUCCESS:
-      return {
-        ...state,
-        token: action.payload.token,
+        isSignedIn: true,
         expiresAt: action.payload.expiresAt,
         signedInWith: action.payload.signedInWith,
         user: { ...action.payload.user },
@@ -74,7 +67,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
         ...state,
         processing: false,
         processed: true,
-        token: null,
+        isSignedIn: false,
         user: {},
         expiresAt: null,
         defaultPath: '/',
@@ -82,7 +75,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case actionTypes.TRY_LOCAL_SIGN_IN_FAIL:
       return {
         ...state,
-        token: null,
+        isSignedIn: false,
         user: {},
         expiresAt: null,
         defaultPath: '/',

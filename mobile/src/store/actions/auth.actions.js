@@ -106,10 +106,10 @@ export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
           dispatch(tryLocalSignInFail());
         });
       }
-      // if token age > 30 days, then refresh token
-      if (authInfo.expiresAt <= now + 30 * 24 * 60 * 60) {
-        mernApi.setAuthToken(authInfo.token);
-        return mernApi.post('/api/auth/refresh-token').then(
+      mernApi.setAuthToken(authInfo.token);
+      return mernApi
+        .post('/api/auth/verify-token', { refreshToken: true })
+        .then(
           (response) => {
             authInfo.token = response.data.token;
             authInfo.expiresAt = response.data.expiresAt;
@@ -121,13 +121,6 @@ export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
             dispatch(tryLocalSignInFail());
           }
         );
-      } else {
-        return Promise.resolve().then(() => {
-          dispatch(
-            signInSuccess(authInfo, actionTypes.TRY_LOCAL_SIGN_IN_SUCCESS)
-          );
-        });
-      }
     },
     (err) => {
       dispatch(tryLocalSignInFail());
