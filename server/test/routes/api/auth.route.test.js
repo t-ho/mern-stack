@@ -689,8 +689,8 @@ describe('ENDPOINT: POST /api/auth/verify-email/:token', function () {
   }
 });
 
-describe('ENDPOINT: POST /api/auth/refresh-token', function () {
-  let endpoint = '/api/auth/refresh-token';
+describe('ENDPOINT: POST /api/auth/verify-token', function () {
+  let endpoint = '/api/auth/verify-token';
 
   it(`POST ${endpoint} - JWT token not provided`, function (done) {
     request(app)
@@ -733,13 +733,24 @@ describe('ENDPOINT: POST /api/auth/refresh-token', function () {
       .expect({ error: { message: 'jwt expired' } }, done);
   });
 
-  it(`POST ${endpoint} - JWT Token - refresh succeeded`, function (done) {
+  it(`POST ${endpoint} - JWT Token - jwt token verification succeeded`, function (done) {
     let existingAdmin = app.locals.existing.admin;
     request(app)
       .post(endpoint)
       .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
       .expect(200)
+      .expect({ status: 'pass' }, done);
+  });
+
+  it(`POST ${endpoint} - JWT Token - verification and refresh succeeded`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    request(app)
+      .post(endpoint)
+      .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
+      .send({ refreshToken: true })
+      .expect(200)
       .then((res) => {
+        expect(res.body.status).to.be.equal('pass');
         expect(res.body.expiresAt).to.be.a('number');
         const newlyDecodedToken = decodeJwtToken(res.body.token);
         expect(newlyDecodedToken.sub).to.be.equal(existingAdmin.subId);
