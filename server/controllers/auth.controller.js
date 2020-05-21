@@ -119,15 +119,32 @@ module.exports.sendToken = (req, res, next) => {
 };
 
 /**
- * @function refreshToken
- * Refresh JWT token
+ * JOI schema for validating verifyToken payload
+ */
+const verifyTokenSchema = Joi.object({
+  refreshToken: Joi.boolean(),
+});
+
+/**
+ * @function verifyToken
+ * Verify JWT token
  *
  */
-module.exports.refreshToken = (req, res, next) => {
-  if (req.user) {
-    jwtTokenObj = req.user.generateJwtToken();
-    res.json(jwtTokenObj);
-  }
+module.exports.verifyToken = (req, res, next) => {
+  verifyTokenSchema
+    .validateAsync(req.body)
+    .then((payload) => {
+      req.body = payload;
+      if (req.user) {
+        if (req.body.refreshToken) {
+          jwtTokenObj = req.user.generateJwtToken();
+          res.status(200).json({ status: 'pass', ...jwtTokenObj });
+        } else {
+          res.status(200).json({ status: 'pass' });
+        }
+      }
+    })
+    .catch(next);
 };
 
 /**
@@ -161,9 +178,7 @@ module.exports.validateLocalSignInPayload = (req, res, next) => {
 
       next();
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 /**
