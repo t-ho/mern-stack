@@ -1,5 +1,5 @@
 import React from 'react';
-import { Keyboard, Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Keyboard, StyleSheet, View, ScrollView } from 'react-native';
 import {
   SafeAreaView,
   NavigationEvents,
@@ -15,11 +15,11 @@ import {
 } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import StatusBar from '../components/StatusBar';
 import { getError, getProcessing, getType } from '../store/selectors';
 import NavLink from '../components/NavLink';
 import { clearErrorMessage, signIn, unloadAuthScreen } from '../store/actions';
 import Spacer from '../components/Spacer';
-import DismissKeyboardView from '../hoc/DismissKeyboardView';
 import OAuthButtons from '../components/OAuthButtons';
 import Logo from '../components/Logo';
 
@@ -44,8 +44,11 @@ class SignInScreen extends React.Component {
     return (
       <SafeAreaView forceInset={{ top: 'always' }} style={styles.container}>
         <NavigationEvents onWillBlur={this.props.unloadAuthScreen} />
-        {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" />}
-        <DismissKeyboardView>
+        <StatusBar barStyle="dark-content" />
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+        >
           <Logo />
           <Spacer>
             <Title style={{ alignSelf: 'center', color: colors.primary }}>
@@ -60,7 +63,9 @@ class SignInScreen extends React.Component {
               value={this.state.email}
               autoCapitalize="none"
               autoCorrect={false}
+              keyboardType="email-address"
               onChangeText={(email) => this.setState({ email })}
+              onSubmitEditing={this.onEmailSignIn}
               disabled={this.props.isSigning}
             />
             <Spacer />
@@ -73,6 +78,7 @@ class SignInScreen extends React.Component {
               autoCapitalize="none"
               autoCorrect={false}
               onChangeText={(password) => this.setState({ password })}
+              onSubmitEditing={this.onEmailSignIn}
               disabled={this.props.isSigning}
             />
             <View style={styles.navLinks}>
@@ -112,11 +118,15 @@ class SignInScreen extends React.Component {
               disabled={this.props.isSigning}
             />
           )}
-        </DismissKeyboardView>
+        </ScrollView>
         <Snackbar
           visible={this.props.errorMessage}
-          duration={20000}
           onDismiss={this.props.clearErrorMessage}
+          action={{
+            label: 'Dismiss',
+            accessibilityLabel: 'Dismiss',
+            onPress: () => {},
+          }}
           style={{ backgroundColor: colors.error }}
         >
           {this.props.errorMessage}
@@ -142,9 +152,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 12,
-  },
-  termsConditions: {
-    textAlign: 'center',
   },
 });
 

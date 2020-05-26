@@ -1,5 +1,5 @@
 import React from 'react';
-import { Keyboard, Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Keyboard, StyleSheet, View, ScrollView } from 'react-native';
 import {
   SafeAreaView,
   NavigationEvents,
@@ -18,12 +18,12 @@ import { compose } from 'redux';
 import NavLink from '../components/NavLink';
 import { clearErrorMessage, signUp, unloadAuthScreen } from '../store/actions';
 import Spacer from '../components/Spacer';
-import DismissKeyboardView from '../hoc/DismissKeyboardView';
 import { getError, getProcessing, getType } from '../store/selectors';
 import OAuthButtons from '../components/OAuthButtons';
 import Logo from '../components/Logo';
+import StatusBar from '../components/StatusBar';
 
-class RegisterScreen extends React.Component {
+class SignUpScreen extends React.Component {
   static navigationOptions = {
     headerShown: false,
     headerTitle: 'Sign Up',
@@ -59,8 +59,11 @@ class RegisterScreen extends React.Component {
     return (
       <SafeAreaView forceInset={{ top: 'always' }} style={styles.container}>
         <NavigationEvents onWillBlur={this.props.unloadAuthScreen} />
-        {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" />}
-        <DismissKeyboardView>
+        <StatusBar barStyle="dark-content" />
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+        >
           <Logo />
           <Spacer>
             <Title style={{ alignSelf: 'center', color: colors.primary }}>
@@ -76,6 +79,7 @@ class RegisterScreen extends React.Component {
               autoCapitalize="none"
               autoCorrect={false}
               onChangeText={(username) => this.setState({ username })}
+              onSubmitEditing={this.onEmailRegister}
               disabled={this.props.isSigning}
             />
             <Spacer />
@@ -86,7 +90,9 @@ class RegisterScreen extends React.Component {
               value={this.state.email}
               autoCapitalize="none"
               autoCorrect={false}
+              keyboardType="email-address"
               onChangeText={(email) => this.setState({ email })}
+              onSubmitEditing={this.onEmailRegister}
               disabled={this.props.isSigning}
             />
             <Spacer />
@@ -99,6 +105,7 @@ class RegisterScreen extends React.Component {
                 value={this.state.firstName}
                 autoCorrect={false}
                 onChangeText={(firstName) => this.setState({ firstName })}
+                onSubmitEditing={this.onEmailRegister}
                 disabled={this.props.isSigning}
               />
               <TextInput
@@ -109,6 +116,7 @@ class RegisterScreen extends React.Component {
                 value={this.state.lastName}
                 autoCorrect={false}
                 onChangeText={(lastName) => this.setState({ lastName })}
+                onSubmitEditing={this.onEmailRegister}
                 disabled={this.props.isSigning}
               />
             </View>
@@ -122,6 +130,7 @@ class RegisterScreen extends React.Component {
               autoCapitalize="none"
               autoCorrect={false}
               onChangeText={(password) => this.setState({ password })}
+              onSubmitEditing={this.onEmailRegister}
               disabled={this.props.isSigning}
             />
             <View style={styles.navLinks}>
@@ -145,10 +154,15 @@ class RegisterScreen extends React.Component {
           <Spacer>
             <OAuthButtons />
           </Spacer>
-        </DismissKeyboardView>
+        </ScrollView>
         <Snackbar
           visible={this.props.errorMessage}
           onDismiss={this.onSnackbarDismiss}
+          action={{
+            label: 'Dismiss',
+            accessibilityLabel: 'Dismiss',
+            onPress: () => {},
+          }}
           style={{ backgroundColor: colors.error }}
         >
           {this.props.errorMessage}
@@ -182,9 +196,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     marginTop: 12,
   },
-  termsConditions: {
-    textAlign: 'center',
-  },
 });
 
 export default compose(
@@ -195,4 +206,4 @@ export default compose(
   }),
   withTheme,
   withNavigation
-)(RegisterScreen);
+)(SignUpScreen);

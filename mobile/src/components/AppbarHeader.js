@@ -4,6 +4,7 @@ import { Appbar, Avatar, withTheme } from 'react-native-paper';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { getCurrentUser, getSignedInWith } from '../store/selectors';
+import StatusBar from './StatusBar';
 
 class AppbarHeader extends React.Component {
   render() {
@@ -13,22 +14,25 @@ class AppbarHeader extends React.Component {
       avatarUri = currentUser.provider[signedInWith].picture;
     }
     return (
-      <Appbar.Header style={styles.appbar}>
-        <Appbar.Content title={this.props.title} />
-        {avatarUri ? (
-          <Avatar.Image
-            size={30}
-            source={{ uri: avatarUri }}
-            style={[{ backgroundColor: theme.colors.accent }, styles.avatar]}
-          />
-        ) : (
-          <Avatar.Icon
-            size={30}
-            icon="account"
-            style={[{ backgroundColor: theme.colors.accent }, styles.avatar]}
-          />
-        )}
-      </Appbar.Header>
+      <>
+        <StatusBar />
+        <Appbar.Header style={styles.appbar}>
+          <Appbar.Content title={this.props.title} />
+          {avatarUri ? (
+            <Avatar.Image
+              size={30}
+              source={{ uri: avatarUri }}
+              style={[{ backgroundColor: theme.colors.accent }, styles.avatar]}
+            />
+          ) : (
+            <Avatar.Icon
+              size={30}
+              icon="account"
+              style={[{ backgroundColor: theme.colors.accent }, styles.avatar]}
+            />
+          )}
+        </Appbar.Header>
+      </>
     );
   }
 }
