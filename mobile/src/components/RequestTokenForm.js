@@ -1,5 +1,10 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  StyleSheet,
+  ScrollView,
+  Platform,
+} from 'react-native';
 import {
   Button,
   IconButton,
@@ -17,20 +22,29 @@ import Spacer from './Spacer';
 import Logo from './Logo';
 
 class RequestTokenForm extends React.Component {
-  state = { email: '', password: '' };
+  state = { email: '', message: null };
 
   onSubmit = () => {
-    this.props.onSubmit({
-      email: this.state.email,
-      tokenPurpose: this.props.tokenPurpose,
-    });
+    this.props
+      .onSubmit({
+        email: this.state.email,
+        tokenPurpose: this.props.tokenPurpose,
+      })
+      .then((res) => {
+        if (res && res.data) {
+          this.setState({ message: res.data.message });
+        }
+      });
   };
 
   render() {
-    const { title, errorMessage, isProcessed, isProcessing } = this.props;
+    const { title, errorMessage, isProcessing } = this.props;
     const { colors } = this.props.theme;
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
+        style={styles.container}
+      >
         <ScrollView
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
@@ -59,7 +73,7 @@ class RequestTokenForm extends React.Component {
               keyboardType="email-address"
               onChangeText={(email) => this.setState({ email })}
               onSubmitEditing={this.onSubmit}
-              disabled={isProcessing || (isProcessed && !errorMessage)}
+              disabled={isProcessing || !!this.state.message}
             />
           </Spacer>
           <Spacer vertical={16}>
@@ -68,7 +82,7 @@ class RequestTokenForm extends React.Component {
               accessibilityLabel="Submit"
               onPress={this.onSubmit}
               loading={isProcessing}
-              disabled={isProcessing || (isProcessed && !errorMessage)}
+              disabled={isProcessing || !!this.state.message}
             >
               Submit
             </Button>
@@ -87,17 +101,17 @@ class RequestTokenForm extends React.Component {
           {errorMessage}
         </Snackbar>
         <Snackbar
-          visible={isProcessed && !errorMessage}
+          visible={this.state.message}
           onDismiss={() => this.props.navigation.goBack()}
           action={{
             label: 'Go Back',
             accessibilityLabel: 'Go Back',
-            onPress: () => this.props.navigation.goBack(),
+            onPress: () => {},
           }}
         >
-          An email has been sent to your email.
+          {this.state.message}
         </Snackbar>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }

@@ -157,6 +157,7 @@ export const requestVerificationEmail = (formValues) => {
     return mernApi.post('/api/auth/send-token', formValues).then(
       (response) => {
         dispatch({ type: actionTypes.REQUEST_VERIFICATION_EMAIL_SUCCESS });
+        return response;
       },
       (err) => {
         dispatch({
@@ -180,6 +181,7 @@ export const requestPasswordReset = (formValues) => {
     return mernApi.post('/api/auth/send-token', formValues).then(
       (response) => {
         dispatch({ type: actionTypes.REQUEST_PASSWORD_RESET_SUCCESS });
+        return response;
       },
       (err) => {
         dispatch({

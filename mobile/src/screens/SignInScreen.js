@@ -1,5 +1,11 @@
 import React from 'react';
-import { Keyboard, StyleSheet, View, ScrollView } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  StyleSheet,
+  View,
+  ScrollView,
+  Platform,
+} from 'react-native';
 import {
   SafeAreaView,
   NavigationEvents,
@@ -32,7 +38,6 @@ class SignInScreen extends React.Component {
   state = { email: '', password: '' };
 
   onEmailSignIn = () => {
-    Keyboard.dismiss();
     this.props.signIn({
       email: this.state.email,
       password: this.state.password,
@@ -45,92 +50,97 @@ class SignInScreen extends React.Component {
       <SafeAreaView forceInset={{ top: 'always' }} style={styles.container}>
         <NavigationEvents onWillBlur={this.props.unloadAuthScreen} />
         <StatusBar barStyle="dark-content" />
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          keyboardDismissMode="on-drag"
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : null}
+          style={styles.container}
         >
-          <Logo />
-          <Spacer>
-            <Title style={{ alignSelf: 'center', color: colors.primary }}>
-              Sign In
-            </Title>
-          </Spacer>
-          <Spacer>
-            <TextInput
-              label="Email"
-              mode="outlined"
-              dense
-              value={this.state.email}
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="email-address"
-              onChangeText={(email) => this.setState({ email })}
-              onSubmitEditing={this.onEmailSignIn}
-              disabled={this.props.isSigning}
-            />
-            <Spacer />
-            <TextInput
-              label="Password"
-              mode="outlined"
-              dense
-              secureTextEntry
-              value={this.state.password}
-              autoCapitalize="none"
-              autoCorrect={false}
-              onChangeText={(password) => this.setState({ password })}
-              onSubmitEditing={this.onEmailSignIn}
-              disabled={this.props.isSigning}
-            />
-            <View style={styles.navLinks}>
-              <NavLink
-                text="Forgot password?"
-                routeName="RequestPasswordReset"
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
+          >
+            <Logo />
+            <Spacer>
+              <Title style={{ alignSelf: 'center', color: colors.primary }}>
+                Sign In
+              </Title>
+            </Spacer>
+            <Spacer>
+              <TextInput
+                label="Email"
+                mode="outlined"
+                dense
+                value={this.state.email}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="email-address"
+                onChangeText={(email) => this.setState({ email })}
+                onSubmitEditing={this.onEmailSignIn}
                 disabled={this.props.isSigning}
               />
-              <NavLink
-                text="Register instead!"
-                routeName="SignUp"
+              <Spacer />
+              <TextInput
+                label="Password"
+                mode="outlined"
+                dense
+                secureTextEntry
+                value={this.state.password}
+                autoCapitalize="none"
+                autoCorrect={false}
+                onChangeText={(password) => this.setState({ password })}
+                onSubmitEditing={this.onEmailSignIn}
                 disabled={this.props.isSigning}
               />
-            </View>
-          </Spacer>
-          <Spacer vertical={4}>
-            <Button
-              mode="contained"
-              accessibilityLabel="Sign In"
-              onPress={this.onEmailSignIn}
-              loading={this.props.isSigning && this.props.type === 'email'}
-              disabled={this.props.isSigning}
-            >
-              Sign In
-            </Button>
-          </Spacer>
-          <Spacer vertical={12}>
-            <Text style={{ alignSelf: 'center' }}>Or Sign In With</Text>
-          </Spacer>
-          <Spacer>
-            <OAuthButtons />
-          </Spacer>
-          {this.props.errorMessage === 'Email is not verified.' && (
-            <NavLink
-              text="Have not received verification email?"
-              routeName="RequestVerificationEmail"
-              disabled={this.props.isSigning}
-            />
-          )}
-        </ScrollView>
-        <Snackbar
-          visible={this.props.errorMessage}
-          onDismiss={this.props.clearErrorMessage}
-          action={{
-            label: 'Dismiss',
-            accessibilityLabel: 'Dismiss',
-            onPress: () => {},
-          }}
-          style={{ backgroundColor: colors.error }}
-        >
-          {this.props.errorMessage}
-        </Snackbar>
+              <View style={styles.navLinks}>
+                <NavLink
+                  text="Forgot password?"
+                  routeName="RequestPasswordReset"
+                  disabled={this.props.isSigning}
+                />
+                <NavLink
+                  text="Register instead!"
+                  routeName="SignUp"
+                  disabled={this.props.isSigning}
+                />
+              </View>
+            </Spacer>
+            <Spacer vertical={4}>
+              <Button
+                mode="contained"
+                accessibilityLabel="Sign In"
+                onPress={this.onEmailSignIn}
+                loading={this.props.isSigning && this.props.type === 'email'}
+                disabled={this.props.isSigning}
+              >
+                Sign In
+              </Button>
+            </Spacer>
+            <Spacer vertical={12}>
+              <Text style={{ alignSelf: 'center' }}>Or Sign In With</Text>
+            </Spacer>
+            <Spacer>
+              <OAuthButtons />
+            </Spacer>
+            {this.props.errorMessage === 'Email is not verified.' && (
+              <NavLink
+                text="Have not received verification email?"
+                routeName="RequestVerificationEmail"
+                disabled={this.props.isSigning}
+              />
+            )}
+          </ScrollView>
+          <Snackbar
+            visible={this.props.errorMessage}
+            onDismiss={this.props.clearErrorMessage}
+            action={{
+              label: 'Dismiss',
+              accessibilityLabel: 'Dismiss',
+              onPress: () => {},
+            }}
+            style={{ backgroundColor: colors.error }}
+          >
+            {this.props.errorMessage}
+          </Snackbar>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }

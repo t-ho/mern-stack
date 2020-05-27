@@ -31,7 +31,7 @@
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.6",
+    "@babel/core": "^7.10.0",
     "babel-preset-expo": "^8.1.0"
   },
   "private": true
