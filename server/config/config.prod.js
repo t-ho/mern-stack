@@ -14,6 +14,9 @@ let prodConfig = {
     verifyEmail: true, // If true, require email verification when signing up
     resetPassword: true, // If true, be able to reset password via email
   },
+  cors: {
+    enabled: false,
+  },
   email: {
     from: 'no-reply@mern.tdev.app', // TODO
     to: '',
