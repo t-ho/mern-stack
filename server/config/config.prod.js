@@ -23,7 +23,8 @@ let prodConfig = {
     algorithm: 'HS512',
     expiresIn: 60 * 24 * 60 * 60, // seconds
   },
-  log: {
+  morgan: {
+    enabled: true,
     format: 'combined', // TODO: possible values: combined, common, dev, short, tiny
   },
   paths: {

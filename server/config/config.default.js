@@ -12,6 +12,14 @@ let defaultConfig = {
     verifyEmail: false, // If true, require email verification when signing up
     resetPassword: false, // If true, be able to reset password via email
   },
+  compression: {
+    enabled: true,
+    options: null, // See https://www.npmjs.com/package/compression
+  },
+  cors: {
+    enabled: true,
+    options: null, // See https://www.npmjs.com/package/cors
+  },
   email: {
     from: 'no-reply@tdev.app', // TODO
     to: '',
@@ -22,8 +30,14 @@ let defaultConfig = {
     algorithm: 'HS512',
     expiresIn: 60 * 24 * 60 * 60, // seconds
   },
-  log: {
+  helmet: {
+    enabled: true,
+    options: null, // See https://www.npmjs.com/package/helmet
+  },
+  morgan: {
+    enabled: true,
     format: 'dev', // TODO: possible values: combined, common, dev, short, tiny
+    options: null, // See https://www.npmjs.com/package/morgan
   },
   mongo: {
     uri: 'This will be overriden by environment variable MONGO_URI',

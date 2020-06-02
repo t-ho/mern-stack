@@ -14,17 +14,25 @@ const config = require('../config/index');
 // App Setup
 const app = express();
 
-// Enable logger
-app.use(morgan(config.log.format));
+// Logger
+if (config.morgan.enabled) {
+  app.use(morgan(config.morgan.format, config.morgan.options));
+}
 
-// Compress all responses
-app.use(compression());
+// Compression
+if (config.compression.enabled) {
+  app.use(compression(config.compression.options));
+}
 
 // Secure app by setting various HTTP headers
-app.use(helmet());
+if (config.helmet.enabled) {
+  app.use(helmet(config.helmet.options));
+}
 
-// Enable Cross-Origin-Resource-Sharing
-app.use(cors());
+// Cross-Origin-Resource-Sharing
+if (config.cors.enabled) {
+  app.use(cors(config.cors.options));
+}
 
 // Support parsing of application/x-www-form-urlencoded post data
 app.use(bodyParser.urlencoded({ extended: true }));

@@ -9,7 +9,7 @@ let devConfig = {
     verifyEmail: false, // If true, require email verification when signing up
     resetPassword: false, // If true, be able to reset password via email
   },
-  log: {
+  morgan: {
     format: 'dev', // TODO: possible values: combined, common, dev, short, tiny
   },
   oauth: {

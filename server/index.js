@@ -12,17 +12,19 @@ const app = require('./core/express');
 const server = http.createServer(app);
 server.listen(config.server.port);
 console.log(chalk.cyanBright(`\n--:[ ${config.app.title} ]:--`));
-console.log(chalk.greenBright(`[+] Environment: ${config.env}`));
+console.log(chalk.green(`[*] Environment: ${config.env}`));
 console.log(
-  chalk.greenBright(`[+] Email verification: ${config.auth.verifyEmail}`)
+  chalk.gray(`[*] Auth - Email verification: ${config.auth.verifyEmail}`)
 );
 console.log(
-  chalk.greenBright(`[+] Password reset: ${config.auth.resetPassword}`)
+  chalk.gray(`[*] Auth - Password reset: ${config.auth.resetPassword}`)
 );
+console.log(chalk.gray(`[*] Compression: ${config.compression.enabled}`));
+console.log(chalk.gray(`[*] Cors: ${config.cors.enabled}`));
+console.log(chalk.gray(`[*] Helmet: ${config.helmet.enabled}`));
+console.log(chalk.gray(`[*] Morgan: ${config.morgan.enabled}`));
 console.log(
-  chalk.greenBright(
-    `[+] API server is listening on port ${config.server.port}\n`
-  )
+  chalk.green(`[*] API server is listening on port ${config.server.port}\n`)
 );
 
 global.app = app;
