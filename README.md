@@ -31,7 +31,8 @@ git clone https://github.com/t-ho/mern-stack.git
 cd mern-stack
 cp .env.example .env
 cp client/.env.example client/.env
-# Edit .env file to meet your requirements
+cp mobile/.env.example mobile/.env
+# Edit .env files to meet your requirements
 ```
 
 ### 3. Install package dependencies

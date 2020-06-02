@@ -37,7 +37,7 @@ export const facebookSignIn = () => (dispatch, getState, { mernApi }) => {
     type: actionTypes.FACEBOOK_SIGN_IN,
     payload: { type: 'facebook' },
   });
-  return Facebook.initializeAsync('1538677846308680') // TODO: Add your Facebook app ID
+  return Facebook.initializeAsync(process.env.REACT_NATIVE_FACEBOOK_APP_ID)
     .then(() => {
       return Facebook.logInWithReadPermissionsAsync({
         permissions: ['public_profile', 'email'],
@@ -68,10 +68,8 @@ export const facebookSignIn = () => (dispatch, getState, { mernApi }) => {
 export const googleSignIn = () => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.GOOGLE_SIGN_IN, payload: { type: 'google' } });
   return Google.logInAsync({
-    iosClientId:
-      '134675062003-f1j19fs02f57g2pol76s1l63bo8bh065.apps.googleusercontent.com', // TODO: Add your Google iosClientId
-    androidClientId:
-      '134675062003-5ndljaf10rb8k3g7kqkkcg3e89kuvdr8.apps.googleusercontent.com', // TODO: Add your Google androidClientId
+    iosClientId: process.env.REACT_NATIVE_GOOGLE_IOS_CLIENT_ID,
+    androidClientId: process.env.REACT_NATIVE_GOOGLE_ANDROID_CLIENT_ID,
     scopes: ['profile', 'email'],
   })
     .then((response) => {
