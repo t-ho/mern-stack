@@ -90,16 +90,14 @@ Sample request body payload
 
 - **Response Payload**
 
-| Property Name | Type      | Description |
-| ------------- | --------- | ----------- |
-| `success`     | _boolean_ | Status      |
-| `message`     | _string_  | Message     |
+| Property Name | Type     | Description |
+| ------------- | -------- | ----------- |
+| `message`     | _string_ | Message     |
 
 Sample response
 
 ```
 {
-  "success": true,
   "message": "Your account has been created successfully"
 }
 ```
@@ -180,16 +178,16 @@ Sample response
 
 - **Resquest Body Payload**
 
-| Property Name   | Type     | Required | Description                |
-| --------------- | -------- | -------- | -------------------------- |
-| `access_token`  | _string_ | Yes      | The Facebook access token  |
-| `refresh_token` | _string_ | No       | The Facebook refresh token |
+| Property Name  | Type     | Required | Description                |
+| -------------- | -------- | -------- | -------------------------- |
+| `accessToken`  | _string_ | Yes      | The Facebook access token  |
+| `refreshToken` | _string_ | No       | The Facebook refresh token |
 
 Sample request body payload
 
 ```
 {
-  "access_token": "EAAx0076n7rwBAE76vGbLS0y5kK01uZB7urxtWC1eh30NIZBO4G0XH1gA2CSRGtNFxaZBKiUlT0nZAPk8AzyiK1DGg47HOaWnkfaG4FyZCPhiEQZByPbP9dWB6JZBw6GiIXPGmnSdkIAzuT5MEK5slyAEs8jZCazvs4wziZBdx2eIsWeSN5Hhxy9RRrZCSHrWGm8hvI9DrxZCkeR4BWVxLN6YItOuZC1A80VctLAZD"
+  "accessToken": "EAAx0076n7rwBAE76vGbLS0y5kK01uZB7urxtWC1eh30NIZBO4G0XH1gA2CSRGtNFxaZBKiUlT0nZAPk8AzyiK1DGg47HOaWnkfaG4FyZCPhiEQZByPbP9dWB6JZBw6GiIXPGmnSdkIAzuT5MEK5slyAEs8jZCazvs4wziZBdx2eIsWeSN5Hhxy9RRrZCSHrWGm8hvI9DrxZCkeR4BWVxLN6YItOuZC1A80VctLAZD"
 }
 ```
 
@@ -244,16 +242,16 @@ Sample response
 
 - **Resquest Body Payload**
 
-| Property Name   | Type     | Required | Description              |
-| --------------- | -------- | -------- | ------------------------ |
-| `access_token`  | _string_ | Yes      | The Google access token  |
-| `refresh_token` | _string_ | No       | The Google refresh token |
+| Property Name  | Type     | Required | Description              |
+| -------------- | -------- | -------- | ------------------------ |
+| `accessToken`  | _string_ | Yes      | The Google access token  |
+| `refreshToken` | _string_ | No       | The Google refresh token |
 
 Sample request body payload
 
 ```
 {
-  "access_token": "ya29.ImC_B0mUYTJfjnd7fCgZvIc6WWjj3GxMC0LwiOyhqDIQBJyAJN9eSRCLNDcr6bXCtHn5oSNOsB-Es2AIIOso-ZMBe0w31K2Ud85dpq3ep4tZI6uftTq_Vjjnzf4esuVO73c"
+  "accessToken": "ya29.ImC_B0mUYTJfjnd7fCgZvIc6WWjj3GxMC0LwiOyhqDIQBJyAJN9eSRCLNDcr6bXCtHn5oSNOsB-Es2AIIOso-ZMBe0w31K2Ud85dpq3ep4tZI6uftTq_Vjjnzf4esuVO73c"
 }
 ```
 
@@ -308,32 +306,30 @@ Sample response
 
 - **Resquest Body Payload**
 
-| Property Name  | Type     | Required | Description                             |
-| -------------- | -------- | -------- | --------------------------------------- |
-| `email`        | _string_ | Yes      | Email                                   |
-| `tokenPurpose` | _string_ | Yes      | Token purpose. It must be `verifyEmail` |
+| Property Name  | Type     | Required | Description                              |
+| -------------- | -------- | -------- | ---------------------------------------- |
+| `email`        | _string_ | Yes      | Email                                    |
+| `tokenPurpose` | _string_ | Yes      | Token purpose. It must be `verify-email` |
 
 Sample request body payload
 
 ```
 {
   "email": "user@tdev.app",
-  "tokenPurpose": "verifyEmail",
+  "tokenPurpose": "verify-email",
 }
 ```
 
 - **Response Payload**
 
-| Property Name | Type      | Description |
-| ------------- | --------- | ----------- |
-| `success`     | _boolean_ | Status      |
-| `message`     | _string_  | Message     |
+| Property Name | Type     | Description |
+| ------------- | -------- | ----------- |
+| `message`     | _string_ | Message     |
 
 Sample response
 
 ```
 {
-  "success": true,
   "message": "A verification email has been sent to your email"
 }
 ```
@@ -350,16 +346,14 @@ Sample response
 
 - **Response Payload**
 
-| Property Name | Type      | Description |
-| ------------- | --------- | ----------- |
-| `success`     | _boolean_ | Status      |
-| `message`     | _string_  | Message     |
+| Property Name | Type     | Description |
+| ------------- | -------- | ----------- |
+| `message`     | _string_ | Message     |
 
 Sample response
 
 ```
 {
-  "success": true,
   "message": "Email verified"
 }
 ```
@@ -376,33 +370,31 @@ Sample response
 
 - **Resquest Body Payload**
 
-| Property Name  | Type     | Required | Description                               |
-| -------------- | -------- | -------- | ----------------------------------------- |
-| `email`        | _string_ | Yes      | Email                                     |
-| `tokenPurpose` | _string_ | Yes      | Token purpose. It must be `resetPassword` |
+| Property Name  | Type     | Required | Description                                |
+| -------------- | -------- | -------- | ------------------------------------------ |
+| `email`        | _string_ | Yes      | Email                                      |
+| `tokenPurpose` | _string_ | Yes      | Token purpose. It must be `reset-password` |
 
 Sample request body payload
 
 ```
 {
   "email": "user@tdev.app",
-  "tokenPurpose": "resetPassword",
+  "tokenPurpose": "reset-password",
 }
 ```
 
 - **Response Payload**
 
-| Property Name | Type      | Description |
-| ------------- | --------- | ----------- |
-| `success`     | _boolean_ | Status      |
-| `message`     | _string_  | Message     |
+| Property Name | Type     | Description |
+| ------------- | -------- | ----------- |
+| `message`     | _string_ | Message     |
 
 Sample response
 
 ```
 {
   {
-    "success": true,
     "message": "A password-reset email has been sent to your email"
   }
 }
@@ -436,16 +428,14 @@ Sample request body payload
 
 - **Response Payload**
 
-| Property Name | Type      | Description |
-| ------------- | --------- | ----------- |
-| `success`     | _boolean_ | Status      |
-| `message`     | _string_  | Message     |
+| Property Name | Type     | Description |
+| ------------- | -------- | ----------- |
+| `message`     | _string_ | Message     |
 
 Sample response
 
 ```
 {
-  "success": true,
   "message": "Password reset"
 }
 ```
@@ -616,14 +606,12 @@ Sample request body payload
 
 | Property Name   | Type           | Description             |
 | --------------- | -------------- | ----------------------- |
-| `success`       | _boolean_      | Status                  |
 | `updatedFields` | _string array_ | Fields has been updated |
 
 Sample response
 
 ```
 {
-  "success": true,
   "updatedFields": [
     "password",
     "firstName"
@@ -651,18 +639,18 @@ Authorization: Bearer {JWT Token}
 
 - **Resquest Query**
 
-| Property Name | Type     | Required | Description                                                    |
-| ------------- | -------- | -------- | -------------------------------------------------------------- |
-| `limit`       | _number_ | No       | Limit number (Default: 30)                                     |
-| `skip`        | _number_ | No       | Offset number (Default: 0)                                     |
-| `sort`        | _string_ | No       | Sort criteria (example: "createdAt" or "-createdAt")           |
-| `username`    | _string_ | No       | Username                                                       |
-| `email`       | _string_ | No       | Email                                                          |
-| `firstName`   | _string_ | No       | First name                                                     |
-| `lastName`    | _string_ | No       | Last name                                                      |
-| `status`      | _string_ | No       | Status. It could be "active", "disabled" or "unverifiedEmail"] |
-| `role`        | _string_ | No       | User role. It could be "root", "admin" or "user"               |
-| `permissions` | _string_ | No       | User permissions. (example: 'readPosts' or 'editPosts').       |
+| Property Name | Type     | Required | Description                                                     |
+| ------------- | -------- | -------- | --------------------------------------------------------------- |
+| `limit`       | _number_ | No       | Limit number (Default: 30)                                      |
+| `skip`        | _number_ | No       | Offset number (Default: 0)                                      |
+| `sort`        | _string_ | No       | Sort criteria (example: "createdAt" or "-createdAt")            |
+| `username`    | _string_ | No       | Username                                                        |
+| `email`       | _string_ | No       | Email                                                           |
+| `firstName`   | _string_ | No       | First name                                                      |
+| `lastName`    | _string_ | No       | Last name                                                       |
+| `status`      | _string_ | No       | Status. It could be "active", "disabled" or "unverified-email"] |
+| `role`        | _string_ | No       | User role. It could be "root", "admin" or "user"                |
+| `permissions` | _string_ | No       | User permissions. (example: 'readPosts' or 'editPosts').        |
 
 Note: When permissions is specified (without role), it will include admin and root users in the response.
 
@@ -790,7 +778,7 @@ Authorization: Bearer {JWT Token}
 | Property Name | Type     | Required | Description                                                                          |
 | ------------- | -------- | -------- | ------------------------------------------------------------------------------------ |
 | `role`        | _string_ | No       | New role. It could be "admin" or "user". NOTE: Only root users can update user role. |
-| `status`      | _string_ | No       | New status. It could be "active", "disabled" or "unverifiedEmail"                    |
+| `status`      | _string_ | No       | New status. It could be "active", "disabled" or "unverified-email"                   |
 | `permissions` | _object_ | No       | Permissions object                                                                   |
 
 Sample request body payload
@@ -808,14 +796,12 @@ Sample request body payload
 
 | Property Name   | Type           | Description             |
 | --------------- | -------------- | ----------------------- |
-| `success`       | _boolean_      | Status                  |
 | `updatedFields` | _string array_ | Fields has been updated |
 
 Sample response
 
 ```
 {
-  "success": true,
   "updatedFields": [
     "role",
     "permissions"
@@ -841,16 +827,14 @@ Authorization: Bearer {JWT Token}
 
 - **Response Payload**
 
-| Property Name | Type      | Description |
-| ------------- | --------- | ----------- |
-| `success`     | _boolean_ | Status      |
-| `message`     | _string_  | Message     |
+| Property Name | Type     | Description |
+| ------------- | -------- | ----------- |
+| `message`     | _string_ | Message     |
 
 Sample response
 
 ```
 {
-  "success": true,
-  "message": "User deleted"
+  "message": "User deleted."
 }
 ```

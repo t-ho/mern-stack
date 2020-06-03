@@ -50,7 +50,7 @@ class SignIn extends React.Component {
 
   onFacebookResponse = (response) => {
     const payload = {
-      access_token: response.accessToken,
+      accessToken: response.accessToken,
     };
     this.props.facebookSignIn(payload).then(() => {
       // FIXME:
@@ -62,7 +62,7 @@ class SignIn extends React.Component {
 
   onGoogleResponse = (response) => {
     const payload = {
-      access_token: response.tokenObj.access_token,
+      accessToken: response.tokenObj.access_token,
     };
     this.props.googleSignIn(payload).then(() => {
       // FIXME:
@@ -108,7 +108,7 @@ class SignIn extends React.Component {
                 Forgot your password?{' '}
                 <Link to="/request-password-reset">Click here</Link>
               </div>
-              {this.props.errorMessage === 'Email is not verified.' && (
+              {this.props.errorMessage === 'Email is not verified' && (
                 <div className="field">
                   Have not received verification email?{' '}
                   <Link to="/request-verification-email">Click here</Link>

@@ -18,7 +18,7 @@ class RequestPasswordResetScreen extends React.Component {
         <NavigationEvents onWillBlur={this.props.unloadAuthScreen} />
         <StatusBar barStyle="dark-content" />
         <RequestTokenForm
-          tokenPurpose="resetPassword"
+          tokenPurpose="reset-password"
           title="Send Password Reset Email"
           onSubmit={this.props.requestPasswordReset}
         />

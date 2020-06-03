@@ -18,7 +18,7 @@ class RequestVerificationEmailScreen extends React.Component {
         <NavigationEvents onWillBlur={this.props.unloadAuthScreen} />
         <StatusBar barStyle="dark-content" />
         <RequestTokenForm
-          tokenPurpose="verifyEmail"
+          tokenPurpose="verify-email"
           title="Resend Verification Email"
           onSubmit={this.props.requestVerificationEmail}
         />

@@ -9,14 +9,14 @@ let testConfig = {
     verifyEmail: false, // If true, require email verification when signing up
     resetPassword: false, // If true, be able to reset password via email
   },
-  log: {
+  morgan: {
     format: 'dev', // TODO: possible values: combined, common, dev, short, tiny
   },
   mongo: {
     testUri: `mongodb://localhost:27017/${defaultConfig.app.name}_test`,
   },
   oauth: {
-    storeToken: true, // If true, the OAuth access_token and refresh_token will be stored in database
+    storeTokens: true, // If true, the OAuth accessToken and refreshToken will be stored in database
   },
   seed: {
     logging: false,

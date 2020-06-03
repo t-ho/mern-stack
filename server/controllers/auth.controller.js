@@ -32,7 +32,7 @@ const resetPasswordSchema = Joi.object({
 module.exports.resetPassword = (req, res, next) => {
   if (!config.auth.resetPassword) {
     return next(
-      createError(422, 'Password reset functionality is not available.')
+      createError(422, 'Password reset functionality is not available')
     );
   }
 
@@ -50,13 +50,13 @@ module.exports.resetPassword = (req, res, next) => {
       return User.findOne({
         email: req.body.email,
         token: req.params.token,
-        tokenPurpose: 'resetPassword',
+        tokenPurpose: 'reset-password',
       });
     })
     .then((user) => {
       existingUser = user;
       if (!existingUser) {
-        throw createError(422, 'Token expired.');
+        throw createError(422, 'Token expired');
       }
       existingUser.clearToken();
       existingUser.setSubId(); // invalidate all issued JWT tokens
@@ -66,7 +66,7 @@ module.exports.resetPassword = (req, res, next) => {
       return existingUser.save();
     })
     .then((user) => {
-      res.status(200).json({ success: true, message: 'Password reset.' });
+      res.status(200).json({ message: 'Password reset' });
     })
     .catch(next);
 };
@@ -79,7 +79,7 @@ const sendTokenSchema = Joi.object({
     .required()
     .email()
     .messages(constants.EMAIL_ERROR_MESSAGES),
-  tokenPurpose: Joi.string().required().valid('verifyEmail', 'resetPassword'),
+  tokenPurpose: Joi.string().required().valid('verify-email', 'reset-password'),
 });
 
 /**
@@ -87,27 +87,27 @@ const sendTokenSchema = Joi.object({
  * Send a token based on the provided token purpose
  *
  * @param {string} req.body.email The email which will receive token
- * @param {string} req.body.tokenPurpose The token purpose. It can be ['verifyEmail', 'resetPassword']
+ * @param {string} req.body.tokenPurpose The token purpose. It can be ['verify-email', 'reset-password']
  */
 module.exports.sendToken = (req, res, next) => {
   sendTokenSchema
     .validateAsync(req.body)
     .then((payload) => {
       req.body = payload;
-      if (req.body.tokenPurpose === 'resetPassword') {
+      if (req.body.tokenPurpose === 'reset-password') {
         if (!config.auth.resetPassword) {
           return next(
-            createError(422, 'Password reset functionality is not available.')
+            createError(422, 'Password reset functionality is not available')
           );
         }
         return sendPasswordResetToken(req, res, next);
       }
-      if (req.body.tokenPurpose === 'verifyEmail') {
+      if (req.body.tokenPurpose === 'verify-email') {
         if (!config.auth.verifyEmail) {
           return next(
             createError(
               422,
-              'Email verification functionality is not available.'
+              'Email verification functionality is not available'
             )
           );
         }
@@ -158,7 +158,7 @@ const signInSchema = Joi.object({
   password: Joi.string().required().messages(constants.PASSWORD_ERROR_MESSAGES),
 })
   .xor('username', 'email')
-  .messages({ 'object.missing': 'Either username or email must be provided.' });
+  .messages({ 'object.missing': 'Either username or email must be provided' });
 
 /**
  * @function validateLocalSignInPayload
@@ -210,22 +210,25 @@ module.exports.localSignIn = (req, res, next) => {
  * JOI schema for validating oauthSignIn payload
  */
 const oauthSignInSchema = Joi.object({
-  access_token: Joi.string().required(),
-  refresh_token: Joi.string(),
+  accessToken: Joi.string().required(),
+  refreshToken: Joi.string(),
 });
 
 /**
  * @function validateGoogleSignInPayload
  * Validate Google sign-in payload
  *
- * @param {string} req.body.access_token The Google access_token
- * @param {string} [req.body.refresh_token] The Google refresh_token
+ * @param {string} req.body.accessToken The Google accessToken
+ * @param {string} [req.body.refreshToken] The Google refreshToken
  */
 module.exports.validateGoogleSignInPayload = (req, res, next) => {
   oauthSignInSchema
     .validateAsync(req.body)
     .then((payload) => {
-      req.body = payload;
+      req.body = { access_token: payload.accessToken };
+      if (payload.refreshToken) {
+        req.body.refresh_token = payload.refreshToken;
+      }
       next();
     })
     .catch(next);
@@ -245,14 +248,17 @@ module.exports.googleSignIn = (req, res, next) => {
  * @function validateFacebookSignInPayload
  * Validate Facebook sign-in payload
  *
- * @param {string} req.body.access_token The Google access_token
- * @param {string} [req.body.refresh_token] The Google refresh_token
+ * @param {string} req.body.accessToken The Facebook accessToken
+ * @param {string} [req.body.refreshToken] The Facebook refreshToken
  */
 module.exports.validateFacebookSignInPayload = (req, res, next) => {
   oauthSignInSchema
     .validateAsync(req.body)
     .then((payload) => {
-      req.body = payload;
+      req.body = { access_token: payload.accessToken };
+      if (payload.refreshToken) {
+        req.body.refresh_token = payload.refreshToken;
+      }
       next();
     })
     .catch(next);
@@ -313,13 +319,13 @@ module.exports.signUp = (req, res, next) => {
       if (existingUser) {
         if (existingUser.email === req.body.email) {
           if (existingUser.provider.local) {
-            throw createError(422, 'Email is already in use.');
+            throw createError(422, 'Email is already in use');
           } else {
             newUser = existingUser;
             isOauthAccount = true;
           }
         } else {
-          throw createError(422, 'Username is already in use.');
+          throw createError(422, 'Username is already in use');
         }
       } else {
         newUser = new User(req.body);
@@ -333,8 +339,8 @@ module.exports.signUp = (req, res, next) => {
     })
     .then(() => {
       if (config.auth.verifyEmail && !isOauthAccount) {
-        newUser.setToken('verifyEmail');
-        newUser.status = 'unverifiedEmail';
+        newUser.setToken('verify-email');
+        newUser.status = 'unverified-email';
       }
       return newUser.save();
     })
@@ -342,15 +348,13 @@ module.exports.signUp = (req, res, next) => {
       if (config.auth.verifyEmail && !isOauthAccount) {
         return sendVerificationEmailAsync(user).then((result) => {
           res.status(201).json({
-            success: true,
-            message: 'A verification email has been sent to your email.',
+            message: 'A verification email has been sent to your email',
           });
         });
       }
 
       res.status(201).json({
-        success: true,
-        message: 'Your account has been created successfully.',
+        message: 'Your account has been created successfully',
       });
     })
     .catch(next);
@@ -365,28 +369,28 @@ module.exports.signUp = (req, res, next) => {
 module.exports.verifyEmail = (req, res, next) => {
   if (!config.auth.verifyEmail) {
     return next(
-      createError(422, 'Email verification functionality is not available.')
+      createError(422, 'Email verification functionality is not available')
     );
   }
 
   if (!req.params.token) {
-    return next(createError(422, 'No token provided.'));
+    return next(createError(422, 'No token provided'));
   }
 
   return User.findOne({
     token: req.params.token,
-    tokenPurpose: 'verifyEmail',
+    tokenPurpose: 'verify-email',
   })
     .then((user) => {
       if (!user) {
-        throw createError(422, 'Token expired.');
+        throw createError(422, 'Token expired');
       }
       user.clearToken();
       user.status = 'active';
       return user.save();
     })
     .then((user) => {
-      res.status(200).json({ success: true, message: 'Email verified.' });
+      res.status(200).json({ message: 'Email verified' });
     })
     .catch(next);
 };
@@ -403,7 +407,7 @@ const sendPasswordResetToken = (req, res, next) => {
   User.findOne({ email: req.body.email })
     .then((user) => {
       if (!user) {
-        throw createError(422, 'Email not associated with any acount.');
+        throw createError(422, 'Email not associated with any acount');
       }
       user.setToken(req.body.tokenPurpose);
       return user.save();
@@ -422,8 +426,7 @@ const sendPasswordResetToken = (req, res, next) => {
     })
     .then((result) => {
       res.status(200).json({
-        success: true,
-        message: 'A password-reset email has been sent to your email.',
+        message: 'A password-reset email has been sent to your email',
       });
     })
     .catch(next);
@@ -443,10 +446,10 @@ const sendVerificationEmailToken = (req, res, next) => {
   User.findOne({ email: req.body.email })
     .then((user) => {
       if (!user) {
-        throw createError(422, 'Email not associated with any acount.');
+        throw createError(422, 'Email not associated with any acount');
       }
-      if (user.status !== 'unverifiedEmail') {
-        throw createError(422, 'Email already verified.');
+      if (user.status !== 'unverified-email') {
+        throw createError(422, 'Email already verified');
       }
       user.setToken(req.body.tokenPurpose);
       return user.save();
@@ -456,8 +459,7 @@ const sendVerificationEmailToken = (req, res, next) => {
     })
     .then((result) => {
       res.status(200).json({
-        success: true,
-        message: 'A verification email has been sent to your email.',
+        message: 'A verification email has been sent to your email',
       });
     })
     .catch(next);

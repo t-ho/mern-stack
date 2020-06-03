@@ -33,7 +33,7 @@ describe('ENDPOINT: GET /api/profiles/', function () {
       .get(endpoint)
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .expect(401)
-      .expect({ error: { message: 'Invalid JWT token.' } }, done);
+      .expect({ error: { message: 'Invalid JWT token' } }, done);
   });
 
   it(`GET ${endpoint} - JWT token - not exist userId`, function (done) {
@@ -44,7 +44,7 @@ describe('ENDPOINT: GET /api/profiles/', function () {
       .get(endpoint)
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .expect(401)
-      .expect({ error: { message: 'Invalid credentials.' } }, done);
+      .expect({ error: { message: 'Invalid credentials' } }, done);
   });
 
   it(`GET ${endpoint} - JWT token - expired token`, function (done) {
@@ -127,7 +127,7 @@ describe('ENDPOINT: PUT /api/profiles/', function () {
       .send(payload)
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .expect(401)
-      .expect({ error: { message: 'Invalid JWT token.' } }, done);
+      .expect({ error: { message: 'Invalid JWT token' } }, done);
   });
 
   it(`PUT ${endpoint} - JWT token - not exist userId`, function (done) {
@@ -140,7 +140,7 @@ describe('ENDPOINT: PUT /api/profiles/', function () {
       .send(payload)
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .expect(401)
-      .expect({ error: { message: 'Invalid credentials.' } }, done);
+      .expect({ error: { message: 'Invalid credentials' } }, done);
   });
 
   it(`PUT ${endpoint} - JWT token - expired token`, function (done) {
@@ -189,10 +189,7 @@ describe('ENDPOINT: PUT /api/profiles/', function () {
       .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
       .send(payload)
       .expect(200)
-      .expect({
-        success: true,
-        updatedFields: ['firstName', 'lastName', 'password'],
-      })
+      .expect({ updatedFields: ['firstName', 'lastName', 'password'] })
       .then((res) => User.findById(existingAdmin._id))
       .then((updatedUser) => {
         expect(updatedUser.toObject()).to.deep.include(
@@ -238,10 +235,7 @@ describe('ENDPOINT: PUT /api/profiles/', function () {
       .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
       .send(payload)
       .expect(200)
-      .expect({
-        success: true,
-        updatedFields: ['firstName', 'lastName'],
-      })
+      .expect({ updatedFields: ['firstName', 'lastName'] })
       .then((res) => User.findById(existingAdmin._id))
       .then((updatedUser) => {
         expect(updatedUser.toObject()).to.deep.include(
@@ -277,14 +271,14 @@ describe('ENDPOINT: GET /api/profiles/:userId', function () {
     request(app)
       .get(`${endpoint}/invalid-user-id`)
       .expect(422)
-      .expect({ error: { message: 'Invalid user ID.' } }, done);
+      .expect({ error: { message: 'Invalid user ID' } }, done);
   });
 
   it(`GET ${endpoint}/userId - Params - User ID not exist`, function (done) {
     request(app)
       .get(`${endpoint}/5e24db1d560ba309f0b0b5a8`)
       .expect(422)
-      .expect({ error: { message: 'User ID does not exist.' } }, done);
+      .expect({ error: { message: 'User ID does not exist' } }, done);
   });
 
   it(`GET ${endpoint}/userId - Get public profile succeeded`, function (done) {

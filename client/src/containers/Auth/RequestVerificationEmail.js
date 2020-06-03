@@ -9,7 +9,7 @@ class RequestVerificationEmail extends React.Component {
   render() {
     return (
       <RequestTokenForm
-        tokenPurpose="verifyEmail"
+        tokenPurpose="verify-email"
         title="Resend Verification Email"
         onSubmit={this.props.requestVerificationEmail}
       />

@@ -33,7 +33,7 @@ describe('ENDPOINT: GET /api/users/', function () {
       .get(endpoint)
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .expect(401)
-      .expect({ error: { message: 'Invalid JWT token.' } }, done);
+      .expect({ error: { message: 'Invalid JWT token' } }, done);
   });
 
   it(`GET ${endpoint} - JWT token - not exist userId`, function (done) {
@@ -44,7 +44,7 @@ describe('ENDPOINT: GET /api/users/', function () {
       .get(endpoint)
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .expect(401)
-      .expect({ error: { message: 'Invalid credentials.' } }, done);
+      .expect({ error: { message: 'Invalid credentials' } }, done);
   });
 
   it(`GET ${endpoint} - JWT token - expired token`, function (done) {
@@ -65,7 +65,7 @@ describe('ENDPOINT: GET /api/users/', function () {
       .get(endpoint)
       .set('Authorization', `Bearer ${existingUser.jwtToken}`)
       .expect(403)
-      .expect({ error: { message: 'Forbidden action.' } }, done);
+      .expect({ error: { message: 'Forbidden action' } }, done);
   });
 
   const testCanGetListOfUsers = (currentUser, done) => {
@@ -149,7 +149,7 @@ describe('ENDPOINT: GET /api/users/:id', function () {
       .get(`${endpoint}/${app.locals.existing.user._id}`)
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .expect(401)
-      .expect({ error: { message: 'Invalid JWT token.' } }, done);
+      .expect({ error: { message: 'Invalid JWT token' } }, done);
   });
 
   it(`GET ${endpoint}/:userId - JWT token - not exist userId`, function (done) {
@@ -160,7 +160,7 @@ describe('ENDPOINT: GET /api/users/:id', function () {
       .get(`${endpoint}/${app.locals.existing.user._id}`)
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .expect(401)
-      .expect({ error: { message: 'Invalid credentials.' } }, done);
+      .expect({ error: { message: 'Invalid credentials' } }, done);
   });
 
   it(`GET ${endpoint}/:userId - JWT token - expired token`, function (done) {
@@ -181,7 +181,7 @@ describe('ENDPOINT: GET /api/users/:id', function () {
       .get(`${endpoint}/invalid-user-id`)
       .set('Authorization', `Bearer ${existingUser.jwtToken}`)
       .expect(422)
-      .expect({ error: { message: 'Invalid user ID.' } }, done);
+      .expect({ error: { message: 'Invalid user ID' } }, done);
   });
 
   it(`GET ${endpoint}/:userId - Params - not existed userId`, function (done) {
@@ -190,7 +190,7 @@ describe('ENDPOINT: GET /api/users/:id', function () {
       .get(`${endpoint}/5e24db1d560ba309f0b0b5a8`)
       .set('Authorization', `Bearer ${existingUser.jwtToken}`)
       .expect(422)
-      .expect({ error: { message: 'User ID does not exist.' } }, done);
+      .expect({ error: { message: 'User ID does not exist' } }, done);
   });
 
   it(`GET ${endpoint}/:userId - Normal user cannot get user details`, function (done) {
@@ -199,7 +199,7 @@ describe('ENDPOINT: GET /api/users/:id', function () {
       .get(`${endpoint}/${existingUser._id}`)
       .set('Authorization', `Bearer ${existingUser.jwtToken}`)
       .expect(403)
-      .expect({ error: { message: 'Forbidden action.' } }, done);
+      .expect({ error: { message: 'Forbidden action' } }, done);
   });
 
   const testCanGetUserDetails = (currentUser, done) => {
@@ -289,7 +289,7 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .send(payload)
       .expect(401)
-      .expect({ error: { message: 'Invalid JWT token.' } }, done);
+      .expect({ error: { message: 'Invalid JWT token' } }, done);
   });
 
   it(`PUT ${endpoint} - JWT token - not exist userId`, function (done) {
@@ -302,7 +302,7 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .send(payload)
       .expect(401)
-      .expect({ error: { message: 'Invalid credentials.' } }, done);
+      .expect({ error: { message: 'Invalid credentials' } }, done);
   });
 
   it(`PUT ${endpoint} - JWT token - expired token`, function (done) {
@@ -325,7 +325,7 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
       .put(`${endpoint}/invalid-user-id`)
       .set('Authorization', `Bearer ${existingUser.jwtToken}`)
       .expect(422)
-      .expect({ error: { message: 'Invalid user ID.' } }, done);
+      .expect({ error: { message: 'Invalid user ID' } }, done);
   });
 
   it(`PUT ${endpoint}/:userId - Params - not existed userId`, function (done) {
@@ -334,7 +334,7 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
       .put(`${endpoint}/5e24db1d560ba309f0b0b5a8`)
       .set('Authorization', `Bearer ${existingUser.jwtToken}`)
       .expect(422)
-      .expect({ error: { message: 'User ID does not exist.' } }, done);
+      .expect({ error: { message: 'User ID does not exist' } }, done);
   });
 
   const testInvalidPayload = (payload, errorMessage, done) => {
@@ -358,10 +358,10 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
   });
 
   it(`PUT ${endpoint}/:userId - Payload - Invalid status`, function (done) {
-    const payload = { status: 'not-active-disabled-or-unverifiedEmail' };
+    const payload = { status: 'not-active-disabled-or-unverified-email' };
     testInvalidPayload(
       payload,
-      '"status" must be one of [active, disabled, unverifiedEmail]',
+      '"status" must be one of [active, disabled, unverified-email]',
       done
     );
   });
@@ -377,7 +377,7 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
       .set('Authorization', `Bearer ${currentUser.jwtToken}`)
       .send(payload)
       .expect(403)
-      .expect({ error: { message: 'Forbidden action.' } }, done);
+      .expect({ error: { message: 'Forbidden action' } }, done);
   };
 
   it(`PUT ${endpoint}/:userId - Normal user cannot update itself and other normal user`, function (done) {
@@ -484,7 +484,6 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
       .send(payload)
       .expect(200)
       .expect({
-        success: true,
         updatedFields: ['status', 'role', 'permissions'],
       })
       .then((res) => User.findById(targetUser._id))
@@ -550,7 +549,7 @@ describe('ENDPOINT: DELETE /api/users/:userId', function () {
       .delete(`${endpoint}/${existingUser._id}`)
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .expect(401)
-      .expect({ error: { message: 'Invalid JWT token.' } }, done);
+      .expect({ error: { message: 'Invalid JWT token' } }, done);
   });
 
   it(`DELETE ${endpoint} - JWT token - not exist userId`, function (done) {
@@ -561,7 +560,7 @@ describe('ENDPOINT: DELETE /api/users/:userId', function () {
       .delete(`${endpoint}/${existingUser._id}`)
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .expect(401)
-      .expect({ error: { message: 'Invalid credentials.' } }, done);
+      .expect({ error: { message: 'Invalid credentials' } }, done);
   });
 
   it(`DELETE ${endpoint} - JWT token - expired token`, function (done) {
@@ -582,7 +581,7 @@ describe('ENDPOINT: DELETE /api/users/:userId', function () {
       .delete(`${endpoint}/invalid-user-id`)
       .set('Authorization', `Bearer ${existingUser.jwtToken}`)
       .expect(422)
-      .expect({ error: { message: 'Invalid user ID.' } }, done);
+      .expect({ error: { message: 'Invalid user ID' } }, done);
   });
 
   it(`DELETE ${endpoint}/:userId - Params - not existed userId`, function (done) {
@@ -591,7 +590,7 @@ describe('ENDPOINT: DELETE /api/users/:userId', function () {
       .delete(`${endpoint}/5e24db1d560ba309f0b0b5a8`)
       .set('Authorization', `Bearer ${existingUser.jwtToken}`)
       .expect(422)
-      .expect({ error: { message: 'User ID does not exist.' } }, done);
+      .expect({ error: { message: 'User ID does not exist' } }, done);
   });
 
   const testUserCannotDeleteOther = (currentUser, targetUser, done) => {
@@ -599,7 +598,7 @@ describe('ENDPOINT: DELETE /api/users/:userId', function () {
       .delete(`${endpoint}/${targetUser._id}`)
       .set('Authorization', `Bearer ${currentUser.jwtToken}`)
       .expect(403)
-      .expect({ error: { message: 'Forbidden action.' } }, done);
+      .expect({ error: { message: 'Forbidden action' } }, done);
   };
 
   it(`DELETE ${endpoint}/:userId - Normal user cannot delete itself and other normal user`, function (done) {
@@ -644,10 +643,7 @@ describe('ENDPOINT: DELETE /api/users/:userId', function () {
       .delete(`${endpoint}/${targetUser._id}`)
       .set('Authorization', `Bearer ${currentUser.jwtToken}`)
       .expect(200)
-      .expect({
-        success: true,
-        message: 'User deleted',
-      })
+      .expect({ message: 'User deleted' })
       .then((res) => User.findById(targetUser._id))
       .then((user) => {
         expect(user).to.be.null;

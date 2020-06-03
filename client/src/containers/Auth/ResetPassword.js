@@ -133,5 +133,5 @@ const validate = (values) => {
 export default compose(
   requireAnonymous(),
   connect(maptStateToProps, { resetPassword, unloadAuthPage }),
-  reduxForm({ form: 'resetPassword', validate })
+  reduxForm({ form: 'reset-password', validate })
 )(ResetPassword);

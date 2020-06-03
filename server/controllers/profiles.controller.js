@@ -54,9 +54,7 @@ module.exports.updateProfile = (req, res, next) => {
         return req.user.save();
       })
       .then((updatedUser) => {
-        res
-          .status(200)
-          .json({ success: true, updatedFields: _.keys(req.body) });
+        res.status(200).json({ updatedFields: _.keys(req.body) });
       })
       .catch(next);
   }
@@ -70,13 +68,13 @@ module.exports.updateProfile = (req, res, next) => {
  */
 module.exports.getPublicProfile = (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
-    return next(createError(422, 'Invalid user ID.'));
+    return next(createError(422, 'Invalid user ID'));
   }
 
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        throw createError(422, 'User ID does not exist.');
+        throw createError(422, 'User ID does not exist');
       }
       res.status(200).send({ profile: user.toJsonFor() });
     })

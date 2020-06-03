@@ -9,7 +9,7 @@ class RequestPasswordReset extends React.Component {
   render() {
     return (
       <RequestTokenForm
-        tokenPurpose="resetPassword"
+        tokenPurpose="reset-password"
         title="Send Password Reset Email"
         onSubmit={this.props.requestPasswordReset}
       />

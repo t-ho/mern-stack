@@ -13,7 +13,7 @@ let devConfig = {
     format: 'dev', // TODO: possible values: combined, common, dev, short, tiny
   },
   oauth: {
-    storeToken: false, // If true, the OAuth access_token and refresh_token will be stored in database
+    storeTokens: false, // If true, the OAuth accessToken and refreshToken will be stored in database
   },
   seed: {
     logging: true,

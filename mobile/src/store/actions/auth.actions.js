@@ -47,7 +47,7 @@ export const facebookSignIn = () => (dispatch, getState, { mernApi }) => {
       if (response.type === 'success') {
         return signInHelper(
           '/api/auth/facebook',
-          { access_token: response.token },
+          { accessToken: response.token },
           actionTypes.FACEBOOK_SIGN_IN_SUCCESS,
           actionTypes.FACEBOOK_SIGN_IN_FAIL,
           dispatch,
@@ -76,7 +76,7 @@ export const googleSignIn = () => (dispatch, getState, { mernApi }) => {
       if (response.type === 'success') {
         return signInHelper(
           '/api/auth/google',
-          { access_token: response.accessToken },
+          { accessToken: response.accessToken },
           actionTypes.GOOGLE_SIGN_IN_SUCCESS,
           actionTypes.GOOGLE_SIGN_IN_FAIL,
           dispatch,

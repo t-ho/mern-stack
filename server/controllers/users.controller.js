@@ -18,7 +18,7 @@ const getUsersSchema = Joi.object({
   email: Joi.string().email(),
   firstName: Joi.string().trim(),
   lastName: Joi.string().trim(),
-  status: Joi.string().valid('active', 'disabled', 'unverifiedEmail'),
+  status: Joi.string().valid('active', 'disabled', 'unverified-email'),
   role: Joi.string().valid('root', 'admin', 'user'),
   permissions: Joi.string().trim(),
 });
@@ -89,13 +89,13 @@ module.exports.getUsers = (req, res, next) => {
  */
 module.exports.preloadTargetUser = (req, res, next, userId) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return next(createError(422, 'Invalid user ID.'));
+    return next(createError(422, 'Invalid user ID'));
   }
 
   User.findById(userId)
     .then((targetUser) => {
       if (!targetUser) {
-        throw createError(422, 'User ID does not exist.');
+        throw createError(422, 'User ID does not exist');
       }
       res.locals.targetUser = targetUser;
       next();
@@ -119,7 +119,7 @@ module.exports.deleteUser = (req, res, next) => {
   res.locals.targetUser
     .delete()
     .then((deletedUser) => {
-      res.status(200).json({ success: true, message: 'User deleted' });
+      res.status(200).json({ message: 'User deleted' });
     })
     .catch(next);
 };
@@ -129,7 +129,7 @@ module.exports.deleteUser = (req, res, next) => {
  */
 const updateUserSchema = Joi.object({
   role: Joi.string().valid('root', 'admin', 'user'),
-  status: Joi.string().valid('active', 'disabled', 'unverifiedEmail'),
+  status: Joi.string().valid('active', 'disabled', 'unverified-email'),
   permissions: Joi.object(),
 });
 
@@ -151,14 +151,14 @@ module.exports.updateUser = (req, res, next) => {
           (req.user.role === 'admin' && req.body.role !== 'user') ||
           (req.user.role === 'root' && req.body.role === 'root')
         ) {
-          throw createError(403, 'Forbidden action.');
+          throw createError(403, 'Forbidden action');
         }
       }
       _.merge(res.locals.targetUser, req.body);
       return res.locals.targetUser.save();
     })
     .then((updatedUser) => {
-      res.status(200).json({ success: true, updatedFields: _.keys(req.body) });
+      res.status(200).json({ updatedFields: _.keys(req.body) });
     })
     .catch(next);
 };

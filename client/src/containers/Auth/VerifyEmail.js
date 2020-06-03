@@ -21,7 +21,7 @@ class SignIn extends React.Component {
             <h4 className="ui header">
               {errorMessage
                 ? errorMessage
-                : 'Email has been verified successfully.'}
+                : 'Email has been verified successfully'}
             </h4>
           </div>
         </div>

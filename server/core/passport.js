@@ -22,29 +22,29 @@ const localStrategy = new LocalStrategy(
       .then((user) => {
         if (!user) {
           return done(null, false, {
-            message: 'Username or email does not exist.',
+            message: 'Username or email does not exist',
           });
         }
         if (!user.provider.local) {
           // not a local account (email and password)
           return done(null, false, {
-            message: 'Username or email does not exist.',
+            message: 'Username or email does not exist',
           });
         }
         user.comparePasswordAsync(password).then((isMatch) => {
           if (!isMatch) {
-            return done(null, false, { message: 'Password is incorrect.' });
+            return done(null, false, { message: 'Password is incorrect' });
           }
 
           if (config.auth.verifyEmail) {
-            if (user.status === 'unverifiedEmail') {
-              return done(null, false, { message: 'Email is not verified.' });
+            if (user.status === 'unverified-email') {
+              return done(null, false, { message: 'Email is not verified' });
             }
           }
 
           if (user.status !== 'active') {
             return done(null, false, {
-              message: 'Your account is disabled.',
+              message: 'Your account is disabled',
             });
           }
 
@@ -65,17 +65,17 @@ const jwtStrategy = new JwtStrategy(
     User.findById(jwtPayload.userId)
       .then((user) => {
         if (!user) {
-          return done(null, false, { message: 'Invalid credentials.' });
+          return done(null, false, { message: 'Invalid credentials' });
         }
 
         if (user.status !== 'active') {
           return done(null, false, {
-            message: 'Disabled or unverified account.',
+            message: 'Disabled or unverified account',
           });
         }
 
         if (user.subId !== jwtPayload.sub) {
-          return done(null, false, { message: 'Invalid JWT token.' });
+          return done(null, false, { message: 'Invalid JWT token' });
         }
 
         return done(null, user);

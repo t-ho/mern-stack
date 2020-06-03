@@ -120,7 +120,7 @@ class SignInScreen extends React.Component {
             <Spacer>
               <OAuthButtons />
             </Spacer>
-            {this.props.errorMessage === 'Email is not verified.' && (
+            {this.props.errorMessage === 'Email is not verified' && (
               <NavLink
                 text="Have not received verification email?"
                 routeName="RequestVerificationEmail"

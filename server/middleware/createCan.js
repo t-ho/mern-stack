@@ -31,7 +31,7 @@ const User = mongoose.model('User');
  */
 const createCan = (actions, isAny = false) => (req, res, next) => {
   if (!req.user || (req.user && !req.user.can(actions, isAny))) {
-    return next(createError(403, 'Forbidden action.'));
+    return next(createError(403, 'Forbidden action'));
   }
 
   if (
@@ -62,7 +62,7 @@ const createCan = (actions, isAny = false) => (req, res, next) => {
   if (canContinue) {
     return next();
   }
-  next(createError(403, 'Forbidden action.'));
+  next(createError(403, 'Forbidden action'));
 };
 
 module.exports = createCan;

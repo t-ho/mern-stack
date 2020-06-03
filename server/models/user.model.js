@@ -61,7 +61,7 @@ const userSchema = new mongoose.Schema(
     lastName: { type: String, trim: true },
     status: {
       type: String,
-      enum: ['active', 'disabled', 'unverifiedEmail'],
+      enum: ['active', 'disabled', 'unverified-email'],
       default: 'active',
       index: true,
     },
@@ -92,7 +92,7 @@ const userSchema = new mongoose.Schema(
     // Do NOT set directly, call user.setToken(tokenPurpose) user.clearToken()
     // to set and clear token and tokenPurpose
     token: { type: String, index: true },
-    tokenPurpose: { type: String, enum: ['verifyEmail', 'resetPassword'] },
+    tokenPurpose: { type: String, enum: ['verify-email', 'reset-password'] },
     provider: {
       local: {
         type: providerDataSchema,

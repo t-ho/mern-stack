@@ -36,7 +36,7 @@ describe('ENDPOINT: POST /api/auth/signup', function () {
       password: 'qweasdzxc',
     };
 
-    testValidation(payload, 400, 'Email is required.', done);
+    testValidation(payload, 400, 'Email is required', done);
   });
 
   it(`POST ${endpoint} - Username required`, function (done) {
@@ -45,7 +45,7 @@ describe('ENDPOINT: POST /api/auth/signup', function () {
       password: 'qweasdzxc',
     };
 
-    testValidation(payload, 400, 'Username is required.', done);
+    testValidation(payload, 400, 'Username is required', done);
   });
 
   it(`POST ${endpoint} - Password required`, function (done) {
@@ -54,7 +54,7 @@ describe('ENDPOINT: POST /api/auth/signup', function () {
       email: 'john@tdev.app',
     };
 
-    testValidation(payload, 400, 'Password is required.', done);
+    testValidation(payload, 400, 'Password is required', done);
   });
 
   it(`POST ${endpoint} - Email existed`, function (done) {
@@ -64,7 +64,7 @@ describe('ENDPOINT: POST /api/auth/signup', function () {
       password: 'qweasdzxc',
     };
 
-    testValidation(payload, 422, 'Email is already in use.', done);
+    testValidation(payload, 422, 'Email is already in use', done);
   });
 
   it(`POST ${endpoint} - Username existed`, function (done) {
@@ -74,7 +74,7 @@ describe('ENDPOINT: POST /api/auth/signup', function () {
       password: 'qweasdzxc',
     };
 
-    testValidation(payload, 422, 'Username is already in use.', done);
+    testValidation(payload, 422, 'Username is already in use', done);
   });
 
   it(`POST ${endpoint} - Fresh sign up succeeded`, function (done) {
@@ -92,13 +92,11 @@ describe('ENDPOINT: POST /api/auth/signup', function () {
       .then((res) => {
         if (config.auth.verifyEmail) {
           expect(res.body).to.deep.equal({
-            success: true,
-            message: 'A verification email has been sent to your email.',
+            message: 'A verification email has been sent to your email',
           });
         } else {
           expect(res.body).to.deep.equal({
-            success: true,
-            message: 'Your account has been created successfully.',
+            message: 'Your account has been created successfully',
           });
         }
         return User.findOne({ email: payload.email });
@@ -110,7 +108,7 @@ describe('ENDPOINT: POST /api/auth/signup', function () {
           expect(value).to.be.false;
         });
         if (config.auth.verifyEmail) {
-          expect(user.status).to.be.equal('unverifiedEmail');
+          expect(user.status).to.be.equal('unverified-email');
         } else {
           expect(user.status).to.be.equal('active');
         }
@@ -148,8 +146,7 @@ describe('ENDPOINT: POST /api/auth/signup', function () {
           .send(payload)
           .expect(201)
           .expect({
-            success: true,
-            message: 'Your account has been created successfully.',
+            message: 'Your account has been created successfully',
           })
           .then((res) => User.findOne({ email: payload.email }))
           .then((user) => {
@@ -197,7 +194,7 @@ describe('ENDPOINT: POST /api/auth/signin', function () {
     testValidation(
       payload,
       400,
-      'Either username or email must be provided.',
+      'Either username or email must be provided',
       done
     );
   });
@@ -207,7 +204,7 @@ describe('ENDPOINT: POST /api/auth/signin', function () {
       email: 'admin@tdev.app',
     };
 
-    testValidation(payload, 400, 'Password is required.', done);
+    testValidation(payload, 400, 'Password is required', done);
   });
 
   it(`POST ${endpoint} - Email not existed`, function (done) {
@@ -216,7 +213,7 @@ describe('ENDPOINT: POST /api/auth/signin', function () {
       password: 'password',
     };
 
-    testValidation(payload, 401, 'Username or email does not exist.', done);
+    testValidation(payload, 401, 'Username or email does not exist', done);
   });
 
   it(`POST ${endpoint} - Username not existed`, function (done) {
@@ -225,7 +222,7 @@ describe('ENDPOINT: POST /api/auth/signin', function () {
       password: 'password',
     };
 
-    testValidation(payload, 401, 'Username or email does not exist.', done);
+    testValidation(payload, 401, 'Username or email does not exist', done);
   });
 
   const testSignInSuccess = (payload, done) => {
@@ -309,10 +306,10 @@ describe('ENDPOINT: POST /api/auth/send-token', function () {
   if (config.auth.verifyEmail || config.auth.resetPassword) {
     it(`POST ${endpoint} - Email required`, function (done) {
       const payload = {
-        tokenPurpose: 'verifyEmail',
+        tokenPurpose: 'verify-email',
       };
 
-      testValidation(payload, 400, 'Email is required.', done);
+      testValidation(payload, 400, 'Email is required', done);
     });
 
     it(`POST ${endpoint} - Token purpose required`, function (done) {
@@ -333,7 +330,7 @@ describe('ENDPOINT: POST /api/auth/send-token', function () {
       testValidation(
         payload,
         400,
-        '"tokenPurpose" must be one of [verifyEmail, resetPassword]',
+        '"tokenPurpose" must be one of [verify-email, reset-password]',
         done
       );
     });
@@ -344,7 +341,7 @@ describe('ENDPOINT: POST /api/auth/send-token', function () {
         let existingUser = app.locals.existing.user;
         const payload = {
           email: existingUser.email,
-          tokenPurpose: 'verifyEmail',
+          tokenPurpose: 'verify-email',
         };
         request(app)
           .post(endpoint)
@@ -353,7 +350,7 @@ describe('ENDPOINT: POST /api/auth/send-token', function () {
           .expect(
             {
               error: {
-                message: 'Email verification functionality is not available.',
+                message: 'Email verification functionality is not available',
               },
             },
             done
@@ -365,7 +362,7 @@ describe('ENDPOINT: POST /api/auth/send-token', function () {
         let existingUser = app.locals.existing.user;
         const payload = {
           email: existingUser.email,
-          tokenPurpose: 'resetPassword',
+          tokenPurpose: 'reset-password',
         };
         request(app)
           .post(endpoint)
@@ -374,7 +371,7 @@ describe('ENDPOINT: POST /api/auth/send-token', function () {
           .expect(
             {
               error: {
-                message: 'Password reset functionality is not available.',
+                message: 'Password reset functionality is not available',
               },
             },
             done
@@ -394,15 +391,13 @@ describe('ENDPOINT: POST /api/auth/send-token', function () {
       .send(payload)
       .expect(200)
       .then((res) => {
-        if (tokenPurpose === 'verifyEmail') {
+        if (tokenPurpose === 'verify-email') {
           expect(res.body).to.deep.equal({
-            success: true,
-            message: 'A verification email has been sent to your email.',
+            message: 'A verification email has been sent to your email',
           });
         } else {
           expect(res.body).to.deep.equal({
-            success: true,
-            message: 'A password-reset email has been sent to your email.',
+            message: 'A password-reset email has been sent to your email',
           });
         }
         return User.findOne({ email: existingUser.email });
@@ -436,16 +431,16 @@ describe('ENDPOINT: POST /api/auth/send-token', function () {
       let existingUser = app.locals.existing.user;
       const payload = {
         email: existingUser.email,
-        tokenPurpose: 'verifyEmail',
+        tokenPurpose: 'verify-email',
       };
-      testValidation(payload, 422, 'Email already verified.', done);
+      testValidation(payload, 422, 'Email already verified', done);
     });
 
     it(`POST ${endpoint} - Send email verification token succeeded`, function (done) {
       let existingUser = app.locals.existing.user;
-      existingUser.status = 'unverifiedEmail';
+      existingUser.status = 'unverified-email';
       existingUser.save().then((user) => {
-        testSendTokenSucceeded('verifyEmail', existingUser, done);
+        testSendTokenSucceeded('verify-email', existingUser, done);
       });
     });
   }
@@ -453,7 +448,7 @@ describe('ENDPOINT: POST /api/auth/send-token', function () {
   if (config.auth.resetPassword) {
     it(`POST ${endpoint} - Send password reset token succeeded`, function (done) {
       let existingUser = app.locals.existing.user;
-      testSendTokenSucceeded('resetPassword', existingUser, done);
+      testSendTokenSucceeded('reset-password', existingUser, done);
     });
   }
 });
@@ -465,7 +460,7 @@ describe('ENDPOINT: POST /api/auth/reset-password/:token', function () {
   beforeEach(function (done) {
     let existingAdmin = app.locals.existing.admin;
     existingAdmin.token = uuid.v4();
-    existingAdmin.tokenPurpose = 'resetPassword';
+    existingAdmin.tokenPurpose = 'reset-password';
     existingAdmin
       .save()
       .then((user) => {
@@ -482,7 +477,7 @@ describe('ENDPOINT: POST /api/auth/reset-password/:token', function () {
         password: 'new-password',
       };
 
-      testValidation(payload, 400, 'Email is required.', done);
+      testValidation(payload, 400, 'Email is required', done);
     });
 
     it(`POST ${endpoint} - New password required`, function (done) {
@@ -490,7 +485,7 @@ describe('ENDPOINT: POST /api/auth/reset-password/:token', function () {
         email: 'admin@tdev.app',
       };
 
-      testValidation(payload, 400, 'Password is required.', done);
+      testValidation(payload, 400, 'Password is required', done);
     });
 
     it(`POST ${endpoint} - Email and token is not a pair`, function (done) {
@@ -499,7 +494,7 @@ describe('ENDPOINT: POST /api/auth/reset-password/:token', function () {
         password: 'new-password',
       };
 
-      testValidation(payload, 422, 'Token expired.', done);
+      testValidation(payload, 422, 'Token expired', done);
     });
 
     it(`POST ${endpoint} - Token not existed`, function (done) {
@@ -513,7 +508,7 @@ describe('ENDPOINT: POST /api/auth/reset-password/:token', function () {
         .post('/api/auth/reset-password/not-exist-token')
         .send(payload)
         .expect(422)
-        .expect({ error: { message: 'Token expired.' } }, done);
+        .expect({ error: { message: 'Token expired' } }, done);
     });
 
     it(`POST ${endpoint} - Token existed but not resetPassword token`, function (done) {
@@ -522,11 +517,11 @@ describe('ENDPOINT: POST /api/auth/reset-password/:token', function () {
         email: existingAdmin.email,
         password: 'new-password',
       };
-      existingAdmin.tokenPurpose = 'verifyEmail';
+      existingAdmin.tokenPurpose = 'verify-email';
       existingAdmin
         .save()
         .then((user) => {
-          testValidation(payload, 422, 'Token expired.', done);
+          testValidation(payload, 422, 'Token expired', done);
         })
         .catch(done);
     });
@@ -543,10 +538,7 @@ describe('ENDPOINT: POST /api/auth/reset-password/:token', function () {
         .post(endpoint)
         .send(payload)
         .expect(200)
-        .expect({
-          message: 'Password reset.',
-          success: true,
-        })
+        .expect({ message: 'Password reset' })
         .then((res) => User.findOne({ email: payload.email }))
         .then((user) => {
           expect(user.token).to.be.undefined;
@@ -590,7 +582,7 @@ describe('ENDPOINT: POST /api/auth/reset-password/:token', function () {
         .expect(
           {
             error: {
-              message: 'Password reset functionality is not available.',
+              message: 'Password reset functionality is not available',
             },
           },
           done
@@ -605,7 +597,7 @@ describe('ENDPOINT: POST /api/auth/verify-email/:token', function () {
   beforeEach(function (done) {
     let existingAdmin = app.locals.existing.admin;
     existingAdmin.token = uuid.v4();
-    existingAdmin.tokenPurpose = 'verifyEmail';
+    existingAdmin.tokenPurpose = 'verify-email';
     existingAdmin
       .save()
       .then((user) => {
@@ -621,19 +613,19 @@ describe('ENDPOINT: POST /api/auth/verify-email/:token', function () {
       request(app)
         .post('/api/auth/verify-email/not-existed-token')
         .expect(422)
-        .expect({ error: { message: 'Token expired.' } }, done);
+        .expect({ error: { message: 'Token expired' } }, done);
     });
 
-    it(`POST ${endpoint} - Token existed but not verifyEmail token`, function (done) {
+    it(`POST ${endpoint} - Token existed but not verify-email token`, function (done) {
       let existingAdmin = app.locals.existing.admin;
-      existingAdmin.tokenPurpose = 'resetPassword';
+      existingAdmin.tokenPurpose = 'reset-password';
       admin
         .save()
         .then((user) => {
           request(app)
             .post(endpoint)
             .expect(422)
-            .expect({ error: { message: 'Token expired.' } }, done);
+            .expect({ error: { message: 'Token expired' } }, done);
         })
         .catch(done);
     });
@@ -644,10 +636,7 @@ describe('ENDPOINT: POST /api/auth/verify-email/:token', function () {
       request(app)
         .post(endpoint)
         .expect(200)
-        .expect({
-          message: 'Email verified.',
-          success: true,
-        })
+        .expect({ message: 'Email verified' })
         .then((res) => User.findOne({ email: existingAdmin.email }))
         .then((user) => {
           expect(user.status).to.be.equal('active');
@@ -680,7 +669,7 @@ describe('ENDPOINT: POST /api/auth/verify-email/:token', function () {
         .expect(
           {
             error: {
-              message: 'Email verification functionality is not available.',
+              message: 'Email verification functionality is not available',
             },
           },
           done
@@ -707,7 +696,7 @@ describe('ENDPOINT: POST /api/auth/verify-token', function () {
       .post(endpoint)
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .expect(401)
-      .expect({ error: { message: 'Invalid JWT token.' } }, done);
+      .expect({ error: { message: 'Invalid JWT token' } }, done);
   });
 
   it(`POST ${endpoint} - JWT token - not exist userId`, function (done) {
@@ -718,7 +707,7 @@ describe('ENDPOINT: POST /api/auth/verify-token', function () {
       .post(endpoint)
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .expect(401)
-      .expect({ error: { message: 'Invalid credentials.' } }, done);
+      .expect({ error: { message: 'Invalid credentials' } }, done);
   });
 
   it(`POST ${endpoint} - JWT token - expired token`, function (done) {
