@@ -3,7 +3,7 @@ import { applyMiddleware, createStore } from 'redux';
 import reduxThunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import rootReducer from './reducers';
-import mernApi from './apis/api';
+import { mernApi } from './apis/mern';
 
 YellowBox.ignoreWarnings(['Remote debugger']);
 
