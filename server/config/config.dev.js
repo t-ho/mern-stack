@@ -6,8 +6,8 @@ const defaultConfig = require('./config.default');
  */
 let devConfig = {
   auth: {
-    verifyEmail: true, // If true, require email verification when signing up
-    resetPassword: true, // If true, be able to reset password via email
+    verifyEmail: false, // If true, require email verification when signing up
+    resetPassword: false, // If true, be able to reset password via email
   },
   morgan: {
     format: 'dev', // TODO: possible values: combined, common, dev, short, tiny

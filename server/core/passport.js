@@ -214,7 +214,7 @@ const updateOrInsert = (userProfile) => {
     userId: userProfile.userId,
     picture: userProfile.picture,
   };
-  if (config.oauth.storeToken) {
+  if (config.oauth.storeTokens) {
     provider.accessToken = userProfile.accessToken;
     provider.refreshToken = userProfile.refreshToken;
   }
