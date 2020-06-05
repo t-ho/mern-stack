@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { getIsSignedIn, getDefaultPath } from '../store/selectors';
+import { getIsSignedIn } from '../store/selectors';
 
 /**
  * If user already logged in, redirect to default path.
@@ -19,19 +19,20 @@ const requireAnonymous = () => (WrappedComponent) => {
 
     shouldNavigateAway = () => {
       if (this.props.isSignedIn) {
-        this.props.history.replace(this.props.defaultPath);
+        this.props.history.replace('/');
       }
     };
 
     render() {
-      return <WrappedComponent {...this.props} />;
+      return this.props.isSignedIn ? null : (
+        <WrappedComponent {...this.props} />
+      );
     }
   }
 
   const mapStateToProps = (state) => {
     return {
       isSignedIn: getIsSignedIn(state),
-      defaultPath: getDefaultPath(state),
     };
   };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch, Redirect } from 'react-router';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Header from '../../components/Header';
 import SignIn from '../Auth/SignIn';
@@ -11,6 +11,7 @@ import { tryLocalSignIn } from '../../store/actions';
 import RequestVerificationEmail from '../Auth/RequestVerificationEmail';
 import RequestPasswordReset from '../Auth/RequestPasswordReset';
 import ResetPassword from '../Auth/ResetPassword';
+import { getIsSignedIn } from '../../store/selectors';
 
 class App extends React.Component {
   componentDidMount() {
@@ -32,19 +33,27 @@ class App extends React.Component {
           <Route
             path="/request-password-reset"
             component={RequestPasswordReset}
-          ></Route>
-          <Route
-            path="/reset-password/:token"
-            component={ResetPassword}
-          ></Route>
+          />
+          <Route path="/reset-password/:token" component={ResetPassword} />
           <Route path="/profile" component={Profile} />
           <Route path="/users" component={UserList} />
-          <Route path="/" component={SignIn} />
-          <Redirect to="/" />
+          <Route path="/">
+            {this.props.isSignedIn ? (
+              <Redirect to="/profile" />
+            ) : (
+              <Redirect to="/signin" />
+            )}
+          </Route>
         </Switch>
       </div>
     );
   }
 }
 
-export default connect(null, { tryLocalSignIn })(App);
+const mapStateToProps = (state) => {
+  return {
+    isSignedIn: getIsSignedIn(state),
+  };
+};
+
+export default connect(mapStateToProps, { tryLocalSignIn })(App);

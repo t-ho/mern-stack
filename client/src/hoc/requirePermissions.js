@@ -1,10 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  getCurrentUser,
-  getIsSignedIn,
-  getDefaultPath,
-} from '../store/selectors';
+import { getCurrentUser, getIsSignedIn } from '../store/selectors';
 import { setAttemptedPath } from '../store/actions';
 
 /**
@@ -13,9 +9,13 @@ import { setAttemptedPath } from '../store/actions';
  * After checking, if he/she is not authorized, redirect to default path.
  *
  * @param {Component} WrappedComponent The component to be wrapped
- * @param {string} action The action (see state.auth.permissions)
+ * @param {string|array} actions The actions (see state.auth.permissions)
+ * @param {boolean=false} requiresAny If true, at least one action must pass to continue. Otherwise, ALL actions must be pass to continue.
  */
-const requirePermission = (action) => (WrappedComponent) => {
+const requirePermissions = (actions, requiresAny = false) => (
+  WrappedComponent
+) => {
+  actions = Array.isArray(actions) ? actions : [actions];
   class ComposedComponent extends React.Component {
     componentDidMount() {
       this.shouldNavigateAway();
@@ -36,21 +36,21 @@ const requirePermission = (action) => (WrappedComponent) => {
         return true;
       }
 
-      if (currentUser.pemissions[action]) {
-        return true;
+      if (requiresAny) {
+        return actions.some((action) => !!currentUser.pemissions[action]);
       }
 
-      return false;
+      return actions.every((action) => !!currentUser.pemissions[action]);
     };
 
     shouldNavigateAway = () => {
       if (!this.isAuthorized()) {
-        this.props.history.replace(this.props.defaultPath);
+        this.props.history.replace('/');
       }
     };
 
     render() {
-      return <WrappedComponent {...this.props} />;
+      return this.isAuthorized() ? <WrappedComponent {...this.props} /> : null;
     }
   }
 
@@ -58,7 +58,6 @@ const requirePermission = (action) => (WrappedComponent) => {
     return {
       currentUser: getCurrentUser(state),
       isSignedIn: getIsSignedIn(state),
-      defaultPath: getDefaultPath(state),
       currentPath: state.router.location.pathname,
     };
   };
@@ -66,4 +65,4 @@ const requirePermission = (action) => (WrappedComponent) => {
   return connect(mapStateToProps, { setAttemptedPath })(ComposedComponent);
 };
 
-export default requirePermission;
+export default requirePermissions;

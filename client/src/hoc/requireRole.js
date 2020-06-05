@@ -1,10 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  getCurrentUser,
-  getIsSignedIn,
-  getDefaultPath,
-} from '../store/selectors';
+import { getCurrentUser, getIsSignedIn } from '../store/selectors';
 import { setAttemptedPath } from '../store/actions';
 
 /**
@@ -53,12 +49,12 @@ const requireRole = (role) => (WrappedComponent) => {
 
     shouldNavigateAway = () => {
       if (!this.isAuthorized()) {
-        this.props.history.replace(this.props.defaultPath);
+        this.props.history.replace('/');
       }
     };
 
     render() {
-      return <WrappedComponent {...this.props} />;
+      return this.isAuthorized() ? <WrappedComponent {...this.props} /> : null;
     }
   }
 
@@ -66,7 +62,6 @@ const requireRole = (role) => (WrappedComponent) => {
     return {
       currentUser: getCurrentUser(state),
       isSignedIn: getIsSignedIn(state),
-      defaultPath: getDefaultPath(state),
       currentPath: state.router.location.pathname,
     };
   };

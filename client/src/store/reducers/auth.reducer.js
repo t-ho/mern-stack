@@ -7,7 +7,6 @@ const INITIAL_STATE = {
   processing: false,
   processed: false,
   error: null,
-  defaultPath: '/', // Used as a default redirect path
   attemptedPath: null, // Used to redirect users to the page they visited before logging in
 };
 
@@ -36,7 +35,6 @@ const authReducer = (state = INITIAL_STATE, action) => {
         expiresAt: action.payload.expiresAt,
         signedInWith: action.payload.signedInWith,
         user: { ...action.payload.user },
-        defaultPath: '/profile',
       };
     case actionTypes.SIGN_UP_SUCCESS:
     case actionTypes.VERIFY_EMAIL_SUCCESS:
@@ -70,7 +68,6 @@ const authReducer = (state = INITIAL_STATE, action) => {
         isSignedIn: false,
         user: {},
         expiresAt: null,
-        defaultPath: '/',
       };
     case actionTypes.TRY_LOCAL_SIGN_IN_FAIL:
       return {
@@ -78,12 +75,6 @@ const authReducer = (state = INITIAL_STATE, action) => {
         isSignedIn: false,
         user: {},
         expiresAt: null,
-        defaultPath: '/',
-      };
-    case actionTypes.SET_DEFAULT_URL:
-      return {
-        ...state,
-        defaultPath: action.payload,
       };
     case actionTypes.SET_ATTEMPTED_PATH:
       return {

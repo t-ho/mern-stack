@@ -27,8 +27,3 @@ export const getIsSignedIn = createSelector(
   getAuthState,
   (auth) => auth.isSignedIn
 );
-
-export const getDefaultPath = createSelector(
-  getAuthState,
-  (auth) => auth.defaultPath
-);

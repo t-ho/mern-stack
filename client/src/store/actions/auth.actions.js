@@ -95,7 +95,10 @@ const signInSuccess = (payload, successType) => (
 ) => {
   setAuthInfo(payload, mernApi);
   dispatch({ type: successType, payload });
-  redirectAfterSignIn(dispatch, getState);
+  if (getState().auth.attemptedPath) {
+    dispatch(replace(getState().auth.attemptedPath));
+    dispatch(setAttemptedPath(null));
+  }
 };
 
 const tryLocalSignInFail = () => (dispatch, getState, { mernApi }) => {
@@ -213,13 +216,4 @@ const setAuthInfo = (authInfo, mernApi) => {
 const clearAuthInfo = (mernApi) => {
   mernApi.setAuthToken('');
   localStorage.removeItem('authInfo');
-};
-
-const redirectAfterSignIn = (dispatch, getState) => {
-  if (getState().auth.attemptedPath) {
-    dispatch(replace(getState().auth.attemptedPath));
-    dispatch(setAttemptedPath(null));
-  } else {
-    dispatch(replace(getState().auth.defaultPath));
-  }
 };

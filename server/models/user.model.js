@@ -224,16 +224,16 @@ userSchema.methods.clearToken = function () {
  * based on user role and user permissions
  *
  * @param {string|array} actions An action or array of actions.
- * @param {boolean=false} isAny If true, at least one action must pass to continue. Otherwise, ALL actions must be pass to continue.
+ * @param {boolean=false} requiresAny If true, at least one action must pass to continue. Otherwise, ALL actions must be pass to continue.
  * @returns {boolean} True if this user has permission to perform the given action.
  * Otherwise, false
  */
-userSchema.methods.can = function (actions, isAny = false) {
+userSchema.methods.can = function (actions, requiresAny = false) {
   if (this.role === 'admin' || this.role === 'root') {
     return true;
   }
   actions = _.castArray(actions);
-  if (isAny) {
+  if (requiresAny) {
     return actions.some((action) => !!this.permissions[action]);
   }
   return actions.every((action) => !!this.permissions[action]);

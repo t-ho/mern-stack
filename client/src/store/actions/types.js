@@ -21,7 +21,6 @@ export const TRY_LOCAL_SIGN_IN_FAIL = '[Auth] Try Local Sign In Fail';
 export const SIGN_OUT = '[Auth] Sign Out';
 export const SIGN_OUT_SUCCESS = '[Auth] Sign Out Success';
 
-export const SET_DEFAULT_URL = '[Auth] Set Default Path';
 export const SET_ATTEMPTED_PATH = '[Auth] Set Attempted Path';
 
 export const VERIFY_EMAIL = '[Auth] Verify Email';

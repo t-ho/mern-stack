@@ -23,14 +23,14 @@ const User = mongoose.model('User');
  * * Admin users cannot update or delete root users.
  *
  * @param {string|array} actions An action or array of actions.
- * @param {boolean=false} isAny If true, at least one action must pass to continue. Otherwise, ALL actions must be pass to continue.
+ * @param {boolean=false} requiresAny If true, at least one action must pass to continue. Otherwise, ALL actions must be pass to continue.
  * See User Schema for a full list of permissions
  *
  * NOTE: readUsers, insertUsers, updateUsers and deleteUsers are not listed in the
  * User Schema meaning normal users DO NOT have any permissions on User Collection at all.
  */
-const createCan = (actions, isAny = false) => (req, res, next) => {
-  if (!req.user || (req.user && !req.user.can(actions, isAny))) {
+const createCan = (actions, requiresAny = false) => (req, res, next) => {
+  if (!req.user || (req.user && !req.user.can(actions, requiresAny))) {
     return next(createError(403, 'Forbidden action'));
   }
 
