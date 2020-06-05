@@ -5,7 +5,7 @@ services:
   server-api:
     build:
       context: ./
-      dockerfile: ./server/Dockerfile.dev
+      dockerfile: ./server/Dockerfile
     volumes:
       - /mern-stack/server/node_modules
       - ./server:/mern-stack/server
