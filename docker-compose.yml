@@ -1,12 +1,5 @@
 version: '3.8'
 services:
-  nginx-proxy:
-    restart: always
-    build:
-      context: ./
-      dockerfile: ./nginx-proxy/Dockerfile
-    ports:
-      - '${NGINX_PROXY_PORT}:${NGINX_PROXY_PORT}'
   mongo:
     image: mongo:latest
   server-api:
@@ -34,3 +27,16 @@ services:
       - '${PORT}:${PORT}'
     depends_on:
       - server-api
+  nginx-proxy:
+    restart: always
+    build:
+      context: ./
+      dockerfile: ./nginx-proxy/Dockerfile
+    ports:
+      - '${NGINX_PROXY_PORT}:80'
+    environment:
+      - PORT=${PORT}
+      - SERVER_PORT=${SERVER_PORT}
+    depends_on:
+      - server-api
+      - client
