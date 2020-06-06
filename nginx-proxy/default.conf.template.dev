@@ -1,0 +1,31 @@
+
+upstream client {
+  server client:${PORT};
+}
+
+upstream server-api {
+  server server-api:${SERVER_PORT};
+}
+
+log_format dev '$request $status $request_time s - $body_bytes_sent';
+
+server {
+  listen 80;
+
+  access_log /var/log/nginx/access.log dev;
+
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+
+  location / {
+    proxy_pass http://client;
+  }
+
+  location /api {
+    proxy_pass http://server-api;
+  }
+
+  location /public {
+    proxy_pass http://server-api;
+  }
+}
