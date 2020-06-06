@@ -10,9 +10,83 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
 
 [![mern-workflow](https://raw.githubusercontent.com/t-ho/mern-stack/assets/assets/mern-workflow.gif)](https://github.com/t-ho/mern-stack)
 
-## Server API documentation
+## Project Breakdown
 
-The full documentation of the server API can be found [here](https://tdev.app/mern-stack/server)
+### 1. API Server
+
+- Directory `server`
+- The full API documentation can be found [here](https://tdev.app/mern-stack/server)
+- Todo:
+  - [x] Authentication system - [passport](https://www.npmjs.com/package/passport)
+    - [x] Sign up - [bcrypt](https://www.npmjs.com/package/bcrypt)
+    - [x] Local login - [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) - [passport-jwt](https://www.npmjs.com/package/passport-jwt)
+    - [x] Facebook login - [passport-facebook-token](https://www.npmjs.com/package/passport-facebook-token)
+    - [x] Google login - [passport-google-token](https://www.npmjs.com/package/passport-google-token)
+    - [x] Email verification - [sendgrid-template-helper](https://www.npmjs.com/package/sendgrid-template-helper)
+    - [x] Password reset email
+  - [x] Authorization system
+    - [x] Role-based access control
+    - [x] Principle of least privilege
+  - [x] User management - CRUD operations
+  - [x] Input validation and sanitization - [@hapi/joi](https://www.npmjs.com/package/@hapi/joi)
+  - [x] Integration testing - [mocha](https://www.npmjs.com/package/mocha) - [chai](https://www.npmjs.com/package/chai) - [supertest](https://www.npmjs.com/package/supertest)
+  - [x] Docker support - [node:lts-buster](https://hub.docker.com/_/node)
+    - [x] Dev mode - See [server/Dockerfile](https://github.com/t-ho/mern-stack/blob/master/server/Dockerfile)
+    - [x] Prod mode - See [server/Dockerfile.prod](https://github.com/t-ho/mern-stack/blob/master/server/Dockerfile.prod)
+
+### 2. React Client
+
+- Directory `client`
+- Created by using [create-react-app](https://www.npmjs.com/package/create-react-app)
+- Todo:
+  - [x] Redux store - [react-redux](https://www.npmjs.com/package/react-redux)
+  - [x] Redux form - [redux-form](https://redux-form.com/8.3.0). NOTE: Migrate to [formik](https://jaredpalmer.com/formik) soon
+  - [x] Router - [react-router-dom](https://www.npmjs.com/package/react-router-dom) - [connected-react-router](https://www.npmjs.com/package/connected-react-router)
+  - [] Material design - [Material-UI](https://material-ui.com)
+  - [] Authentication pages
+    - [x] Sign up page
+    - [x] Sign in page with email, Facebook or Google account
+    - [x] Request password reset email page
+    - [x] Request verification email page
+    - [x] Reset password page
+    - [] Profile page
+  - [] User management pages
+    - [] User list page
+    - [] User edit page
+  - [x] Docker support - [node:lts-buster](https://hub.docker.com/_/node) - [nginx:stable-alpine](https://hub.docker.com/_/nginx)
+    - [x] Dev mode - See [client/Dockerfile](https://github.com/t-ho/mern-stack/blob/master/client/Dockerfile)
+    - [x] Prod mode - See [client/Dockerfile.prod](https://github.com/t-ho/mern-stack/blob/master/client/Dockerfile.prod)
+
+### 3. React Native - Mobile
+
+- Directory `mobile`
+- Created by using [expo-cli](https://www.npmjs.com/package/expo-cli). To switch to _bare_ workflow, please see docs [here](https://docs.expo.io/introduction/managed-vs-bare)
+- Todo:
+  - [x] Redux store - [react-redux](https://www.npmjs.com/package/react-redux)
+  - [x] Router - [react-navigation](https://reactnavigation.org)
+  - [x] Material design - [react-native-paper](https://www.npmjs.com/package/react-native-paper)
+  - [] Authentication screens
+    - [x] Sign up screen
+    - [x] Sign in screen with email, Facebook or Google account
+    - [x] Request password reset email screen
+    - [x] Request verification email screen
+    - [] Settings screen
+
+### 4. Nginx Proxy
+
+- Directory `nginx-proxy`
+- Todo:
+  - [x] Reverse proxy server - [nginx:stable](https://hub.docker.com/_/nginx)
+    - [x] Dev mode - See [nginx-proxy/Dockerfile](https://github.com/t-ho/mern-stack/blob/master/nginx-proxy/Dockerfile)
+    - [x] Prod mode - See [nginx-proxy/Dockerfile.prod](https://github.com/t-ho/mern-stack/blob/master/nginx-proxy/Dockerfile.prod)
+  - [x] Configuring upstream servers' port numbers via `.env` file
+
+### 5. CI and CD
+
+- Directory `.github/workflows`
+- Todo:
+  - [x] Testing workflow
+  - [] Building and deploying workflow
 
 ## Getting started
 
@@ -32,7 +106,7 @@ cd mern-stack
 cp .env.example .env
 cp client/.env.example client/.env
 cp mobile/.env.example mobile/.env
-# Edit .env files to meet your requirements
+# Edit all three .env files to meet your requirements
 ```
 
 ### 3. Install package dependencies
@@ -103,6 +177,27 @@ npm run server:mobile
 
 - On Chrome, install [redux-devtools-extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd)
 - On Firefox, install [redux-devtools-add-ons](https://addons.mozilla.org/en-US/firefox/addon/reduxdevtools/)
+
+### 8. Docker
+
+You can start the MERN stack (`server` and `client` only) using `docker-compose`:
+
+```bash
+git clone https://github.com/t-ho/mern-stack.git
+cd mern-stack
+cp .env.example .env
+cp client/.env.example client/.env
+# Edit .env files to meet your requirements
+```
+
+After editing `.env` and `client/.env`, in the root directory `mern-stack`, run:
+
+```bash
+# For development
+docker-compose up
+```
+
+The `nginx-proxy` server will listen on port `8081` (`NGINX_PROXY_PORT`) by default.
 
 ## Testing
 
