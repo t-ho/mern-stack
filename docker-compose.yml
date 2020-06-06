@@ -1,5 +1,12 @@
 version: '3.8'
 services:
+  nginx-proxy:
+    restart: always
+    build:
+      context: ./
+      dockerfile: ./nginx-proxy/Dockerfile
+    ports:
+      - '${NGINX_PROXY_PORT}:${NGINX_PROXY_PORT}'
   mongo:
     image: mongo:latest
   server-api:
