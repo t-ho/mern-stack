@@ -49,7 +49,7 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
     - [x] Request password reset email page
     - [x] Request verification email page
     - [x] Reset password page
-    - [] Profile page
+    - [ ] Profile page
   - [ ] User management pages
     - [ ] User list page
     - [ ] User edit page
