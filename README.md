@@ -42,17 +42,17 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
   - [x] Redux store - [react-redux](https://www.npmjs.com/package/react-redux)
   - [x] Redux form - [redux-form](https://redux-form.com/8.3.0). NOTE: Migrate to [formik](https://jaredpalmer.com/formik) soon
   - [x] Router - [react-router-dom](https://www.npmjs.com/package/react-router-dom) - [connected-react-router](https://www.npmjs.com/package/connected-react-router)
-  - [] Material design - [Material-UI](https://material-ui.com)
-  - [] Authentication pages
+  - [ ] Material design - [Material-UI](https://material-ui.com)
+  - [ ] Authentication pages
     - [x] Sign up page
     - [x] Sign in page with email, Facebook or Google account
     - [x] Request password reset email page
     - [x] Request verification email page
     - [x] Reset password page
     - [] Profile page
-  - [] User management pages
-    - [] User list page
-    - [] User edit page
+  - [ ] User management pages
+    - [ ] User list page
+    - [ ] User edit page
   - [x] Docker support - [node:lts-buster](https://hub.docker.com/_/node) - [nginx:stable-alpine](https://hub.docker.com/_/nginx)
     - [x] Dev mode - See [client/Dockerfile](https://github.com/t-ho/mern-stack/blob/master/client/Dockerfile)
     - [x] Prod mode - See [client/Dockerfile.prod](https://github.com/t-ho/mern-stack/blob/master/client/Dockerfile.prod)
@@ -65,12 +65,12 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
   - [x] Redux store - [react-redux](https://www.npmjs.com/package/react-redux)
   - [x] Router - [react-navigation](https://reactnavigation.org)
   - [x] Material design - [react-native-paper](https://www.npmjs.com/package/react-native-paper)
-  - [] Authentication screens
+  - [ ] Authentication screens
     - [x] Sign up screen
     - [x] Sign in screen with email, Facebook or Google account
     - [x] Request password reset email screen
     - [x] Request verification email screen
-    - [] Settings screen
+    - [ ] Settings screen
 
 ### 4. Nginx Proxy
 
@@ -86,7 +86,7 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
 - Directory `.github/workflows`
 - Todo:
   - [x] Testing workflow
-  - [] Building and deploying workflow
+  - [ ] Building and deploying workflow
 
 ## Getting started
 
