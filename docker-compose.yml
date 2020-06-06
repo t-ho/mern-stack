@@ -12,6 +12,18 @@ services:
     environment:
       MONGO_URI: mongodb://mongo/merndb
     ports:
-      - '8080:8080'
+      - '${SERVER_PORT}:${SERVER_PORT}'
     depends_on:
       - mongo
+  client:
+    build:
+      context: ./
+      dockerfile: ./client/Dockerfile
+    volumes:
+      - /mern-stack/client/node_modules
+      - ./client:/mern-stack/client
+    stdin_open: true # FIXME: https://github.com/facebook/create-react-app/issues/8688
+    ports:
+      - '${PORT}:${PORT}'
+    depends_on:
+      - server-api
