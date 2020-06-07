@@ -47,8 +47,10 @@ let defaultConfig = {
     apiKey: 'This will be overriden by environment variable SENDGRID_API_KEY',
   },
   server: {
-    port: 'This will be overriden by environment variable SERVER_PORT',
     host: 'This will be overriden by environment variable SERVER_HOST',
+    port: 'This will be overriden by environment variable SERVER_PORT',
+    publicUrl:
+      'This will be overriden by environment variable SERVER_PUBLIC_URL',
   },
   paths: {
     root: fspath.normalize(`${__dirname}/..`),
