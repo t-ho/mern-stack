@@ -2,7 +2,7 @@ version: '3.8'
 services:
   mongo:
     image: mongo:latest
-  server-api:
+  api-server:
     build:
       context: ./
       dockerfile: ./server/Dockerfile
@@ -10,7 +10,7 @@ services:
       - /mern-stack/server/node_modules
       - ./server:/mern-stack/server
     environment:
-      MONGO_URI: mongodb://mongo/merndb
+      - MONGO_URI=mongodb://mongo/merndb
     ports:
       - '${SERVER_PORT}:${SERVER_PORT}'
     depends_on:
@@ -26,17 +26,18 @@ services:
     ports:
       - '${PORT}:${PORT}'
     depends_on:
-      - server-api
+      - api-server
   nginx-proxy:
     restart: always
     build:
       context: ./
       dockerfile: ./nginx-proxy/Dockerfile
     ports:
-      - '${NGINX_PROXY_PORT}:80'
+      - '${NGINX_PROXY_PORT}:${NGINX_PROXY_PORT}'
     environment:
-      - PORT=${PORT}
-      - SERVER_PORT=${SERVER_PORT}
+      - PORT
+      - SERVER_PORT
+      - NGINX_PROXY_PORT
     depends_on:
-      - server-api
+      - api-server
       - client
