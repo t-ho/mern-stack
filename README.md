@@ -2,7 +2,7 @@
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![license](https://img.shields.io/github/license/t-ho/mern-stack)](https://github.com/t-ho/mern-stack/blob/master/LICENSE)
 
-# MERN Stack
+# MERN Stack with Docker
 
 ### MongoDB - Express - React - Redux - React Native - NodeJS
 
@@ -182,19 +182,27 @@ npm run server:mobile
 
 You can start the MERN stack (`server` and `client` only) using `docker-compose`:
 
+**Development mode**
+
 ```bash
 git clone https://github.com/t-ho/mern-stack.git
 cd mern-stack
 cp .env.example .env
 cp client/.env.example client/.env
+
 # Edit .env files to meet your requirements
+docker-compose up
 ```
 
-After editing `.env` and `client/.env`, in the root directory `mern-stack`, run:
+**Production mode**
 
 ```bash
-# For development
-docker-compose up
+git clone https://github.com/t-ho/mern-stack.git
+cd mern-stack
+cp .env.example .env
+
+# Edit .env files to meet your requirements
+docker-compose -f docker-compose.prod.yml up
 ```
 
 The `nginx-proxy` server will listen on port `8080` (`NGINX_PROXY_PORT`) by default.
