@@ -2,7 +2,7 @@
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![license](https://img.shields.io/github/license/t-ho/mern-stack)](https://github.com/t-ho/mern-stack/blob/master/LICENSE)
 
-# MERN Stack
+# MERN Stack with Docker
 
 ### MongoDB - Express - React - Redux - React Native - NodeJS
 
@@ -124,7 +124,7 @@ To start `server`, `client`, and `mobile`, run:
 ```bash
 # In the root directory (mern):
 npm start
-# Server API is running at http://localhost:8080
+# Server API is running at http://localhost:8861
 # Web client is running at http://localhost:3000
 # Mobile - Expo DevTools is running at http://localhost:19002
 ```
@@ -148,7 +148,7 @@ Or to start `server` and `client` only, run:
 ```bash
 # In the root directory (mern):
 npm run server:client
-# Server API is running at http://localhost:8080
+# Server API is running at http://localhost:8861
 # Web client is running at http://localhost:3000
 ```
 
@@ -157,7 +157,7 @@ Or to start `server` and `mobile` only, run:
 ```bash
 # In the root directory (mern):
 npm run server:mobile
-# Server API is running at http://localhost:8080
+# Server API is running at http://localhost:8861
 # Mobile - Expo DevTools is running at http://localhost:19002
 ```
 
@@ -182,22 +182,30 @@ npm run server:mobile
 
 You can start the MERN stack (`server` and `client` only) using `docker-compose`:
 
+**Development mode**
+
 ```bash
 git clone https://github.com/t-ho/mern-stack.git
 cd mern-stack
 cp .env.example .env
 cp client/.env.example client/.env
+
 # Edit .env files to meet your requirements
-```
-
-After editing `.env` and `client/.env`, in the root directory `mern-stack`, run:
-
-```bash
-# For development
 docker-compose up
 ```
 
-The `nginx-proxy` server will listen on port `8081` (`NGINX_PROXY_PORT`) by default.
+**Production mode**
+
+```bash
+git clone https://github.com/t-ho/mern-stack.git
+cd mern-stack
+cp .env.example .env
+
+# Edit .env files to meet your requirements
+docker-compose -f docker-compose.prod.yml up
+```
+
+The `nginx-proxy` server will listen on port `8080` (`NGINX_PROXY_PORT`) by default.
 
 ## Testing
 
