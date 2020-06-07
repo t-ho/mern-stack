@@ -421,7 +421,7 @@ const sendPasswordResetToken = (req, res, next) => {
         If this was you, click button below to reset your password.
         Otherwise, ignore this email.`,
         'Reset Password',
-        `${config.server.host}/reset-password/${user.token}` // FIXME: Fix port number
+        `${config.server.publicUrl}/reset-password/${user.token}` // FIXME: Fix port number
       );
     })
     .then((result) => {
@@ -481,7 +481,7 @@ const sendVerificationEmailAsync = (user) => {
     `Welcome to ${config.app.title}`,
     'Before you can start using your account, please verify it by following the link below:',
     'Verify Email',
-    `${config.server.host}/verify-email/${user.token}` // FIXME: fix port number
+    `${config.server.publicUrl}/verify-email/${user.token}` // FIXME: fix port number
   );
 };
 

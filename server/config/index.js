@@ -19,6 +19,7 @@ const envVarsSchema = Joi.object({
   NODE_ENV: Joi.string().valid('development', 'production', 'test'),
   SERVER_HOST: Joi.string().required(),
   SERVER_PORT: Joi.number().required(),
+  SERVER_PUBLIC_URL: Joi.string().uri().required(),
   SENDGRID_API_KEY: Joi.string(),
 }).unknown();
 
@@ -46,6 +47,7 @@ let envConfig = {
   server: {
     host: value.SERVER_HOST,
     port: value.SERVER_PORT,
+    publicUrl: value.SERVER_PUBLIC_URL,
   },
   oauth: {
     facebook: {
