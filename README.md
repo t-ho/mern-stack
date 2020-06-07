@@ -124,7 +124,7 @@ To start `server`, `client`, and `mobile`, run:
 ```bash
 # In the root directory (mern):
 npm start
-# Server API is running at http://localhost:8080
+# Server API is running at http://localhost:8861
 # Web client is running at http://localhost:3000
 # Mobile - Expo DevTools is running at http://localhost:19002
 ```
@@ -148,7 +148,7 @@ Or to start `server` and `client` only, run:
 ```bash
 # In the root directory (mern):
 npm run server:client
-# Server API is running at http://localhost:8080
+# Server API is running at http://localhost:8861
 # Web client is running at http://localhost:3000
 ```
 
@@ -157,7 +157,7 @@ Or to start `server` and `mobile` only, run:
 ```bash
 # In the root directory (mern):
 npm run server:mobile
-# Server API is running at http://localhost:8080
+# Server API is running at http://localhost:8861
 # Mobile - Expo DevTools is running at http://localhost:19002
 ```
 
@@ -197,7 +197,7 @@ After editing `.env` and `client/.env`, in the root directory `mern-stack`, run:
 docker-compose up
 ```
 
-The `nginx-proxy` server will listen on port `8081` (`NGINX_PROXY_PORT`) by default.
+The `nginx-proxy` server will listen on port `8080` (`NGINX_PROXY_PORT`) by default.
 
 ## Testing
 
