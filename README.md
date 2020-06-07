@@ -2,6 +2,8 @@
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![license](https://img.shields.io/github/license/t-ho/mern-stack)](https://github.com/t-ho/mern-stack/blob/master/LICENSE)
 
+[![mern-logo](https://raw.githubusercontent.com/t-ho/mern-stack/assets/assets/mern-logo.png)](https://github.com/t-ho/mern-stack)
+
 # MERN Stack with Docker
 
 ### MongoDB - Express - React - Redux - React Native - NodeJS
