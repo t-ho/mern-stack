@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import requireRole from '../../hoc/requireRole';
 import { getCurrentUser, getSignedInWith } from '../../store/selectors';
 
 class Profile extends React.Component {
@@ -11,7 +10,7 @@ class Profile extends React.Component {
     if (currentUser.provider) {
       picture = currentUser.provider[signedInWith].picture;
     }
-    picture = picture ? picture : '/logo512.png';
+    picture = picture ? picture : '/logo-circle512.png';
     return (
       <div className="ui centered grid padded">
         <div className="ui raised card">
@@ -48,7 +47,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default compose(
-  requireRole('user'),
-  connect(mapStateToProps, {})
-)(Profile);
+export default compose(connect(mapStateToProps, {}))(Profile);

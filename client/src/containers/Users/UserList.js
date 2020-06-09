@@ -1,5 +1,4 @@
 import React from 'react';
-import requireRole from '../../hoc/requireRole';
 
 const UserList = () => {
   return (
@@ -10,4 +9,4 @@ const UserList = () => {
   );
 };
 
-export default requireRole('admin')(UserList);
+export default UserList;

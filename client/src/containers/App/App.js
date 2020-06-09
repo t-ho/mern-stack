@@ -1,6 +1,8 @@
 import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
+import AnonymousRoute from '../../components/AnonymousRoute';
+import ProtectedRoute from '../../components/ProtectedRoute';
 import Header from '../../components/Header';
 import SignIn from '../Auth/SignIn';
 import SignUp from '../Auth/SignUp';
@@ -23,20 +25,30 @@ class App extends React.Component {
       <div className="ui container">
         <Header />
         <Switch>
-          <Route path="/signin" component={SignIn} />
-          <Route path="/signup" component={SignUp} />
-          <Route path="/verify-email/:token" component={VerifyEmail} />
-          <Route
-            path="/request-verification-email"
-            component={RequestVerificationEmail}
-          />
-          <Route
-            path="/request-password-reset"
-            component={RequestPasswordReset}
-          />
-          <Route path="/reset-password/:token" component={ResetPassword} />
-          <Route path="/profile" component={Profile} />
-          <Route path="/users" component={UserList} />
+          <AnonymousRoute path="/signin">
+            <SignIn />
+          </AnonymousRoute>
+          <AnonymousRoute path="/signup">
+            <SignUp />
+          </AnonymousRoute>
+          <AnonymousRoute path="/verify-email/:token">
+            <VerifyEmail />
+          </AnonymousRoute>
+          <AnonymousRoute path="/request-verification-email">
+            <RequestVerificationEmail />
+          </AnonymousRoute>
+          <AnonymousRoute path="/request-password-reset">
+            <RequestPasswordReset />
+          </AnonymousRoute>
+          <AnonymousRoute path="/reset-password/:token">
+            <ResetPassword />
+          </AnonymousRoute>
+          <ProtectedRoute path="/profile">
+            <Profile />
+          </ProtectedRoute>
+          <ProtectedRoute path="/users" permissions="updateUsers">
+            <UserList />
+          </ProtectedRoute>
           <Route path="/">
             {this.props.isSignedIn ? (
               <Redirect to="/profile" />
