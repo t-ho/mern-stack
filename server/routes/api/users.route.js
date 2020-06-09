@@ -5,9 +5,8 @@ const createCan = require('../../middleware/createCan');
 
 const router = express.Router();
 const jwtAuthenticate = createAuthStrategy('jwt');
-const canDeleteUsers = createCan('deleteUsers');
-const canReadUsers = createCan('readUsers');
-const canUpdateUsers = createCan('updateUsers');
+const canReadUsers = createCan('usersRead');
+const canModifyUsers = createCan('usersModify');
 
 router.use(jwtAuthenticate);
 
@@ -18,8 +17,8 @@ router.get('/', canReadUsers, usersCtr.getUsers);
 
 router.get('/:userId', canReadUsers, usersCtr.getUser);
 
-router.put('/:userId', canUpdateUsers, usersCtr.updateUser);
+router.put('/:userId', canModifyUsers, usersCtr.updateUser);
 
-router.delete('/:userId', canDeleteUsers, usersCtr.deleteUser);
+router.delete('/:userId', canModifyUsers, usersCtr.deleteUser);
 
 module.exports = router;

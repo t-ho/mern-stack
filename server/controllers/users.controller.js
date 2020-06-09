@@ -137,7 +137,7 @@ const updateUserSchema = Joi.object({
  * @function updatedUser
  * Update user controller.
  *
- * @param {string} [req.body.role] The role could be 'root', 'admin' or 'user'
+ * @param {string} [req.body.role] The role could be 'root', 'admin' or 'user'. Only root are allowed to update role.
  * @param {status} [req.body.status] The status of user
  * @param {object} [req.body.permissions] The permissions object
  */
@@ -149,7 +149,7 @@ module.exports.updateUser = (req, res, next) => {
       if (req.body.role) {
         if (
           (req.user.role === 'admin' && req.body.role !== 'user') ||
-          (req.user.role === 'root' && req.body.role === 'root')
+          (req.user.role === 'user' && req.body.role !== 'user')
         ) {
           throw createError(403, 'Forbidden action');
         }

@@ -74,27 +74,30 @@ describe('ENDPOINT: GET /api/users/', function () {
       .set('Authorization', `Bearer ${currentUser.jwtToken}`)
       .expect(200)
       .then((res) => {
-        expect(res.body.usersCount).to.be.equal(3);
+        expect(res.body.usersCount).to.be.equal(8);
         res.body.users.forEach((user) => {
           expect(user.id).to.be.equal(
-            app.locals.existing[[user.role]]._id.toString()
+            app.locals.existing[[user.username]]._id.toString()
           );
           expect(user).to.have.property('createdAt');
           expect(user).to.have.property('updatedAt');
           expect(user.provider).to.deep.equal({
             local: {
-              userId: app.locals.existing[[user.role]]._id.toString(),
+              userId: app.locals.existing[[user.username]]._id.toString(),
             },
             google: {
               // not have property "accessToken" and "refreshToken"
-              userId: app.locals.existing[[user.role]].provider.google.userId,
-              picture: app.locals.existing[[user.role]].provider.google.picture,
+              userId:
+                app.locals.existing[[user.username]].provider.google.userId,
+              picture:
+                app.locals.existing[[user.username]].provider.google.picture,
             },
             facebook: {
               // not have property "accessToken" and "refreshToken"
-              userId: app.locals.existing[[user.role]].provider.facebook.userId,
+              userId:
+                app.locals.existing[[user.username]].provider.facebook.userId,
               picture:
-                app.locals.existing[[user.role]].provider.facebook.picture,
+                app.locals.existing[[user.username]].provider.facebook.picture,
             },
           });
           expect(user).to.not.have.property('hashedPassword');
@@ -103,7 +106,7 @@ describe('ENDPOINT: GET /api/users/', function () {
           expect(user).to.not.have.property('token');
           expect(user).to.not.have.property('tokenPurpose');
           expect(user).to.deep.include(
-            _.pick(app.locals.existing[[user.role]].toObject(), [
+            _.pick(app.locals.existing[[user.username]].toObject(), [
               'username',
               'email',
               'status',
@@ -210,28 +213,32 @@ describe('ENDPOINT: GET /api/users/:id', function () {
       .expect(200)
       .then((res) => {
         expect(res.body.user.id).to.be.equal(
-          app.locals.existing[[res.body.user.role]]._id.toString()
+          app.locals.existing[[res.body.user.username]]._id.toString()
         );
         expect(res.body.user).to.have.property('createdAt');
         expect(res.body.user).to.have.property('updatedAt');
         expect(res.body.user.provider).to.deep.equal({
           local: {
-            userId: app.locals.existing[[res.body.user.role]]._id.toString(),
+            userId: app.locals.existing[
+              [res.body.user.username]
+            ]._id.toString(),
           },
           google: {
             // not have property "accessToken" and "refreshToken"
             userId:
-              app.locals.existing[[res.body.user.role]].provider.google.userId,
+              app.locals.existing[[res.body.user.username]].provider.google
+                .userId,
             picture:
-              app.locals.existing[[res.body.user.role]].provider.google.picture,
+              app.locals.existing[[res.body.user.username]].provider.google
+                .picture,
           },
           facebook: {
             // not have property "accessToken" and "refreshToken"
             userId:
-              app.locals.existing[[res.body.user.role]].provider.facebook
+              app.locals.existing[[res.body.user.username]].provider.facebook
                 .userId,
             picture:
-              app.locals.existing[[res.body.user.role]].provider.facebook
+              app.locals.existing[[res.body.user.username]].provider.facebook
                 .picture,
           },
         });
@@ -241,7 +248,7 @@ describe('ENDPOINT: GET /api/users/:id', function () {
         expect(res.body.user).to.not.have.property('token');
         expect(res.body.user).to.not.have.property('tokenPurpose');
         expect(res.body.user).to.deep.include(
-          _.pick(app.locals.existing[[res.body.user.role]].toObject(), [
+          _.pick(app.locals.existing[[res.body.user.username]].toObject(), [
             'username',
             'email',
             'status',
@@ -380,9 +387,16 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
       .expect({ error: { message: 'Forbidden action' } }, done);
   };
 
-  it(`PUT ${endpoint}/:userId - Normal user cannot update itself and other normal user`, function (done) {
+  it(`PUT ${endpoint}/:userId - Normal user cannot update itself`, function (done) {
     const currentUser = app.locals.existing.user;
     const targetUser = app.locals.existing.user;
+    const payload = { status: 'active' };
+    testUserCannotUpdateOther(currentUser, targetUser, payload, done);
+  });
+
+  it(`PUT ${endpoint}/:userId - Normal user cannot update other normal user`, function (done) {
+    const currentUser = app.locals.existing.user;
+    const targetUser = app.locals.existing.anotheruser;
     const payload = { status: 'active' };
     testUserCannotUpdateOther(currentUser, targetUser, payload, done);
   });
@@ -401,9 +415,58 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
     testUserCannotUpdateOther(currentUser, targetUser, payload, done);
   });
 
-  it(`PUT ${endpoint}/:userId - Admin cannot update itself and other admin`, function (done) {
+  it(`PUT ${endpoint}/:userId - Special user cannot set role = 'admin' to other normal user`, function (done) {
+    const currentUser = app.locals.existing.specialuser;
+    const targetUser = app.locals.existing.user;
+    const payload = { role: 'admin' };
+    testUserCannotUpdateOther(currentUser, targetUser, payload, done);
+  });
+
+  it(`PUT ${endpoint}/:userId - Special user cannot set role = 'root' to other normal user`, function (done) {
+    const currentUser = app.locals.existing.specialuser;
+    const targetUser = app.locals.existing.user;
+    const payload = { role: 'root' };
+    testUserCannotUpdateOther(currentUser, targetUser, payload, done);
+  });
+
+  it(`PUT ${endpoint}/:userId - Special user cannot update itself`, function (done) {
+    const currentUser = app.locals.existing.specialuser;
+    const targetUser = app.locals.existing.specialuser;
+    const payload = { status: 'active' };
+    testUserCannotUpdateOther(currentUser, targetUser, payload, done);
+  });
+
+  it(`PUT ${endpoint}/:userId - Special user cannot update other special user`, function (done) {
+    const currentUser = app.locals.existing.specialuser;
+    const targetUser = app.locals.existing.anotherspecialuser;
+    const payload = { status: 'active' };
+    testUserCannotUpdateOther(currentUser, targetUser, payload, done);
+  });
+
+  it(`PUT ${endpoint}/:userId - Special user cannot update admin`, function (done) {
+    const currentUser = app.locals.existing.specialuser;
+    const targetUser = app.locals.existing.admin;
+    const payload = { status: 'active' };
+    testUserCannotUpdateOther(currentUser, targetUser, payload, done);
+  });
+
+  it(`PUT ${endpoint}/:userId - Special user cannot update root`, function (done) {
+    const currentUser = app.locals.existing.specialuser;
+    const targetUser = app.locals.existing.root;
+    const payload = { status: 'active' };
+    testUserCannotUpdateOther(currentUser, targetUser, payload, done);
+  });
+
+  it(`PUT ${endpoint}/:userId - Admin cannot update itself`, function (done) {
     const currentUser = app.locals.existing.admin;
     const targetUser = app.locals.existing.admin;
+    const payload = { status: 'active' };
+    testUserCannotUpdateOther(currentUser, targetUser, payload, done);
+  });
+
+  it(`PUT ${endpoint}/:userId - Admin cannot update other admin`, function (done) {
+    const currentUser = app.locals.existing.admin;
+    const targetUser = app.locals.existing.anotheradmin;
     const payload = { status: 'active' };
     testUserCannotUpdateOther(currentUser, targetUser, payload, done);
   });
@@ -429,27 +492,6 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
     testUserCannotUpdateOther(currentUser, targetUser, payload, done);
   });
 
-  it(`PUT ${endpoint}/:userId - Root cannot update root`, function (done) {
-    const currentUser = app.locals.existing.root;
-    const targetUser = app.locals.existing.root;
-    const payload = { status: 'active' };
-    testUserCannotUpdateOther(currentUser, targetUser, payload, done);
-  });
-
-  it(`PUT ${endpoint}/:userId - Root cannot set role = 'root' to other admin user`, function (done) {
-    const currentUser = app.locals.existing.root;
-    const targetUser = app.locals.existing.admin;
-    const payload = { role: 'root' };
-    testUserCannotUpdateOther(currentUser, targetUser, payload, done);
-  });
-
-  it(`PUT ${endpoint}/:userId - Root cannot set role = 'root' to other normal user`, function (done) {
-    const currentUser = app.locals.existing.root;
-    const targetUser = app.locals.existing.user;
-    const payload = { role: 'root' };
-    testUserCannotUpdateOther(currentUser, targetUser, payload, done);
-  });
-
   const testUserCanUpdateOther = (currentUser, targetUser, newRole, done) => {
     const User = mongoose.model('User');
     const payload = {
@@ -464,7 +506,8 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
       subId: '5e24db1d560ba309f0b0b5a8',
       permissions: {
         // this will be updated
-        debug: true,
+        usersModify: true,
+        usersRead: false,
       },
       provider: {
         // this will be updated
@@ -511,9 +554,27 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
       .catch(done);
   };
 
+  it(`PUT ${endpoint}/:userId - Special user can update normal user (only update status, role and permissions)`, function (done) {
+    const currentUser = app.locals.existing.specialuser;
+    const targetUser = app.locals.existing.user;
+    testUserCanUpdateOther(currentUser, targetUser, 'user', done);
+  });
+
   it(`PUT ${endpoint}/:userId - Admin can update normal user (only update status, role and permissions)`, function (done) {
     const currentUser = app.locals.existing.admin;
     const targetUser = app.locals.existing.user;
+    testUserCanUpdateOther(currentUser, targetUser, 'user', done);
+  });
+
+  it(`PUT ${endpoint}/:userId - Root can update itself (only update status, role and permissions)`, function (done) {
+    const currentUser = app.locals.existing.root;
+    const targetUser = app.locals.existing.root;
+    testUserCanUpdateOther(currentUser, targetUser, 'user', done);
+  });
+
+  it(`PUT ${endpoint}/:userId - Root can update other root (only update status, role and permissions)`, function (done) {
+    const currentUser = app.locals.existing.root;
+    const targetUser = app.locals.existing.anotherroot;
     testUserCanUpdateOther(currentUser, targetUser, 'user', done);
   });
 
@@ -523,10 +584,10 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
     testUserCanUpdateOther(currentUser, targetUser, 'user', done);
   });
 
-  it(`PUT ${endpoint}/:userId - Root can update normal admin (only update status, role and permissions)`, function (done) {
+  it(`PUT ${endpoint}/:userId - Root can update normal user (only update status, role and permissions)`, function (done) {
     const currentUser = app.locals.existing.root;
     const targetUser = app.locals.existing.user;
-    testUserCanUpdateOther(currentUser, targetUser, 'admin', done);
+    testUserCanUpdateOther(currentUser, targetUser, 'root', done);
   });
 });
 
@@ -601,9 +662,15 @@ describe('ENDPOINT: DELETE /api/users/:userId', function () {
       .expect({ error: { message: 'Forbidden action' } }, done);
   };
 
-  it(`DELETE ${endpoint}/:userId - Normal user cannot delete itself and other normal user`, function (done) {
+  it(`DELETE ${endpoint}/:userId - Normal user cannot delete itself`, function (done) {
     const currentUser = app.locals.existing.user;
     const targetUser = app.locals.existing.user;
+    testUserCannotDeleteOther(currentUser, targetUser, done);
+  });
+
+  it(`DELETE ${endpoint}/:userId - Normal user cannot delete other normal user`, function (done) {
+    const currentUser = app.locals.existing.user;
+    const targetUser = app.locals.existing.anotheruser;
     testUserCannotDeleteOther(currentUser, targetUser, done);
   });
 
@@ -619,20 +686,56 @@ describe('ENDPOINT: DELETE /api/users/:userId', function () {
     testUserCannotDeleteOther(currentUser, targetUser, done);
   });
 
-  it(`DELETE ${endpoint}/:userId - Admin cannot delete itself and other admin`, function (done) {
+  it(`DELETE ${endpoint}/:userId - Special user cannot delete itself`, function (done) {
+    const currentUser = app.locals.existing.specialuser;
+    const targetUser = app.locals.existing.specialuser;
+    testUserCannotDeleteOther(currentUser, targetUser, done);
+  });
+
+  it(`DELETE ${endpoint}/:userId - Special user cannot delete other special user`, function (done) {
+    const currentUser = app.locals.existing.specialuser;
+    const targetUser = app.locals.existing.anotherspecialuser;
+    testUserCannotDeleteOther(currentUser, targetUser, done);
+  });
+
+  it(`DELETE ${endpoint}/:userId - Special user cannot delete admin`, function (done) {
+    const currentUser = app.locals.existing.specialuser;
+    const targetUser = app.locals.existing.admin;
+    testUserCannotDeleteOther(currentUser, targetUser, done);
+  });
+
+  it(`DELETE ${endpoint}/:userId - Special user cannot delete root`, function (done) {
+    const currentUser = app.locals.existing.specialuser;
+    const targetUser = app.locals.existing.root;
+    testUserCannotDeleteOther(currentUser, targetUser, done);
+  });
+
+  it(`DELETE ${endpoint}/:userId - Special user cannot delete admin`, function (done) {
+    const currentUser = app.locals.existing.specialuser;
+    const targetUser = app.locals.existing.admin;
+    testUserCannotDeleteOther(currentUser, targetUser, done);
+  });
+
+  it(`DELETE ${endpoint}/:userId - Special user cannot delete root`, function (done) {
+    const currentUser = app.locals.existing.specialuser;
+    const targetUser = app.locals.existing.root;
+    testUserCannotDeleteOther(currentUser, targetUser, done);
+  });
+
+  it(`DELETE ${endpoint}/:userId - Admin cannot delete itself`, function (done) {
     const currentUser = app.locals.existing.admin;
     const targetUser = app.locals.existing.admin;
     testUserCannotDeleteOther(currentUser, targetUser, done);
   });
 
-  it(`DELETE ${endpoint}/:userId - Admin cannot delete root`, function (done) {
-    currentUser = app.locals.existing.admin;
-    const targetUser = app.locals.existing.root;
+  it(`DELETE ${endpoint}/:userId - Admin cannot delete other admin`, function (done) {
+    const currentUser = app.locals.existing.admin;
+    const targetUser = app.locals.existing.anotheradmin;
     testUserCannotDeleteOther(currentUser, targetUser, done);
   });
 
-  it(`DELETE ${endpoint}/:userId - Root cannot delete root`, function (done) {
-    const currentUser = app.locals.existing.root;
+  it(`DELETE ${endpoint}/:userId - Admin cannot delete root`, function (done) {
+    currentUser = app.locals.existing.admin;
     const targetUser = app.locals.existing.root;
     testUserCannotDeleteOther(currentUser, targetUser, done);
   });
@@ -652,9 +755,33 @@ describe('ENDPOINT: DELETE /api/users/:userId', function () {
       .catch(done);
   };
 
+  it(`DELETE ${endpoint}/:userId - Special user can delete normal user`, function (done) {
+    const currentUser = app.locals.existing.specialuser;
+    const targetUser = app.locals.existing.user;
+    testUserCanDeleteOther(currentUser, targetUser, done);
+  });
+
   it(`DELETE ${endpoint}/:userId - Admin can delete normal user`, function (done) {
     const currentUser = app.locals.existing.admin;
     const targetUser = app.locals.existing.user;
+    testUserCanDeleteOther(currentUser, targetUser, done);
+  });
+
+  it(`DELETE ${endpoint}/:userId - Admin can delete normal user`, function (done) {
+    const currentUser = app.locals.existing.admin;
+    const targetUser = app.locals.existing.user;
+    testUserCanDeleteOther(currentUser, targetUser, done);
+  });
+
+  it(`DELETE ${endpoint}/:userId - Root can delete itself`, function (done) {
+    const currentUser = app.locals.existing.root;
+    const targetUser = app.locals.existing.root;
+    testUserCanDeleteOther(currentUser, targetUser, done);
+  });
+
+  it(`DELETE ${endpoint}/:userId - Root can delete other root`, function (done) {
+    const currentUser = app.locals.existing.root;
+    const targetUser = app.locals.existing.anotherroot;
     testUserCanDeleteOther(currentUser, targetUser, done);
   });
 

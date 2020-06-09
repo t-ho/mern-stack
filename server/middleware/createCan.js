@@ -9,14 +9,15 @@ const User = mongoose.model('User');
  * Create a middleware to determine whether the current user has permission
  * to perform the given actions.
  *
- * If the actions contains either "updateUsers" or "deleteUsers", it will check the
+ * If the actions array contains "usersModify", it will check the
  * role of the current user and target user (res.locals.targetUser).
  *
- * RULES for updating and deleting users
+ * RULES for modifying (updating and deleting) users
  * * Root > admin > user
- * * Users CANNOT perform actions(update or delete) on the other users
- * who have the same role.
- * * Users CANNOT update or delete themselves.
+ * * Root CAN do anything
+ * * Admin CANNOT modify other admin and root
+ * * User with "usersModify" permission CANNOT update root, admin and other user with "usersModify" permission
+ * * Admin and User CANNOT modify themselves
  *
  * Example:
  * * Root users cannot update or delete other root users.
@@ -26,23 +27,21 @@ const User = mongoose.model('User');
  * @param {boolean=false} requiresAny If true, at least one action must pass to continue. Otherwise, ALL actions must be pass to continue.
  * See User Schema for a full list of permissions
  *
- * NOTE: readUsers, insertUsers, updateUsers and deleteUsers are not listed in the
- * User Schema meaning normal users DO NOT have any permissions on User Collection at all.
  */
 const createCan = (actions, requiresAny = false) => (req, res, next) => {
+  if (req.user && req.user.role === 'root') {
+    return next();
+  }
+
   if (!req.user || (req.user && !req.user.can(actions, requiresAny))) {
     return next(createError(403, 'Forbidden action'));
   }
 
-  if (
-    _.castArray(actions).every(
-      (action) => action !== 'updateUsers' && action !== 'deleteUsers'
-    )
-  ) {
+  if (_.castArray(actions).every((action) => action !== 'usersModify')) {
     return next();
   }
 
-  // Now action === 'updateUsers' or action === 'deleteUsers'
+  // Now 'usersModify' is in the list of actions
   const targetUser = res.locals.targetUser;
   let canContinue = false;
   if (!targetUser || (targetUser && !(targetUser instanceof User))) {
@@ -54,11 +53,16 @@ const createCan = (actions, requiresAny = false) => (req, res, next) => {
       )
     );
   }
-  if (req.user.role === 'root' && targetUser.role !== 'root') {
+  if (req.user.role === 'admin' && targetUser.role === 'user') {
     canContinue = true;
-  } else if (req.user.role === 'admin' && targetUser.role === 'user') {
+  } else if (
+    req.user.role === 'user' &&
+    targetUser.role === 'user' &&
+    targetUser.permissions['usersModify'] === false
+  ) {
     canContinue = true;
   }
+
   if (canContinue) {
     return next();
   }

@@ -43,7 +43,7 @@ beforeEach(function (done) {
     app.locals.existing = {};
     users.forEach((user) => {
       user.jwtToken = generateJwtToken(user);
-      app.locals.existing[[user.role]] = user;
+      app.locals.existing[[user.username]] = user;
     });
     done();
   });
