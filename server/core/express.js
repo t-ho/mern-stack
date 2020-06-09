@@ -46,8 +46,16 @@ app.use(routes);
 
 app.use('/public', express.static(path.resolve(__dirname, '../public')));
 
-// catch 404 errors and forward to error handler
-app.use((req, res, next) => next(createError(404, 'Not Found')));
+// catch 404 errors and forward to error handler by default
+app.use((req, res, next) => {
+  res.format({
+    'application/json': () => next(createError(404, 'Not Found')),
+    'text/html': () => {
+      res.sendFile(path.resolve(__dirname, '../public/404.html'));
+    },
+    default: () => next(createError(404, 'Not Found')),
+  });
+});
 
 // error handler
 // print stacktrace during development

@@ -2,7 +2,6 @@ import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { requestPasswordReset, unloadAuthPage } from '../../store/actions';
-import requireAnonymous from '../../hoc/requireAnonymous';
 import RequestTokenForm from '../../components/RequestTokenForm';
 
 class RequestPasswordReset extends React.Component {
@@ -21,7 +20,6 @@ class RequestPasswordReset extends React.Component {
   }
 }
 
-export default compose(
-  requireAnonymous(),
-  connect(null, { requestPasswordReset, unloadAuthPage })
-)(RequestPasswordReset);
+export default compose(connect(null, { requestPasswordReset, unloadAuthPage }))(
+  RequestPasswordReset
+);

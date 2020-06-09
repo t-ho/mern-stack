@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import requireAnonymous from '../../hoc/requireAnonymous';
 import { verifyEmail, unloadAuthPage } from '../../store/actions';
 import { getError } from '../../store/selectors';
 
@@ -41,6 +40,5 @@ const maptStateToProps = (state) => {
 };
 
 export default compose(
-  requireAnonymous(),
   connect(maptStateToProps, { verifyEmail, unloadAuthPage })
 )(SignIn);

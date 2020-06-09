@@ -76,17 +76,12 @@ const userSchema = new mongoose.Schema(
     // By default, root and admin can do any thing (permissions field is ignored).
     // So, call user.can(action) to determine permission on Collections.
     // The rules for updating and deleting users are implemented in createCan middleware.
-
-    // NOTE: readUsers, insertUsers, updateUsers and deleteUsers are not listed
-    // here which means that normal users DO NOT have any permissions on User
-    // Collection at all.
     permissions: {
-      debug: { type: Boolean, default: false },
+      usersModify: { type: Boolean, default: false }, // Insert, Update and Delete
+      usersRead: { type: Boolean, default: false }, // Read only
       // Example: permissions for Posts collection should be defined as below:
-      // readPosts: { type: Boolean, default: false },
-      // insertPosts: { type: Boolean, default: false },
-      // updatePosts: { type: Boolean, default: false },
-      // deletePosts: { type: Boolean, default: false }
+      // postsModify: { type: Boolean, default: false }, // Insert, Update and Delete
+      // postsRead: { type: Boolean, default: false }, // Read only
     },
     // token for veryfication email or reset password purpose, NOT JWT token
     // Do NOT set directly, call user.setToken(tokenPurpose) user.clearToken()
@@ -117,7 +112,7 @@ userSchema.virtual('fullName').get(function () {
  */
 userSchema.methods.toJsonFor = function (user) {
   const userObj = this.toObject();
-  if (user && (user.can('readUsers') || user._id == this._id)) {
+  if (user && (user.can('usersRead') || user._id === this._id)) {
     const provider = _.mapValues(userObj.provider, (p) => {
       return _.pick(p, ['userId', 'picture']);
     });
