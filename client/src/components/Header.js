@@ -10,11 +10,12 @@ export class Header extends React.Component {
     if (isSignedIn) {
       return (
         <>
-          {(currentUser.role === 'root' || currentUser.role === 'admin') && (
-            <NavLink to="/users" className="item">
-              Manage Users
-            </NavLink>
-          )}
+          {currentUser.permissions['usersRead'] &&
+            currentUser.permissions['usersModify'] && (
+              <NavLink to="/users" className="item">
+                Manage Users
+              </NavLink>
+            )}
           <button
             style={{ cursor: 'pointer' }}
             onClick={this.props.signOut}

@@ -46,7 +46,10 @@ class App extends React.Component {
           <ProtectedRoute path="/profile">
             <Profile />
           </ProtectedRoute>
-          <ProtectedRoute path="/users" permissions="updateUsers">
+          <ProtectedRoute
+            path="/users"
+            permissions={['usersRead', 'usersModify']}
+          >
             <UserList />
           </ProtectedRoute>
           <Route path="/">
