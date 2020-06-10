@@ -12,5 +12,6 @@ FROM nginx:stable
 COPY --from=builder /mern-stack/client/build /usr/share/nginx/html
 COPY ./client/nginx.default.conf.template.prod /nginx.default.conf.template
 COPY ./client/nginx-entrypoint.sh /
+RUN chmod +x nginx-entrypoint.sh
 ENTRYPOINT [ "/nginx-entrypoint.sh" ]
 CMD ["nginx", "-g", "daemon off;"]
