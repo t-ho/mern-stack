@@ -126,8 +126,8 @@ To start `server`, `client`, and `mobile`, run:
 ```bash
 # In the root directory (mern):
 npm start
-# Server API is running at http://localhost:8861
-# Web client is running at http://localhost:3000
+# Server API is running at http://localhost:SERVER_PORT (http://localhost:8861 by default)
+# Web client is running at http://localhost:PORT (http://localhost:3000 by default)
 # Mobile - Expo DevTools is running at http://localhost:19002
 ```
 
@@ -150,8 +150,8 @@ Or to start `server` and `client` only, run:
 ```bash
 # In the root directory (mern):
 npm run server:client
-# Server API is running at http://localhost:8861
-# Web client is running at http://localhost:3000
+# Server API is running at http://localhost:SERVER_PORT (http://localhost:8861 by default)
+# Web client is running at http://localhost:PORT (http://localhost:3000 by default)
 ```
 
 Or to start `server` and `mobile` only, run:
@@ -159,7 +159,7 @@ Or to start `server` and `mobile` only, run:
 ```bash
 # In the root directory (mern):
 npm run server:mobile
-# Server API is running at http://localhost:8861
+# Server API is running at http://localhost:SERVER_PORT (http://localhost:8861 by default)
 # Mobile - Expo DevTools is running at http://localhost:19002
 ```
 
@@ -192,8 +192,9 @@ cd mern-stack
 cp .env.example .env
 cp client/.env.example client/.env
 
-# Edit .env files to meet your requirements
+# Edit the .env file to meet your requirements
 docker-compose up
+# The mongoDB service listen on port 27018
 ```
 
 **Production mode**
@@ -203,7 +204,7 @@ git clone https://github.com/t-ho/mern-stack.git
 cd mern-stack
 cp .env.example .env
 
-# Edit .env files to meet your requirements
+# Edit the .env file to meet your requirements
 docker-compose -f docker-compose.prod.yml up
 ```
 
