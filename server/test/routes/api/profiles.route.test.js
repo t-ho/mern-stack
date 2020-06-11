@@ -171,8 +171,9 @@ describe('ENDPOINT: PUT /api/profiles/', function () {
       role: 'root',
       subId: '5e24db1d560ba309f0b0b5a8',
       permissions: {
-        usersModify: true,
-        usersRead: true,
+        userInsert: true,
+        userModify: true,
+        userRead: true,
       },
       provider: {
         google: {

@@ -1,28 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Redirect, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getCurrentUser, getIsSignedIn } from '../store/selectors';
-import { setAttemptedPath } from '../store/actions';
+import { getCurrentUser, getIsSignedIn } from '../../store/selectors';
 
 /**
  * If the current user is admin or root, he/she is authorized by default.
  * If the current user is normal user, then check his/her permssions.
- * After checking, if he/she is not authorized, redirect to default path.
+ * After checking, if he/she is authorized, render the children component. Otherwise, render nothing.
  *
  */
-class ProtectedRoute extends React.Component {
+class ProtectedComponent extends React.Component {
   isAuthorized = () => {
-    const {
-      currentUser,
-      isSignedIn,
-      permissions,
-      requiresAny,
-      location,
-      setAttemptedPath,
-    } = this.props;
+    const { currentUser, isSignedIn, permissions, requiresAny } = this.props;
     if (!isSignedIn) {
-      setAttemptedPath(location.pathname);
       return false;
     }
 
@@ -44,20 +34,7 @@ class ProtectedRoute extends React.Component {
   };
 
   render() {
-    const {
-      children,
-      currentUser,
-      isSignedIn,
-      permissions,
-      requiresAny,
-      ...rest
-    } = this.props;
-    return (
-      <Route
-        {...rest}
-        render={() => (this.isAuthorized() ? children : <Redirect to="/" />)}
-      />
-    );
+    return this.isAuthorized() ? this.props.children : null;
   }
 }
 
@@ -68,7 +45,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-ProtectedRoute.propTypes = {
+ProtectedComponent.propTypes = {
   permissions: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(PropTypes.string),
@@ -78,4 +55,4 @@ ProtectedRoute.propTypes = {
   requiresAny: PropTypes.bool,
 };
 
-export default connect(mapStateToProps, { setAttemptedPath })(ProtectedRoute);
+export default connect(mapStateToProps, {})(ProtectedComponent);

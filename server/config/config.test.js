@@ -117,8 +117,9 @@ let testConfig = {
         lastName: 'Account',
         role: 'user',
         permissions: {
-          usersModify: true,
-          usersRead: true,
+          userInsert: true,
+          userModify: true,
+          userRead: true,
         },
         provider: {
           google: {
@@ -143,8 +144,9 @@ let testConfig = {
         lastName: 'Account',
         role: 'user',
         permissions: {
-          usersModify: true,
-          usersRead: true,
+          userInsert: true,
+          userModify: true,
+          userRead: true,
         },
         provider: {
           google: {

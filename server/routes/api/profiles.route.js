@@ -1,10 +1,10 @@
 const express = require('express');
 const profilesCtrl = require('../../controllers/profiles.controller');
-const createAuthStrategy = require('../../middleware/createAuthStrategy');
+const createAuthenticationStrategy = require('../../middleware/createAuthenticationStrategy');
 
 const router = express.Router();
 
-const jwtAuthenticate = createAuthStrategy('jwt');
+const jwtAuthenticate = createAuthenticationStrategy('jwt');
 
 router.get('/', jwtAuthenticate, profilesCtrl.getProfile);
 
