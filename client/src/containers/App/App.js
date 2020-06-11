@@ -1,8 +1,8 @@
 import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import AnonymousRoute from '../../components/AnonymousRoute';
-import ProtectedRoute from '../../components/ProtectedRoute';
+import AnonymousRoute from '../../components/accessControl/AnonymousRoute';
+import ProtectedRoute from '../../components/accessControl/ProtectedRoute';
 import Header from '../../components/Header';
 import SignIn from '../Auth/SignIn';
 import SignUp from '../Auth/SignUp';
@@ -25,33 +25,27 @@ class App extends React.Component {
       <div className="ui container">
         <Header />
         <Switch>
-          <AnonymousRoute path="/signin">
-            <SignIn />
-          </AnonymousRoute>
-          <AnonymousRoute path="/signup">
-            <SignUp />
-          </AnonymousRoute>
-          <AnonymousRoute path="/verify-email/:token">
-            <VerifyEmail />
-          </AnonymousRoute>
-          <AnonymousRoute path="/request-verification-email">
-            <RequestVerificationEmail />
-          </AnonymousRoute>
-          <AnonymousRoute path="/request-password-reset">
-            <RequestPasswordReset />
-          </AnonymousRoute>
-          <AnonymousRoute path="/reset-password/:token">
-            <ResetPassword />
-          </AnonymousRoute>
-          <ProtectedRoute path="/profile">
-            <Profile />
-          </ProtectedRoute>
+          <AnonymousRoute path="/signin" component={SignIn} />
+          <AnonymousRoute path="/signup" component={SignUp} />
+          <AnonymousRoute path="/verify-email/:token" component={VerifyEmail} />
+          <AnonymousRoute
+            path="/request-verification-email"
+            component={RequestVerificationEmail}
+          />
+          <AnonymousRoute
+            path="/request-password-reset"
+            component={RequestPasswordReset}
+          />
+          <AnonymousRoute
+            path="/reset-password/:token"
+            component={ResetPassword}
+          />
+          <ProtectedRoute path="/profile" component={Profile} />
           <ProtectedRoute
             path="/users"
-            permissions={['usersRead', 'usersModify']}
-          >
-            <UserList />
-          </ProtectedRoute>
+            permissions={['userInsert', 'userRead', 'userModify']}
+            component={UserList}
+          />
           <Route path="/">
             {this.props.isSignedIn ? (
               <Redirect to="/profile" />

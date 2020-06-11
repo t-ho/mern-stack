@@ -1,12 +1,12 @@
 const express = require('express');
 const authCtrl = require('../../controllers/auth.controller');
-const createAuthStrategy = require('../../middleware/createAuthStrategy');
+const createAuthenticationStrategy = require('../../middleware/createAuthenticationStrategy');
 
 const router = express.Router();
-const jwtAuthenticate = createAuthStrategy('jwt');
-const localAuthenticate = createAuthStrategy('local');
-const googleAuthenticate = createAuthStrategy('google-token');
-const facebookAuthenticate = createAuthStrategy('facebook-token');
+const jwtAuthenticate = createAuthenticationStrategy('jwt');
+const localAuthenticate = createAuthenticationStrategy('local');
+const googleAuthenticate = createAuthenticationStrategy('google-token');
+const facebookAuthenticate = createAuthenticationStrategy('facebook-token');
 
 router.post(
   '/facebook',

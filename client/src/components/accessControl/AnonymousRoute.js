@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getIsSignedIn } from '../store/selectors';
+import { getIsSignedIn } from '../../store/selectors';
 
 /**
  * If user already logged in, redirect to default protected path.
@@ -9,11 +9,13 @@ import { getIsSignedIn } from '../store/selectors';
  */
 class AnonymousRoute extends React.Component {
   render() {
-    const { children, isSignedIn, ...rest } = this.props;
+    const { component: Component, isSignedIn, ...rest } = this.props;
     return (
       <Route
         {...rest}
-        render={() => (isSignedIn ? <Redirect to="/" /> : children)}
+        render={(props) =>
+          isSignedIn ? <Redirect to="/" /> : <Component {...props} />
+        }
       />
     );
   }

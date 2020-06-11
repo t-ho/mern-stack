@@ -68,11 +68,10 @@ module.exports.getUsers = (req, res, next) => {
           .limit(req.query.limit)
           .skip(req.query.skip)
           .exec(),
-        User.find(query).countDocuments(),
+        User.countDocuments(query),
       ]);
     })
-    .then((results) => {
-      const [users, usersCount] = results;
+    .then(([users, usersCount]) => {
       res.status(200).json({
         users: users.map((user) => user.toJsonFor(req.user)),
         usersCount,

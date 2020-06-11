@@ -1,21 +1,23 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getIsSignedIn, getCurrentUser } from '../store/selectors';
+import { getIsSignedIn } from '../store/selectors';
 import { signOut } from '../store/actions';
+import ProtectedComponent from './accessControl/ProtectedComponent';
 
 export class Header extends React.Component {
   renderAuthButtons = () => {
-    const { isSignedIn, currentUser } = this.props;
+    const { isSignedIn } = this.props;
     if (isSignedIn) {
       return (
         <>
-          {currentUser.permissions['usersRead'] &&
-            currentUser.permissions['usersModify'] && (
-              <NavLink to="/users" className="item">
-                Manage Users
-              </NavLink>
-            )}
+          <ProtectedComponent
+            permissions={['userInsert', 'userRead', 'userModify']}
+          >
+            <NavLink to="/users" className="item">
+              Manage Users
+            </NavLink>
+          </ProtectedComponent>
           <button
             style={{ cursor: 'pointer' }}
             onClick={this.props.signOut}
@@ -54,7 +56,6 @@ export class Header extends React.Component {
 const mapStateToProps = (state) => {
   return {
     isSignedIn: getIsSignedIn(state),
-    currentUser: getCurrentUser(state),
   };
 };
 

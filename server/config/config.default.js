@@ -4,6 +4,10 @@ const fspath = require('path');
  * Default configuration
  */
 let defaultConfig = {
+  allowCreatorModify: {
+    user: false, // Model name in camel case
+    // examplePost: true
+  },
   app: {
     name: 'mern', // TODO: Lowercase, URL compatible name
     title: 'MERN Stack', // TODO: Human friendly name

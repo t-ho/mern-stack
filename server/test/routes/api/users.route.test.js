@@ -506,8 +506,9 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
       subId: '5e24db1d560ba309f0b0b5a8',
       permissions: {
         // this will be updated
-        usersModify: true,
-        usersRead: false,
+        userInsert: true,
+        userModify: true,
+        userRead: false,
       },
       provider: {
         // this will be updated

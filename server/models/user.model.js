@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
-const uuid = require('uuid');
+const { v4: uuidv4 } = require('uuid');
 const config = require('../config');
 
-// By defaulf, we don't store oauth access_token and refresh_token
+// By defaulf, we don't store oauth accessToken and refreshToken
 const providerDataSchema = new mongoose.Schema({
   userId: {
     type: String,
@@ -74,14 +74,16 @@ const userSchema = new mongoose.Schema(
     // The permissions field will allow a normal user to perform
     // admin-like actions.
     // By default, root and admin can do any thing (permissions field is ignored).
-    // So, call user.can(action) to determine permission on Collections.
-    // The rules for updating and deleting users are implemented in createCan middleware.
+    // So, call user.hasPermission(permission) to determine the permission.
+    // The rules for updating and deleting are implemented in createXAuthorizationMiddleware middleware.
     permissions: {
-      usersModify: { type: Boolean, default: false }, // Insert, Update and Delete
-      usersRead: { type: Boolean, default: false }, // Read only
-      // Example: permissions for Posts collection should be defined as below:
-      // postsModify: { type: Boolean, default: false }, // Insert, Update and Delete
-      // postsRead: { type: Boolean, default: false }, // Read only
+      userInsert: { type: Boolean, default: false }, // Insert only
+      userModify: { type: Boolean, default: false }, // Update and Delete
+      userRead: { type: Boolean, default: false }, // Read only
+      // Example: permissions for ExamplePost model should be defined as below:
+      // examplePostInsert: { type: Boolean, default: false }, // Insert only
+      // examplePostModify: { type: Boolean, default: false }, // Update and Delete
+      // examplePostRead: { type: Boolean, default: true }, // Read only
     },
     // token for veryfication email or reset password purpose, NOT JWT token
     // Do NOT set directly, call user.setToken(tokenPurpose) user.clearToken()
@@ -112,7 +114,7 @@ userSchema.virtual('fullName').get(function () {
  */
 userSchema.methods.toJsonFor = function (user) {
   const userObj = this.toObject();
-  if (user && (user.can('usersRead') || user._id === this._id)) {
+  if (user && (user.hasPermission('userRead') || user.id === this.id)) {
     const provider = _.mapValues(userObj.provider, (p) => {
       return _.pick(p, ['userId', 'picture']);
     });
@@ -202,7 +204,7 @@ userSchema.methods.generateJwtToken = function () {
  * @param {string} purpose The purpose of the token.
  */
 userSchema.methods.setToken = function (purpose) {
-  this.token = uuid.v4();
+  this.token = uuidv4();
   this.tokenPurpose = purpose;
 };
 
@@ -215,23 +217,18 @@ userSchema.methods.clearToken = function () {
 };
 
 /**
- * Determine whether this user has permission to do given actions
- * based on user role and user permissions
+ * Determine whether this user has a permission
+ * based on user role and user's permissions properties
  *
- * @param {string|array} actions An action or array of actions.
- * @param {boolean=false} requiresAny If true, at least one action must pass to continue. Otherwise, ALL actions must be pass to continue.
- * @returns {boolean} True if this user has permission to perform the given action.
+ * @param {string} permission A permission
+ * @returns {boolean} true if this user has the given permission.
  * Otherwise, false
  */
-userSchema.methods.can = function (actions, requiresAny = false) {
+userSchema.methods.hasPermission = function (permission) {
   if (this.role === 'admin' || this.role === 'root') {
     return true;
   }
-  actions = _.castArray(actions);
-  if (requiresAny) {
-    return actions.some((action) => !!this.permissions[action]);
-  }
-  return actions.every((action) => !!this.permissions[action]);
+  return !!this.permissions[permission];
 };
 
 mongoose.model('User', userSchema);
