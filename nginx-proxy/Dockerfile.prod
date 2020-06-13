@@ -3,5 +3,4 @@ COPY ./nginx-proxy/default.conf.template.prod /nginx.default.conf.template
 COPY ./nginx-proxy/nginx-entrypoint.sh /
 RUN chmod +x nginx-entrypoint.sh
 ENTRYPOINT [ "/nginx-entrypoint.sh" ]
-CMD ["nginx", "-g", "daemon off;"]
-
+CMD /bin/sh -c 'while :; do sleep 6h & wait ${!}; nginx -s reload; done & nginx -g "daemon off;"'

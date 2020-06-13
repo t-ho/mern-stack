@@ -1,7 +1,9 @@
 version: '3.8'
 services:
   mongo: # Remove this if you use external MongoDB service such as MongoDB Atlas
+    restart: always
     image: mongo:latest
+
   api-server:
     restart: always
     build:
@@ -13,6 +15,7 @@ services:
       - MONGO_URI=mongodb://mongo/merndb # Remove this if you use external MongoDB service such as MongoDB Atlas
     depends_on:
       - mongo
+
   client:
     restart: always
     build:
@@ -25,17 +28,35 @@ services:
       - PORT
     depends_on:
       - api-server
+
   nginx-proxy:
     restart: always
     build:
       context: ./
       dockerfile: ./nginx-proxy/Dockerfile.prod
+    volumes:
+      - /mern-stack/letsencrypt:/etc/letsencrypt
+      - /mern-stack/www/certbot:/var/www/certbot
     ports:
       - '${NGINX_PROXY_PORT}:${NGINX_PROXY_PORT}'
+      - '443:443'
     environment:
+      - DOMAIN_NAME
+      - NGINX_PROXY_PORT
+      - NODE_ENV
       - PORT
       - SERVER_PORT
-      - NGINX_PROXY_PORT
     depends_on:
       - api-server
       - client
+
+  certbot:
+    restart: always
+    build:
+      context: ./
+      dockerfile: ./nginx-proxy/Dockerfile.certbot.prod
+    volumes:
+      - /mern-stack/letsencrypt:/etc/letsencrypt
+      - /mern-stack/www/certbot:/var/www/certbot
+    depends_on:
+      - nginx-proxy
