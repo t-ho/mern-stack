@@ -36,15 +36,15 @@ services:
       dockerfile: ./nginx-proxy/Dockerfile.prod
     volumes:
       - /mern-stack/letsencrypt:/etc/letsencrypt
-      - /mern-stack/www/certbot:/var/www/certbot
     ports:
       - '${NGINX_PROXY_PORT}:${NGINX_PROXY_PORT}'
       - '443:443'
     environment:
-      - DOMAIN_NAME
+      - DOMAIN_NAMES
       - NGINX_PROXY_PORT
       - NODE_ENV
       - PORT
+      - PUBLIC_IP_ADDRESS
       - SERVER_PORT
     depends_on:
       - api-server
@@ -57,6 +57,5 @@ services:
       dockerfile: ./nginx-proxy/Dockerfile.certbot.prod
     volumes:
       - /mern-stack/letsencrypt:/etc/letsencrypt
-      - /mern-stack/www/certbot:/var/www/certbot
     depends_on:
       - nginx-proxy

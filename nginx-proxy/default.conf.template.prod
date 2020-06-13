@@ -1,12 +1,4 @@
 
-upstream client-cluster {
-  server client:${PORT};
-}
-
-upstream api-server-cluster {
-  server api-server:${SERVER_PORT};
-}
-
 # don't send the nginx version number in error pages and Server header
 server_tokens off;
 
@@ -40,28 +32,71 @@ add_header X-XSS-Protection "1; mode=block";
 # FIXME: 
 #add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ssl.google-analytics.com https://assets.zendesk.com https://connect.facebook.net; img-src 'self' https://ssl.google-analytics.com https://s-static.ak.facebook.com https://assets.zendesk.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://assets.zendesk.com; font-src 'self' https://themes.googleusercontent.com; frame-src https://assets.zendesk.com https://www.facebook.com https://s-static.ak.facebook.com https://tautt.zendesk.com; object-src 'none'";
 
+# If no default server is defined, Nginx will use the first found server.
+# To prevent host header attacks, or other potential problems when an unknown
+# server name is used in a request, it's recommended to drop the request
+# returning 444 "No Response".
 
+upstream client-cluster {
+  server client:${PORT};
+}
+
+upstream api-server-cluster {
+  server api-server:${SERVER_PORT};
+}
+
+# default config for no-ssl server
 server {
   listen ${NGINX_PROXY_PORT} default_server;
   listen [::]:${NGINX_PROXY_PORT} default_server;
   
   server_name _;
-
-  location /.well-known/acme-challenge/ {
-    root /var/www/certbot;
-  }
   
   return 301 https://$host$request_uri;
+}
+
+server {
+  listen 80;
+  listen [::]:80;
+  
+  server_name ${PUBLIC_IP_ADDRESS};
+
+  return 301 https://${PRIMARY_DOMAIN}$request_uri;
+}
+
+# default config for ssl server
+server {
+  listen 443 ssl http2 default_server;
+  listen [::]:443 ssl http2 default_server;
+  
+  server_name _;
+  
+  ssl_certificate /etc/letsencrypt/live/${PRIMARY_DOMAIN}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/${PRIMARY_DOMAIN}/privkey.pem;
+
+  return 444;
 }
 
 server {
   listen 443 ssl http2;
   listen [::]:443 ssl http2;
   
-  server_name ${DOMAIN_NAME};
+  server_name ${PUBLIC_IP_ADDRESS};
+  
+  ssl_certificate /etc/letsencrypt/live/${PRIMARY_DOMAIN}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/${PRIMARY_DOMAIN}/privkey.pem;
 
-  ssl_certificate /etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem;
-  ssl_certificate_key /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem;
+  return 301 https://${PRIMARY_DOMAIN}$request_uri;
+}
+
+server {
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+  
+  server_name ${DOMAIN_LIST};
+
+  ssl_certificate /etc/letsencrypt/live/${PRIMARY_DOMAIN}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/${PRIMARY_DOMAIN}/privkey.pem;
   
   # See https://github.com/certbot/certbot/blob/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf {{{
   # enable session resumption to improve https performance
@@ -84,7 +119,7 @@ server {
   resolver 8.8.8.8 8.8.4.4;
   ssl_stapling on;
   ssl_stapling_verify on;
-  ssl_trusted_certificate /etc/letsencrypt/live/${DOMAIN_NAME}/chain.pem;
+  ssl_trusted_certificate /etc/letsencrypt/live/${PRIMARY_DOMAIN}/chain.pem;
 
   # config to enable HSTS(HTTP Strict Transport Security) https://developer.mozilla.org/en-US/docs/Security/HTTP_Strict_Transport_Security
   # to avoid ssl stripping https://en.wikipedia.org/wiki/SSL_stripping#SSL_stripping
