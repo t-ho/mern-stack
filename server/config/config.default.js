@@ -17,7 +17,7 @@ let defaultConfig = {
     resetPassword: false, // If true, be able to reset password via email
   },
   compression: {
-    enabled: true,
+    enabled: false,
     options: null, // See https://www.npmjs.com/package/compression
   },
   cors: {

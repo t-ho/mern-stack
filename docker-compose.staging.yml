@@ -9,9 +9,9 @@ services:
     build:
       context: ./
       dockerfile: ./server/Dockerfile.prod
-    env_file: .env.prod
+    env_file: .env.staging
     environment:
-      - NODE_ENV=production # Override the NODE_ENV in .env file
+      - NODE_ENV=staging # Override the NODE_ENV in .env.staging file
       - MONGO_URI=mongodb://mongo/merndb # Remove this if you use external MongoDB service such as MongoDB Atlas
     depends_on:
       - mongo
@@ -33,29 +33,14 @@ services:
     restart: always
     build:
       context: ./
-      dockerfile: ./nginx-proxy/Dockerfile.prod
-    volumes:
-      - /mern-stack/letsencrypt:/etc/letsencrypt
+      dockerfile: ./nginx-proxy/Dockerfile.staging
     ports:
       - '${NGINX_PROXY_PORT}:${NGINX_PROXY_PORT}'
-      - '443:443'
     environment:
-      - DOMAIN_NAMES
       - NGINX_PROXY_PORT
       - NODE_ENV
       - PORT
-      - PUBLIC_IP_ADDRESS
       - SERVER_PORT
     depends_on:
       - api-server
       - client
-
-  certbot:
-    restart: always
-    build:
-      context: ./
-      dockerfile: ./nginx-proxy/certbot/Dockerfile
-    volumes:
-      - /mern-stack/letsencrypt:/etc/letsencrypt
-    depends_on:
-      - nginx-proxy

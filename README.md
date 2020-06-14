@@ -80,8 +80,14 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
 - Todo:
   - [x] Reverse proxy server - [nginx:stable](https://hub.docker.com/_/nginx)
     - [x] Dev mode - See [nginx-proxy/Dockerfile](https://github.com/t-ho/mern-stack/blob/master/nginx-proxy/Dockerfile)
+    - [x] Staging mode - See [nginx-proxy/Dockerfile.staging](https://github.com/t-ho/mern-stack/blob/master/nginx-proxy/Dockerfile.staging)
     - [x] Prod mode - See [nginx-proxy/Dockerfile.prod](https://github.com/t-ho/mern-stack/blob/master/nginx-proxy/Dockerfile.prod)
-  - [x] Configuring upstream servers' port numbers via `.env` file
+      - [x] Install and auto-renew SSL certificate - [certbot](https://github.com/certbot)
+      - [x] Force all HTTP traffic (domain name and IP address) to HTTPS
+      - [x] Use recommended configuration - [server-configs-nginx](https://github.com/h5bp/server-configs-nginx)
+  - [x] Configuration can be done easily by modifying the `.env` file
+    - [x] Upstream servers' port number
+    - [x] Domain name list
 
 ### 5. CI and CD
 
@@ -197,18 +203,35 @@ docker-compose up
 # The mongoDB service listen on port 27018
 ```
 
+The `nginx-proxy` server will listen on port `8080` (`NGINX_PROXY_PORT`) by default.
+
 **Production mode**
 
 ```bash
 git clone https://github.com/t-ho/mern-stack.git
 cd mern-stack
-cp .env.example .env
+cp .env.example .env.prod
 
-# Edit the .env file to meet your requirements
-docker-compose -f docker-compose.prod.yml up
+# Edit the .env.prod file to meet your requirements
+docker-compose -f docker-compose.prod.yml  --env-file ./.env.prod up -d
 ```
 
-The `nginx-proxy` server will listen on port `8080` (`NGINX_PROXY_PORT`) by default.
+**Staging mode**
+
+This mode allows you to up and run the servers without TLS support. It is useful when you don't have a domain name, but want to deploy to remote server for testing purpose. NOTE:
+
+- The `client` and `server` image are built in `production` mode.
+- Support HTTP requests only
+
+```bash
+git clone https://github.com/t-ho/mern-stack.git
+cd mern-stack
+cp .env.example .env.staging
+
+# Edit the .env.staging file to meet your requirements
+# NODE_ENV=staging
+docker-compose -f docker-compose.staging.yml  --env-file ./.env.staging up -d
+```
 
 ## Testing
 
