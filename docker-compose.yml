@@ -37,9 +37,10 @@ services:
     ports:
       - '${NGINX_PROXY_PORT}:${NGINX_PROXY_PORT}'
     environment:
+      - NGINX_PROXY_PORT
+      - NODE_ENV
       - PORT
       - SERVER_PORT
-      - NGINX_PROXY_PORT
     depends_on:
       - api-server
       - client

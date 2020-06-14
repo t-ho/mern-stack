@@ -1,7 +1,9 @@
 FROM nginx:stable
-COPY ./nginx-proxy/default.conf.template.prod /nginx.default.conf.template
+RUN mv /etc/nginx /etc/nginx-previous
+COPY ./nginx-proxy/prod-config /etc/nginx/
+COPY ./nginx-proxy/templates/default.conf.template.prod /nginx.default.conf.template
+COPY ./nginx-proxy/templates/certificate_files.conf.template /nginx.certificate_files.conf.template
 COPY ./nginx-proxy/nginx-entrypoint.sh /
 RUN chmod +x nginx-entrypoint.sh
 ENTRYPOINT [ "/nginx-entrypoint.sh" ]
-CMD ["nginx", "-g", "daemon off;"]
-
+CMD /bin/sh -c 'while :; do sleep 6h & wait ${!}; nginx -s reload; done & nginx -g "daemon off;"'

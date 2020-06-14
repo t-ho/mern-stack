@@ -16,7 +16,7 @@ const envVarsSchema = Joi.object({
   GOOGLE_CLIENT_SECRET: Joi.string().required(),
   JWT_SECRET: Joi.string().required(),
   MONGO_URI: Joi.string().uri().required(),
-  NODE_ENV: Joi.string().valid('development', 'production', 'test'),
+  NODE_ENV: Joi.string().valid('development', 'production', 'staging', 'test'),
   SERVER_HOST: Joi.string().required(),
   SERVER_PORT: Joi.number().required(),
   SERVER_PUBLIC_URL: Joi.string().uri().required(),
@@ -67,6 +67,8 @@ if (envConfig.env === 'development') {
   config = require('./config.dev');
 } else if (envConfig.env === 'production') {
   config = require('./config.prod');
+} else if (envConfig.env === 'staging') {
+  config = require('./config.staging');
 } else if (envConfig.env === 'test') {
   config = require('./config.test');
 }

@@ -1,0 +1,9 @@
+FROM nginx:stable
+RUN mv /etc/nginx /etc/nginx-previous
+COPY ./nginx-proxy/prod-config /etc/nginx/
+COPY ./nginx-proxy/templates/default.conf.template.staging /nginx.default.conf.template
+COPY ./nginx-proxy/nginx-entrypoint.sh /
+RUN chmod +x nginx-entrypoint.sh
+ENTRYPOINT [ "/nginx-entrypoint.sh" ]
+CMD ["nginx", "-g", "daemon off;"]
+
