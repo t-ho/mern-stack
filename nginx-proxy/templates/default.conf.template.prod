@@ -1,0 +1,93 @@
+# If no default server is defined, Nginx will use the first found server.
+# To prevent host header attacks, or other potential problems when an unknown
+# server name is used in a request, it's recommended to drop the request
+# returning 444 "No Response".
+
+upstream client-cluster {
+  server client:${PORT};
+}
+
+upstream api-server-cluster {
+  server api-server:${SERVER_PORT};
+}
+
+# default config for no-ssl server
+server {
+  listen ${NGINX_PROXY_PORT} default_server;
+  listen [::]:${NGINX_PROXY_PORT} default_server;
+  
+  server_name _;
+  
+  return 301 https://$host$request_uri;
+}
+
+server {
+  listen ${NGINX_PROXY_PORT};
+  listen [::]:${NGINX_PROXY_PORT};
+  
+  server_name ${PUBLIC_IP_ADDRESS};
+
+  return 301 https://${PRIMARY_DOMAIN}$request_uri;
+}
+
+# default config for ssl server
+server {
+  listen 443 ssl http2 default_server;
+  listen [::]:443 ssl http2 default_server;
+  
+  server_name _;
+
+  include h5bp/ssl/ssl_engine.conf;
+  include h5bp/ssl/certificate_files.conf;
+  include h5bp/ssl/ocsp_stapling.conf;  
+  include h5bp/ssl/policy_intermediate.conf;
+  
+  return 444;
+}
+
+server {
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+  
+  server_name ${PUBLIC_IP_ADDRESS};
+  
+  include h5bp/ssl/ssl_engine.conf;
+  include h5bp/ssl/certificate_files.conf;
+  include h5bp/ssl/ocsp_stapling.conf;  
+  include h5bp/ssl/policy_intermediate.conf;
+
+  return 301 https://${PRIMARY_DOMAIN}$request_uri;
+}
+
+server {
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+  
+  server_name ${DOMAIN_LIST};
+  
+  include h5bp/ssl/ssl_engine.conf;
+  include h5bp/ssl/certificate_files.conf;
+  include h5bp/ssl/ocsp_stapling.conf;  
+  include h5bp/ssl/policy_intermediate.conf;
+  
+  include h5bp/security/strict-transport-security.conf;
+  include h5bp/basic.conf;
+   
+  # FIXME:
+  #include h5bp/security/content-security-policy.conf;
+
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+
+  location / {
+    proxy_pass http://client-cluster;
+  }
+
+  location /api {
+    proxy_pass http://api-server-cluster;
+  }
+
+  location /public {
+    proxy_pass http://api-server-cluster;
+  }
+}

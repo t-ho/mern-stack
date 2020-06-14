@@ -54,7 +54,7 @@ services:
     restart: always
     build:
       context: ./
-      dockerfile: ./nginx-proxy/Dockerfile.certbot.prod
+      dockerfile: ./nginx-proxy/certbot/Dockerfile
     volumes:
       - /mern-stack/letsencrypt:/etc/letsencrypt
     depends_on:

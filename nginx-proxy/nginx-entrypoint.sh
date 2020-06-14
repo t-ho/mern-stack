@@ -13,9 +13,12 @@ if [ $NODE_ENV = production ]; then
 
   export PRIMARY_DOMAIN=$(echo "$DOMAIN_NAMES" | cut -d "," -f 1)
   export DOMAIN_LIST=$(echo "$DOMAIN_NAMES" | tr "," " ")
+
+  envsubst '${DOMAIN_LIST} ${NGINX_PROXY_PORT} ${PORT} ${PRIMARY_DOMAIN} ${PUBLIC_IP_ADDRESS} ${SERVER_PORT}' < /nginx.default.conf.template > /etc/nginx/conf.d/default.conf
+  envsubst '${PRIMARY_DOMAIN}' < /nginx.certificate_files.conf.template > /etc/nginx/h5bp/ssl/certificate_files.conf
+
+else
+  envsubst '${NGINX_PROXY_PORT} ${PORT} ${SERVER_PORT}' < /nginx.default.conf.template > /etc/nginx/conf.d/default.conf
 fi
-
-
-envsubst '${DOMAIN_LIST} ${NGINX_PROXY_PORT} ${PORT} ${PRIMARY_DOMAIN} ${PUBLIC_IP_ADDRESS} ${SERVER_PORT}' < /nginx.default.conf.template > /etc/nginx/conf.d/default.conf
 
 exec "$@"
