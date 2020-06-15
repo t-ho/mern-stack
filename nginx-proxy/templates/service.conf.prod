@@ -4,30 +4,20 @@
 # returning 444 "No Response".
 
 upstream client-cluster {
-  server client:${PORT};
+  server client:3000;
 }
 
 upstream api-server-cluster {
-  server api-server:${SERVER_PORT};
-}
-
-# default config for no-ssl server
-server {
-  listen ${NGINX_PROXY_PORT} default_server;
-  listen [::]:${NGINX_PROXY_PORT} default_server;
-  
-  server_name _;
-  
-  return 301 https://$host$request_uri;
+  server api-server:PLACEHOLDER_1;
 }
 
 server {
-  listen ${NGINX_PROXY_PORT};
-  listen [::]:${NGINX_PROXY_PORT};
+  listen 80;
+  listen [::]:80;
   
-  server_name ${PUBLIC_IP_ADDRESS};
+  server_name PLACEHOLDER_2;
 
-  return 301 https://${PRIMARY_DOMAIN}$request_uri;
+  return 301 https://CN_DOMAIN$request_uri;
 }
 
 # default config for ssl server
@@ -49,21 +39,21 @@ server {
   listen 443 ssl http2;
   listen [::]:443 ssl http2;
   
-  server_name ${PUBLIC_IP_ADDRESS};
+  server_name PLACEHOLDER_2;
   
   include h5bp/ssl/ssl_engine.conf;
   include h5bp/ssl/certificate_files.conf;
   include h5bp/ssl/ocsp_stapling.conf;  
   include h5bp/ssl/policy_intermediate.conf;
 
-  return 301 https://${PRIMARY_DOMAIN}$request_uri;
+  return 301 https://CN_DOMAIN$request_uri;
 }
 
 server {
   listen 443 ssl http2;
   listen [::]:443 ssl http2;
   
-  server_name ${DOMAIN_LIST};
+  server_name LE_FQDN;
   
   include h5bp/ssl/ssl_engine.conf;
   include h5bp/ssl/certificate_files.conf;
@@ -78,6 +68,7 @@ server {
 
   proxy_set_header Host $host;
   proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
   location / {
     proxy_pass http://client-cluster;

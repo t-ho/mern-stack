@@ -1,20 +1,21 @@
 
 upstream client-cluster {
-  server client:${PORT};
+  server client:3000;
 }
 
 upstream api-server-cluster {
-  server api-server:${SERVER_PORT};
+  server api-server:PLACEHOLDER_1;
 }
 
 server {
-  listen ${NGINX_PROXY_PORT} default_server;
-  listen [::]:${NGINX_PROXY_PORT} default_server;
+  listen 80 default_server;
+  listen [::]:80 default_server;
   
   include h5bp/basic.conf;
 
   proxy_set_header Host $host;
   proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
   location / {
     proxy_pass http://client-cluster;

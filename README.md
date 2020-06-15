@@ -216,23 +216,6 @@ cp .env.example .env.prod
 docker-compose -f docker-compose.prod.yml  --env-file ./.env.prod up -d
 ```
 
-**Staging mode**
-
-This mode allows you to up and run the servers without TLS support. It is useful when you don't have a domain name, but want to deploy to remote server for testing purpose. NOTE:
-
-- The `client` and `server` image are built in `production` mode.
-- Support HTTP requests only
-
-```bash
-git clone https://github.com/t-ho/mern-stack.git
-cd mern-stack
-cp .env.example .env.staging
-
-# Edit the .env.staging file to meet your requirements
-# NODE_ENV=staging
-docker-compose -f docker-compose.staging.yml  --env-file ./.env.staging up -d
-```
-
 ## Testing
 
 In the root (`mern-stack`) directory, run:

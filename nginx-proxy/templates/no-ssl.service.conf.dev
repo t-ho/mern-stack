@@ -1,16 +1,16 @@
 
 upstream client-cluster {
-  server client:${PORT};
+  server client:PLACEHOLDER_1;
 }
 
 upstream api-server-cluster {
-  server api-server:${SERVER_PORT};
+  server api-server:PLACEHOLDER_2;
 }
 
-log_format dev '$request $status $request_time s - $body_bytes_sent';
+log_format dev '[$time_local] $request $status $request_time s - $body_bytes_sent';
 
 server {
-  listen ${NGINX_PROXY_PORT};
+  listen PLACEHOLDER_3;
 
   access_log /var/log/nginx/access.log dev;
 

@@ -4,6 +4,7 @@ services:
     image: mongo:latest
     ports:
       - '27018:27017'
+
   api-server:
     build:
       context: ./
@@ -17,6 +18,7 @@ services:
       - '${SERVER_PORT}:${SERVER_PORT}'
     depends_on:
       - mongo
+
   client:
     build:
       context: ./
@@ -29,6 +31,7 @@ services:
       - '${PORT}:${PORT}'
     depends_on:
       - api-server
+
   nginx-proxy:
     restart: always
     build:
@@ -37,10 +40,10 @@ services:
     ports:
       - '${NGINX_PROXY_PORT}:${NGINX_PROXY_PORT}'
     environment:
-      - NGINX_PROXY_PORT
-      - NODE_ENV
-      - PORT
-      - SERVER_PORT
+      - PLACEHOLDER_1=${PORT}
+      - PLACEHOLDER_2=${SERVER_PORT}
+      - PLACEHOLDER_3=${NGINX_PROXY_PORT}
+      - TZ=Canada/Pacific
     depends_on:
       - api-server
       - client
