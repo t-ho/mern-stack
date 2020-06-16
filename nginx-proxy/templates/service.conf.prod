@@ -3,6 +3,9 @@
 # server name is used in a request, it's recommended to drop the request
 # returning 444 "No Response".
 
+# Specify file cache expiration.
+include h5bp/web_performance/cache_expiration.conf;
+
 upstream client-cluster {
   server client:3000;
 }
