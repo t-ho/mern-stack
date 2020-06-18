@@ -36,7 +36,7 @@ let defaultConfig = {
   },
   helmet: {
     enabled: true,
-    options: null, // See https://www.npmjs.com/package/helmet
+    options: {}, // See https://www.npmjs.com/package/helmet
   },
   morgan: {
     enabled: true,

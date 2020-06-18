@@ -80,7 +80,6 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
 - Todo:
   - [x] Reverse proxy server - [nginx:stable](https://hub.docker.com/_/nginx)
     - [x] Dev mode - See [nginx-proxy/Dockerfile](https://github.com/t-ho/mern-stack/blob/master/nginx-proxy/Dockerfile)
-    - [x] Staging mode - See [nginx-proxy/Dockerfile.staging](https://github.com/t-ho/mern-stack/blob/master/nginx-proxy/Dockerfile.staging)
     - [x] Prod mode - See [nginx-proxy/Dockerfile.prod](https://github.com/t-ho/mern-stack/blob/master/nginx-proxy/Dockerfile.prod)
       - [x] Install and auto-renew SSL certificate - [certbot](https://github.com/certbot)
       - [x] Force all HTTP traffic (domain name and IP address) to HTTPS
