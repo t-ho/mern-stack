@@ -43,7 +43,7 @@ services:
       - PLACEHOLDER_1=${PORT}
       - PLACEHOLDER_2=${SERVER_PORT}
       - PLACEHOLDER_3=${NGINX_PROXY_PORT}
-      - TZ=Canada/Pacific
+      - TZ
     depends_on:
       - api-server
       - client

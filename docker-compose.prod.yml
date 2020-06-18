@@ -24,6 +24,8 @@ services:
       args:
         - facebook_app_id=${FACEBOOK_APP_ID}
         - google_client_id=${GOOGLE_CLIENT_ID}
+    environment:
+      - TZ
     depends_on:
       - api-server
 
@@ -43,7 +45,7 @@ services:
       - LE_FQDN
       - PLACEHOLDER_1=${SERVER_PORT}
       - PLACEHOLDER_2=${PUBLIC_IP_ADDRESS}
-      - TZ=Canada/Pacific
+      - TZ
     depends_on:
       - api-server
       - client
