@@ -22,39 +22,36 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="ui container">
-        <Header />
-        <Switch>
-          <AnonymousRoute path="/signin" component={SignIn} />
-          <AnonymousRoute path="/signup" component={SignUp} />
-          <AnonymousRoute path="/verify-email/:token" component={VerifyEmail} />
-          <AnonymousRoute
-            path="/request-verification-email"
-            component={RequestVerificationEmail}
-          />
-          <AnonymousRoute
-            path="/request-password-reset"
-            component={RequestPasswordReset}
-          />
-          <AnonymousRoute
-            path="/reset-password/:token"
-            component={ResetPassword}
-          />
-          <ProtectedRoute path="/profile" component={Profile} />
-          <ProtectedRoute
-            path="/users"
-            permissions={['userInsert', 'userRead', 'userModify']}
-            component={UserList}
-          />
-          <Route path="/">
-            {this.props.isSignedIn ? (
-              <Redirect to="/profile" />
-            ) : (
-              <Redirect to="/signin" />
-            )}
-          </Route>
-        </Switch>
-      </div>
+      <Switch>
+        <AnonymousRoute path="/signin" component={SignIn} />
+        <AnonymousRoute path="/signup" component={SignUp} />
+        <AnonymousRoute path="/verify-email/:token" component={VerifyEmail} />
+        <AnonymousRoute
+          path="/request-verification-email"
+          component={RequestVerificationEmail}
+        />
+        <AnonymousRoute
+          path="/request-password-reset"
+          component={RequestPasswordReset}
+        />
+        <AnonymousRoute
+          path="/reset-password/:token"
+          component={ResetPassword}
+        />
+        <ProtectedRoute path="/profile" component={Profile} />
+        <ProtectedRoute
+          path="/users"
+          permissions={['userInsert', 'userRead', 'userModify']}
+          component={UserList}
+        />
+        <Route path="/">
+          {this.props.isSignedIn ? (
+            <Redirect to="/profile" />
+          ) : (
+            <Redirect to="/signin" />
+          )}
+        </Route>
+      </Switch>
     );
   }
 }

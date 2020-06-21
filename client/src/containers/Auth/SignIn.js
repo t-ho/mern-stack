@@ -1,8 +1,22 @@
 import React from 'react';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import Link from '@material-ui/core/Link';
+import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
+import { Facebook, Google } from 'mdi-material-ui';
+import GoogleLogin from 'react-google-login';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import { Field, reduxForm, SubmissionError } from 'redux-form';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { Link } from 'react-router-dom';
 import {
   signIn,
   facebookSignIn,
@@ -11,34 +25,29 @@ import {
 } from '../../store/actions';
 import { getProcessing, getError } from '../../store/selectors';
 import { email, minLength, required } from '../../utils/formValidator';
-import GoogleLogin from 'react-google-login';
-import FacebookLogin from 'react-facebook-login';
+
+const styles = (theme) => ({
+  paper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar: {
+    marginTop: theme.spacing(6),
+    marginBottom: theme.spacing(2),
+    width: theme.spacing(10),
+    height: theme.spacing(10),
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+});
 
 class SignIn extends React.Component {
-  renderInput = (field) => {
-    const className = `field ${
-      field.meta.error && field.meta.touched ? 'error' : ''
-    }`;
-    return (
-      <>
-        <div className={className}>
-          <label>{field.label}</label>
-          <input
-            {...field.input}
-            type={field.type}
-            autoComplete="off"
-            placeholder={field.placeholder}
-          />
-        </div>
-        {field.meta.touched && field.meta.error && (
-          <div className="ui error message">
-            <div className="header">{field.meta.error}</div>
-          </div>
-        )}
-      </>
-    );
-  };
-
   onSubmit = (formValues) => {
     return this.props.signIn(formValues).then(() => {
       if (this.props.errorMessage) {
@@ -71,115 +80,140 @@ class SignIn extends React.Component {
     });
   };
 
+  componentWillUnmount() {
+    this.props.unloadAuthPage();
+  }
+
+  renderTextField = ({ input, label, meta: { touched, error }, ...custom }) => (
+    <TextField
+      label={label}
+      error={touched && !!error}
+      helperText={touched && error}
+      variant="outlined"
+      margin="normal"
+      required
+      fullWidth
+      {...input}
+      {...custom}
+    />
+  );
+
   render() {
     const {
+      classes,
       handleSubmit,
       pristine,
-      reset,
       submitting,
       valid,
       error,
     } = this.props;
     return (
-      <div className="ui centered grid">
-        <div className="eight wide column">
-          <div className="ui segment">
-            <h1 className="ui header">Sign In</h1>
-            <form
-              onSubmit={handleSubmit(this.onSubmit)}
-              className="ui form error"
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Avatar
+            className={classes.avatar}
+            alt="Logo"
+            src="/logo-circle512.png"
+          />
+          <Typography component="h1" variant="h5" color="primary">
+            Sign in
+          </Typography>
+          <form className={classes.form} onSubmit={handleSubmit(this.onSubmit)}>
+            <Field
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              component={this.renderTextField}
+            />
+            <Field
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              component={this.renderTextField}
+            />
+            <Button
+              className={classes.submit}
+              color="primary"
+              disabled={pristine || submitting || !valid}
+              fullWidth
+              type="submit"
+              variant="contained"
             >
-              <Field
-                name="email"
-                label="Email"
-                placeholder="Enter your email"
-                type="text"
-                component={this.renderInput}
+              Sign In
+            </Button>
+            <Grid container>
+              <Grid item xs>
+                <Link href="/request-password-reset" variant="body2">
+                  Forgot password?
+                </Link>
+              </Grid>
+              <Grid item>
+                <Link href="/signup" variant="body2">
+                  {"Don't have an account? Sign Up"}
+                </Link>
+              </Grid>
+            </Grid>
+          </form>
+          <Box m={3}>
+            <Typography variant="body2" color="textSecondary">
+              Or Sign In With
+            </Typography>
+          </Box>
+          <Grid container spacing={3}>
+            <Grid item xs={6}>
+              <FacebookLogin
+                appId={process.env.REACT_APP_FACEBOOK_APP_ID}
+                fields="name,email,picture"
+                scope="public_profile,email"
+                version="7.0"
+                callback={this.onFacebookResponse}
+                render={(renderProps) => (
+                  <Button
+                    color="primary"
+                    disabled={renderProps.isProcessing}
+                    fullWidth
+                    onClick={renderProps.onClick}
+                    startIcon={<Facebook />}
+                    variant="outlined"
+                  >
+                    Facebook
+                  </Button>
+                )}
               />
-              <Field
-                name="password"
-                label="Password"
-                placeholder="Enter your password"
-                type="password"
-                component={this.renderInput}
+            </Grid>
+            <Grid item xs={6}>
+              <GoogleLogin
+                clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+                buttonText="Google Login"
+                onSuccess={this.onGoogleResponse}
+                onFailure={this.onGoogleResponse}
+                render={(renderProps) => (
+                  <Button
+                    color="secondary"
+                    disabled={renderProps.disabled}
+                    fullWidth
+                    onClick={renderProps.onClick}
+                    startIcon={<Google />}
+                    variant="outlined"
+                  >
+                    Google
+                  </Button>
+                )}
               />
-              <div className="field">
-                Forgot your password?{' '}
-                <Link to="/request-password-reset">Click here</Link>
-              </div>
-              {this.props.errorMessage === 'Email is not verified' && (
-                <div className="field">
-                  Have not received verification email?{' '}
-                  <Link to="/request-verification-email">Click here</Link>
-                </div>
-              )}
-              {error && (
-                <div className="ui error message">
-                  <div className="header">{error}</div>
-                </div>
-              )}
-              <button
-                disabled={pristine || submitting || !valid}
-                className="ui button primary"
-                type="submit"
-              >
-                Sign In
-              </button>
-              <button
-                disabled={pristine || submitting}
-                onClick={reset}
-                className="ui button"
-                type="button"
-              >
-                Reset
-              </button>
-            </form>
-          </div>
-          <div className="ui segment">
-            <div className="ui stackable two column center aligned grid">
-              <div className="column">
-                <GoogleLogin
-                  clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                  buttonText="Google Login"
-                  onSuccess={this.onGoogleResponse}
-                  onFailure={this.onGoogleResponse}
-                  render={(renderProps) => (
-                    <button
-                      onClick={renderProps.onClick}
-                      disabled={renderProps.disabled}
-                      className="ui google blue large button"
-                    >
-                      <i className="google icon"></i>
-                      Google Login
-                    </button>
-                  )}
-                />
-              </div>
-              <div className="column">
-                {/* FIXME: Warning: componentWillReceiveProps has been renamed, and is not recommended for use. */}
-                <FacebookLogin
-                  appId={process.env.REACT_APP_FACEBOOK_APP_ID}
-                  fields="name,email,picture"
-                  scope="public_profile,email"
-                  version="6.0"
-                  callback={this.onFacebookResponse}
-                  textButton="Facebook Login"
-                  icon={<i className="facebook icon"></i>}
-                  cssClass="ui facebook large button"
-                />
-              </div>
-            </div>
-          </div>
+            </Grid>
+          </Grid>
         </div>
-      </div>
+        <Snackbar open={!!error}>
+          <Alert severity="error">{error}</Alert>
+        </Snackbar>
+      </Container>
     );
   }
-
-  componentWillUnmount() {
-    this.props.unloadAuthPage();
-  }
 }
-
 const maptStateToProps = (state) => {
   return {
     isProcessing: getProcessing(state),
@@ -201,5 +235,6 @@ export default compose(
     googleSignIn,
     unloadAuthPage,
   }),
-  reduxForm({ form: 'signIn', validate })
+  reduxForm({ form: 'signIn', validate }),
+  withStyles(styles)
 )(SignIn);
