@@ -143,7 +143,7 @@ class SignIn extends React.Component {
               type="submit"
               variant="contained"
             >
-              Sign In
+              Submit
             </Button>
             <Grid container>
               <Grid item xs>
@@ -153,7 +153,7 @@ class SignIn extends React.Component {
               </Grid>
               <Grid item>
                 <Link href="/signup" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                  {"Don't have an account? Sign up"}
                 </Link>
               </Grid>
             </Grid>

@@ -132,7 +132,7 @@ class ResetPassword extends React.Component {
               </Grid>
               <Grid item>
                 <Link href="/signup" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                  {"Don't have an account? Sign up"}
                 </Link>
               </Grid>
             </Grid>
