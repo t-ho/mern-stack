@@ -208,7 +208,20 @@ class SignIn extends React.Component {
           </Grid>
         </div>
         <Snackbar open={!!error}>
-          <Alert severity="error">{error}</Alert>
+          {error !== 'Email is not verified' ? (
+            <Alert severity="error">{error}</Alert>
+          ) : (
+            <Alert
+              severity="error"
+              action={
+                <Link href="/request-verification-email" variant="body2">
+                  Click here
+                </Link>
+              }
+            >
+              Email is not verified. Have not received verification email?
+            </Alert>
+          )}
         </Snackbar>
       </Container>
     );
