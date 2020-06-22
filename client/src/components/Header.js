@@ -56,6 +56,19 @@ class Header extends React.Component {
     this.props.push('/dashboard/profile');
   };
 
+  getBrand = () => {
+    const { routes: routeCategories, pathname } = this.props;
+    let brand = '';
+    routeCategories.forEach(({ routes }) => {
+      routes.forEach(({ name, path }) => {
+        if (pathname.indexOf(path) > -1) {
+          brand = name;
+        }
+      });
+    });
+    return brand;
+  };
+
   render() {
     const { classes, onDrawerToggle, me, authProvider, signOut } = this.props;
 
@@ -80,7 +93,7 @@ class Header extends React.Component {
               </Hidden>
               <Grid item xs>
                 <Typography color="inherit" variant="h5" component="h1">
-                  Users
+                  {this.getBrand()}
                 </Typography>
               </Grid>
               <Grid item>
@@ -109,14 +122,6 @@ class Header extends React.Component {
                   anchorEl={anchorEl}
                   open={Boolean(anchorEl)}
                   onClose={this.onMenuClose}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                  }}
-                  transformOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                  }}
                   keepMounted
                 >
                   <MenuItem onClick={this.onProfileClick}>
@@ -144,6 +149,7 @@ class Header extends React.Component {
 Header.propTypes = {
   classes: PropTypes.object.isRequired,
   onDrawerToggle: PropTypes.func.isRequired,
+  routes: PropTypes.arrayOf(PropTypes.object),
 };
 
 const mapStateToProps = (state) => {
@@ -151,6 +157,7 @@ const mapStateToProps = (state) => {
     isSignedIn: getIsSignedIn(state),
     me: getCurrentUser(state),
     authProvider: getSignedInWith(state),
+    pathname: state.router.location.pathname,
   };
 };
 

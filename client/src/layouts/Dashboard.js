@@ -74,7 +74,7 @@ function Admin(props) {
         </Hidden>
       </nav>
       <div className={classes.app}>
-        <Header onDrawerToggle={handleDrawerToggle} />
+        <Header onDrawerToggle={handleDrawerToggle} routes={routeCategories} />
         <main className={classes.main}>{switchRoutes}</main>
       </div>
     </div>

@@ -123,7 +123,8 @@ function Navigator(props) {
                           button
                           className={clsx(
                             classes.item,
-                            pathname === path && classes.itemActiveItem
+                            pathname.indexOf(path) > -1 &&
+                              classes.itemActiveItem
                           )}
                         >
                           <ListItemIcon className={classes.itemIcon}>
