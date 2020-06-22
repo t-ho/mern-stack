@@ -9,6 +9,18 @@ const theme = createMuiTheme({
       main: '#e91e63',
     },
   },
+  overrides: {
+    MuiDrawer: {
+      paper: {
+        backgroundColor: '#18202c',
+      },
+    },
+    MuiListItemIcon: {
+      root: {
+        color: 'inherit',
+      },
+    },
+  },
 });
 
 export default theme;

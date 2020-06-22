@@ -3,16 +3,14 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import AnonymousRoute from '../../components/accessControl/AnonymousRoute';
 import ProtectedRoute from '../../components/accessControl/ProtectedRoute';
-import Header from '../../components/Header';
 import SignIn from '../Auth/SignIn';
 import SignUp from '../Auth/SignUp';
 import VerifyEmail from '../Auth/VerifyEmail';
-import Profile from '../Auth/Profile';
-import UserList from '../Users/UserList';
 import { tryLocalSignIn } from '../../store/actions';
 import RequestVerificationEmail from '../Auth/RequestVerificationEmail';
 import RequestPasswordReset from '../Auth/RequestPasswordReset';
 import ResetPassword from '../Auth/ResetPassword';
+import Dashboard from '../../layouts/Dashboard';
 import { getIsSignedIn } from '../../store/selectors';
 
 class App extends React.Component {
@@ -38,15 +36,11 @@ class App extends React.Component {
           path="/reset-password/:token"
           component={ResetPassword}
         />
-        <ProtectedRoute path="/profile" component={Profile} />
-        <ProtectedRoute
-          path="/users"
-          permissions={['userInsert', 'userRead', 'userModify']}
-          component={UserList}
-        />
+        <ProtectedRoute path="/dashboard" component={Dashboard} />
+
         <Route path="/">
           {this.props.isSignedIn ? (
-            <Redirect to="/profile" />
+            <Redirect to="/dashboard" />
           ) : (
             <Redirect to="/signin" />
           )}
