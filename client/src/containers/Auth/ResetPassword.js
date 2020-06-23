@@ -1,4 +1,15 @@
 import React from 'react';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import Link from '@material-ui/core/Link';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
 import { Field, reduxForm, SubmissionError } from 'redux-form';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -6,35 +17,31 @@ import { resetPassword, unloadAuthPage } from '../../store/actions';
 import { getError, getProcessed } from '../../store/selectors';
 import { email, minLength, required } from '../../utils/formValidator';
 
+const styles = (theme) => ({
+  paper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar: {
+    marginTop: theme.spacing(6),
+    marginBottom: theme.spacing(2),
+    width: theme.spacing(10),
+    height: theme.spacing(10),
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+});
+
 class ResetPassword extends React.Component {
   componentDidMount() {
     this.resetToken = this.props.match.params.token;
   }
-
-  renderInput = (field) => {
-    const className = `field ${
-      field.meta.error && field.meta.touched ? 'error' : ''
-    }`;
-    return (
-      <>
-        <div className={className}>
-          <label>{field.label}</label>
-          <input
-            {...field.input}
-            type={field.type}
-            autoComplete="off"
-            placeholder={field.placeholder}
-          />
-        </div>
-        {field.meta.touched && field.meta.error && (
-          <div className="ui error message">
-            <div className="header">{field.meta.error}</div>
-          </div>
-        )}
-      </>
-    );
-  };
-
   onSubmit = (formValues) => {
     return this.props.resetPassword(formValues, this.resetToken).then(() => {
       if (this.props.errorMessage) {
@@ -43,11 +50,29 @@ class ResetPassword extends React.Component {
     });
   };
 
+  componentWillUnmount() {
+    this.props.unloadAuthPage();
+  }
+
+  renderTextField = ({ input, label, meta: { touched, error }, ...custom }) => (
+    <TextField
+      label={label}
+      error={touched && !!error}
+      helperText={touched && error}
+      variant="outlined"
+      margin="normal"
+      required
+      fullWidth
+      {...input}
+      {...custom}
+    />
+  );
+
   render() {
     const {
+      classes,
       handleSubmit,
       pristine,
-      reset,
       submitting,
       valid,
       error,
@@ -55,63 +80,74 @@ class ResetPassword extends React.Component {
       isProcessed,
     } = this.props;
     return (
-      <div className="ui centered grid">
-        <div className="eight wide column">
-          <div className="ui segment">
-            <h1 className="ui header">Reset Your Password</h1>
-            {(isProcessed && errorMessage) || !isProcessed ? (
-              <form
-                onSubmit={handleSubmit(this.onSubmit)}
-                className="ui form error"
-              >
-                <Field
-                  name="email"
-                  label="Email"
-                  placeholder="Enter your email"
-                  type="text"
-                  component={this.renderInput}
-                />
-                <Field
-                  name="password"
-                  label="Password"
-                  placeholder="Enter your new password"
-                  type="password"
-                  component={this.renderInput}
-                />
-                {error && (
-                  <div className="ui error message">
-                    <div className="header">{error}</div>
-                  </div>
-                )}
-                <button
-                  disabled={pristine || submitting || !valid}
-                  className="ui button primary"
-                  type="submit"
-                >
-                  Submit
-                </button>
-                <button
-                  disabled={pristine || submitting}
-                  onClick={reset}
-                  className="ui button"
-                  type="button"
-                >
-                  Clear
-                </button>
-              </form>
-            ) : (
-              <h4 className="ui header">
-                Your password has been reset successfully.
-              </h4>
-            )}
-          </div>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Avatar
+            className={classes.avatar}
+            alt="Logo"
+            src="/logo-circle512.png"
+          />
+          <Typography component="h1" variant="h5" color="primary">
+            Reset Your Password
+          </Typography>
+          <form className={classes.form} onSubmit={handleSubmit(this.onSubmit)}>
+            <Field
+              autoComplete="email"
+              component={this.renderTextField}
+              disabled={isProcessed && !errorMessage}
+              id="email"
+              label="Email Address"
+              name="email"
+            />
+            <Field
+              autoComplete="current-password"
+              component={this.renderTextField}
+              disabled={isProcessed && !errorMessage}
+              id="password"
+              label="Password"
+              name="password"
+              type="password"
+            />
+            <Button
+              className={classes.submit}
+              color="primary"
+              disabled={
+                pristine ||
+                submitting ||
+                !valid ||
+                (isProcessed && !errorMessage)
+              }
+              fullWidth
+              type="submit"
+              variant="contained"
+            >
+              Submit
+            </Button>
+            <Grid container>
+              <Grid item xs>
+                <Link href="/signin" variant="body2">
+                  Sign In
+                </Link>
+              </Grid>
+              <Grid item>
+                <Link href="/signup" variant="body2">
+                  {"Don't have an account? Sign up"}
+                </Link>
+              </Grid>
+            </Grid>
+          </form>
         </div>
-      </div>
+        <Snackbar open={!!error}>
+          <Alert severity="error">{error}</Alert>
+        </Snackbar>
+        <Snackbar open={isProcessed && !errorMessage}>
+          <Alert severity="success">
+            Your password has been reset successfully
+          </Alert>
+        </Snackbar>
+      </Container>
     );
-  }
-
-  componentWillUnmount() {
-    this.props.unloadAuthPage();
   }
 }
 
@@ -131,5 +167,6 @@ const validate = (values) => {
 
 export default compose(
   connect(maptStateToProps, { resetPassword, unloadAuthPage }),
-  reduxForm({ form: 'reset-password', validate })
+  reduxForm({ form: 'reset-password', validate }),
+  withStyles(styles)
 )(ResetPassword);

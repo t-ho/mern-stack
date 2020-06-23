@@ -24,7 +24,7 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
     - [x] Local login - [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) - [passport-jwt](https://www.npmjs.com/package/passport-jwt)
     - [x] Facebook login - [passport-facebook-token](https://www.npmjs.com/package/passport-facebook-token)
     - [x] Google login - [passport-google-token](https://www.npmjs.com/package/passport-google-token)
-    - [x] Email verification - [sendgrid-template-helper](https://www.npmjs.com/package/sendgrid-template-helper)
+    - [x] Email verification
     - [x] Password reset email
   - [x] Authorization system
     - [x] Role-based access control
@@ -44,7 +44,7 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
   - [x] Redux store - [react-redux](https://www.npmjs.com/package/react-redux)
   - [x] Redux form - [redux-form](https://redux-form.com/8.3.0). NOTE: Migrate to [formik](https://jaredpalmer.com/formik) soon
   - [x] Router - [react-router-dom](https://www.npmjs.com/package/react-router-dom) - [connected-react-router](https://www.npmjs.com/package/connected-react-router)
-  - [ ] Material design - [Material-UI](https://material-ui.com)
+  - [x] Material design - [Material-UI](https://material-ui.com)
   - [ ] Authentication pages
     - [x] Sign up page
     - [x] Sign in page with email, Facebook or Google account
@@ -81,7 +81,7 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
   - [x] Reverse proxy server - [nginx:stable](https://hub.docker.com/_/nginx)
     - [x] Dev mode - See [nginx-proxy/Dockerfile](https://github.com/t-ho/mern-stack/blob/master/nginx-proxy/Dockerfile)
     - [x] Prod mode - See [nginx-proxy/Dockerfile.prod](https://github.com/t-ho/mern-stack/blob/master/nginx-proxy/Dockerfile.prod)
-      - [x] Install and auto-renew SSL certificate - [certbot](https://github.com/certbot)
+      - [x] Install and auto-renew SSL certificate
       - [x] Force all HTTP traffic (domain name and IP address) to HTTPS
       - [x] Use recommended configuration - [server-configs-nginx](https://github.com/h5bp/server-configs-nginx)
   - [x] Configuration can be done easily by modifying the `.env` file
