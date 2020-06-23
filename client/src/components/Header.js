@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
-import { Account, Bell, Logout, Menu as MenuIcon } from 'mdi-material-ui';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -15,6 +14,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { withStyles } from '@material-ui/core/styles';
 import { push } from 'connected-react-router';
+import { Account, Bell, Logout, Menu as MenuIcon } from 'mdi-material-ui';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import {

@@ -1,21 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { Link } from 'react-router-dom';
-import { withStyles } from '@material-ui/core/styles';
+import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
-import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import { withStyles } from '@material-ui/core/styles';
 import { Tag } from 'mdi-material-ui';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
-import ProtectedComponent from './accessControl/ProtectedComponent';
-import routeCategories from '../routes';
+import { getRouteCategories } from '../store/selectors';
 
 const styles = (theme) => ({
   categoryHeader: {
@@ -65,7 +64,7 @@ const styles = (theme) => ({
 });
 
 function Navigator(props) {
-  const { classes, pathname, onClose, ...other } = props;
+  const { classes, pathname, routeCategories, onClose, ...other } = props;
   return (
     <Drawer variant="permanent" onClose={onClose} {...other}>
       <List disablePadding onClick={onClose}>
@@ -95,59 +94,47 @@ function Navigator(props) {
             {process.env.REACT_APP_VERSION ?? 'App Version'}
           </ListItemText>
         </ListItem>
-        {routeCategories.map(
-          ({ id, name: categoryName, showOnDrawer, routes }) => {
-            if (!showOnDrawer) return null;
-            return (
-              <React.Fragment key={id}>
-                <ListItem className={classes.categoryHeader}>
-                  <ListItemText
-                    classes={{
-                      primary: classes.categoryHeaderPrimary,
-                    }}
+        {routeCategories.map((category) => {
+          if (category.isHidden) return null;
+          return (
+            <React.Fragment key={category.id}>
+              <ListItem className={classes.categoryHeader}>
+                <ListItemText
+                  classes={{
+                    primary: classes.categoryHeaderPrimary,
+                  }}
+                >
+                  {category.name}
+                </ListItemText>
+              </ListItem>
+              {category.routes.map((route) => (
+                <Link key={route.id} to={route.path}>
+                  <ListItem
+                    button
+                    className={clsx(
+                      classes.item,
+                      pathname.indexOf(route.path) > -1 &&
+                        classes.itemActiveItem
+                    )}
                   >
-                    {categoryName}
-                  </ListItemText>
-                </ListItem>
-                {routes.map(
-                  ({
-                    id: childId,
-                    path,
-                    name,
-                    permissions,
-                    icon: IconComponent,
-                  }) => (
-                    <ProtectedComponent key={childId} permissions={permissions}>
-                      <Link to={path}>
-                        <ListItem
-                          button
-                          className={clsx(
-                            classes.item,
-                            pathname.indexOf(path) > -1 &&
-                              classes.itemActiveItem
-                          )}
-                        >
-                          <ListItemIcon className={classes.itemIcon}>
-                            <IconComponent />
-                          </ListItemIcon>
-                          <ListItemText
-                            classes={{
-                              primary: classes.itemPrimary,
-                            }}
-                          >
-                            {name}
-                          </ListItemText>
-                        </ListItem>
-                      </Link>
-                    </ProtectedComponent>
-                  )
-                )}
+                    <ListItemIcon className={classes.itemIcon}>
+                      <route.icon />
+                    </ListItemIcon>
+                    <ListItemText
+                      classes={{
+                        primary: classes.itemPrimary,
+                      }}
+                    >
+                      {route.name}
+                    </ListItemText>
+                  </ListItem>
+                </Link>
+              ))}
 
-                <Divider className={classes.divider} />
-              </React.Fragment>
-            );
-          }
-        )}
+              <Divider className={classes.divider} />
+            </React.Fragment>
+          );
+        })}
       </List>
     </Drawer>
   );
@@ -155,6 +142,7 @@ function Navigator(props) {
 
 const mapStateToProps = (state) => ({
   pathname: state.router.location.pathname,
+  routeCategories: getRouteCategories(state),
 });
 
 Navigator.propTypes = {

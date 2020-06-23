@@ -6,7 +6,7 @@ const routeCategories = [
   {
     id: 'manage',
     name: 'Manage',
-    showOnDrawer: true,
+    isHidden: false,
     routes: [
       {
         id: 'users',
@@ -22,7 +22,7 @@ const routeCategories = [
   {
     id: 'accountSettings',
     name: 'Account Settings',
-    showOnDrawer: false,
+    isHidden: true,
     routes: [
       {
         id: 'profile',
