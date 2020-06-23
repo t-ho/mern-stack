@@ -12,6 +12,14 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
 
 [![mern-workflow](https://raw.githubusercontent.com/t-ho/mern-stack/assets/assets/mern-workflow.gif)](https://github.com/t-ho/mern-stack)
 
+## Demo
+
+- Web app [demo](https://mernstack.tdev.app)
+- Mobile app [demo](https://expo.io/@t-ho/mern-stack)
+- Dummy accounts:
+  - email: `admin@tdev.app` - password: `password`
+  - email: `user@tdev.app` - password: `password`
+
 ## Project Breakdown
 
 ### 1. API Server
@@ -85,8 +93,6 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
       - [x] Force all HTTP traffic (domain name and IP address) to HTTPS
       - [x] Use recommended configuration - [server-configs-nginx](https://github.com/h5bp/server-configs-nginx)
   - [x] Configuration can be done easily by modifying the `.env` file
-    - [x] Upstream servers' port number
-    - [x] Domain name list
 
 ### 5. CI and CD
 
