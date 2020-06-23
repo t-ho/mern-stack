@@ -56,14 +56,18 @@ const isAuthorized = (user, route) => {
 export const getRouteCategories = createSelector(getCurrentUser, (user) => {
   let result = [];
   routeCategories.forEach((category) => {
-    const routes = [];
+    let routes = [];
+    let isHidden = true;
     category.routes.forEach((route) => {
       if (isAuthorized(user, route)) {
         routes.push(route);
+        if (!category.isHidden && !route.isHidden) {
+          isHidden = false;
+        }
       }
     });
     if (routes.length > 0) {
-      result.push({ ...category, routes });
+      result.push({ ...category, isHidden, routes });
     }
   });
   return result;

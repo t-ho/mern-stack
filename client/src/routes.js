@@ -12,6 +12,7 @@ const routeCategories = [
         id: 'users',
         name: 'Users',
         path: '/dashboard/users',
+        isHidden: false,
         component: UserList,
         permissions: ['userInsert', 'userRead', 'userModify'],
         requiresAny: false,

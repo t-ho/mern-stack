@@ -110,28 +110,32 @@ function Navigator(props) {
                   {category.name}
                 </ListItemText>
               </ListItem>
-              {category.routes.map((route) => (
-                <ListItem
-                  key={route.id}
-                  button
-                  className={clsx(
-                    classes.item,
-                    pathname.indexOf(route.path) > -1 && classes.itemActiveItem
-                  )}
-                  onClick={() => push(route.path)}
-                >
-                  <ListItemIcon className={classes.itemIcon}>
-                    <route.icon />
-                  </ListItemIcon>
-                  <ListItemText
-                    classes={{
-                      primary: classes.itemPrimary,
-                    }}
+              {category.routes.map((route) => {
+                if (route.isHidden) return null;
+                return (
+                  <ListItem
+                    key={route.id}
+                    button
+                    className={clsx(
+                      classes.item,
+                      pathname.indexOf(route.path) > -1 &&
+                        classes.itemActiveItem
+                    )}
+                    onClick={() => push(route.path)}
                   >
-                    {route.name}
-                  </ListItemText>
-                </ListItem>
-              ))}
+                    <ListItemIcon className={classes.itemIcon}>
+                      <route.icon />
+                    </ListItemIcon>
+                    <ListItemText
+                      classes={{
+                        primary: classes.itemPrimary,
+                      }}
+                    >
+                      {route.name}
+                    </ListItemText>
+                  </ListItem>
+                );
+              })}
 
               <Divider className={classes.divider} />
             </React.Fragment>
