@@ -104,19 +104,21 @@ class Header extends React.Component {
                 </Tooltip>
               </Grid>
               <Grid item>
-                <IconButton
-                  color="inherit"
-                  className={classes.iconButtonAvatar}
-                  aria-controls="avatar-menu"
-                  aria-haspopup="true"
-                  onClick={this.onMenuOpen}
-                >
-                  <Avatar
-                    src={me.provider[authProvider].picture}
-                    alt="My Avatar"
-                    className={classes.avatar}
-                  />
-                </IconButton>
+                <Tooltip title={`${me.firstName} ${me.lastName}`}>
+                  <IconButton
+                    color="inherit"
+                    className={classes.iconButtonAvatar}
+                    aria-controls="avatar-menu"
+                    aria-haspopup="true"
+                    onClick={this.onMenuOpen}
+                  >
+                    <Avatar
+                      src={me.provider[authProvider].picture}
+                      alt="My Avatar"
+                      className={classes.avatar}
+                    />
+                  </IconButton>
+                </Tooltip>
                 <Menu
                   id="avatar-menu"
                   anchorEl={anchorEl}

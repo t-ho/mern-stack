@@ -8,6 +8,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import { Tooltip } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { push } from 'connected-react-router';
 import { Tag } from 'mdi-material-ui';
@@ -82,18 +83,20 @@ function Navigator(props) {
           />
           MERN Stack
         </ListItem>
-        <ListItem className={clsx(classes.item, classes.itemCategory)}>
-          <ListItemIcon className={classes.itemIcon}>
-            <Tag />
-          </ListItemIcon>
-          <ListItemText
-            classes={{
-              primary: classes.itemPrimary,
-            }}
-          >
-            {process.env.REACT_APP_VERSION ?? 'App Version'}
-          </ListItemText>
-        </ListItem>
+        <Tooltip title="Application version">
+          <ListItem className={clsx(classes.item, classes.itemCategory)}>
+            <ListItemIcon className={classes.itemIcon}>
+              <Tag />
+            </ListItemIcon>
+            <ListItemText
+              classes={{
+                primary: classes.itemPrimary,
+              }}
+            >
+              {process.env.REACT_APP_VERSION ?? 'App Version'}
+            </ListItemText>
+          </ListItem>
+        </Tooltip>
         {routeCategories.map((category) => {
           if (category.isHidden) return null;
           return (

@@ -95,6 +95,26 @@ class SignUp extends React.Component {
               autoComplete="username"
               component={this.renderTextField}
             />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <Field
+                  autoComplete="fname"
+                  id="firstName"
+                  label="First Name"
+                  name="firstName"
+                  component={this.renderTextField}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Field
+                  autoComplete="lname"
+                  id="lastName"
+                  label="Last Name"
+                  name="lastName"
+                  component={this.renderTextField}
+                />
+              </Grid>
+            </Grid>
             <Field
               id="email"
               label="Email Address"
@@ -147,6 +167,8 @@ const maptStateToProps = (state) => {
 const validate = (values) => {
   const errors = {};
   errors.username = required(values.username) || minLength(4)(values.username);
+  errors.firstName = required(values.firstName);
+  errors.lastName = required(values.lastName);
   errors.email = required(values.email) || email(values.email);
   errors.password = required(values.password) || minLength(8)(values.password);
   return errors;
