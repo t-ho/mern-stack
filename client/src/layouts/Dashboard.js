@@ -30,7 +30,7 @@ const styles = (theme) => ({
   },
   main: {
     flex: 1,
-    padding: theme.spacing(1),
+    padding: theme.spacing(2),
   },
 });
 

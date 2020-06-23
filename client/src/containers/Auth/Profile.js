@@ -1,50 +1,72 @@
 import React from 'react';
+import { withStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { getCurrentUser, getSignedInWith } from '../../store/selectors';
 
+const styles = (theme) => ({
+  image: {
+    backgroundColor: '#f5f5f5',
+    width: '100%',
+  },
+});
+
 class Profile extends React.Component {
   render() {
-    const { currentUser, signedInWith } = this.props;
+    const { me, classes, authProvider } = this.props;
+
     let picture = '';
-    if (currentUser.provider) {
-      picture = currentUser.provider[signedInWith].picture;
+    if (me.provider) {
+      picture = me.provider[authProvider].picture;
     }
+
     picture = picture ? picture : '/logo-circle512.png';
+
     return (
-      <div className="ui centered grid padded">
-        <div className="ui raised card">
-          <div className="image">
-            <img alt="avatar" src={picture} />
-          </div>
-          <div className="content">
-            <span className="header">{`${currentUser.firstName} ${currentUser.lastName}`}</span>
-            <div className="meta">
-              <span className="date">
-                Joined in {new Date(currentUser.createdAt).getFullYear()}
-              </span>
-            </div>
-            <div className="description">
-              You are logged in as <b>{currentUser.username}</b>
-            </div>
-          </div>
-          <div className="extra content">
-            <span>
-              <i className="envelope icon"></i>
-              {currentUser.email}
-            </span>
-          </div>
-        </div>
-      </div>
+      <Grid container justify="center">
+        <Grid xs={12} sm={5} md={3} item>
+          <Card>
+            <CardActionArea>
+              <CardMedia
+                component={() => (
+                  <div>
+                    <img alt="avatar" src={picture} className={classes.image} />
+                  </div>
+                )}
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="h2">
+                  {`${me.firstName} ${me.lastName}`}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" component="p">
+                  Joined in {new Date(me.createdAt).getFullYear()}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" component="p">
+                  You are logged in as <b>{me.username}</b>
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+        </Grid>
+      </Grid>
     );
   }
 }
 
 const mapStateToProps = (state) => {
   return {
-    currentUser: getCurrentUser(state),
-    signedInWith: getSignedInWith(state),
+    me: getCurrentUser(state),
+    authProvider: getSignedInWith(state),
   };
 };
 
-export default compose(connect(mapStateToProps, {}))(Profile);
+export default compose(
+  connect(mapStateToProps, {}),
+  withStyles(styles)
+)(Profile);

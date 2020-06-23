@@ -1,12 +1,8 @@
 import React from 'react';
+import Typography from '@material-ui/core/Typography';
 
 const UserList = () => {
-  return (
-    <div>
-      <h3>UserList Page</h3>
-      Only root or admin can go here
-    </div>
-  );
+  return <Typography>UserList Page</Typography>;
 };
 
 export default UserList;

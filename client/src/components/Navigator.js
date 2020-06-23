@@ -9,8 +9,8 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { withStyles } from '@material-ui/core/styles';
+import { push } from 'connected-react-router';
 import { Tag } from 'mdi-material-ui';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
@@ -64,7 +64,7 @@ const styles = (theme) => ({
 });
 
 function Navigator(props) {
-  const { classes, pathname, routeCategories, onClose, ...other } = props;
+  const { classes, pathname, routeCategories, onClose, push, ...other } = props;
   return (
     <Drawer variant="permanent" onClose={onClose} {...other}>
       <List disablePadding onClick={onClose}>
@@ -108,27 +108,26 @@ function Navigator(props) {
                 </ListItemText>
               </ListItem>
               {category.routes.map((route) => (
-                <Link key={route.id} to={route.path}>
-                  <ListItem
-                    button
-                    className={clsx(
-                      classes.item,
-                      pathname.indexOf(route.path) > -1 &&
-                        classes.itemActiveItem
-                    )}
+                <ListItem
+                  key={route.id}
+                  button
+                  className={clsx(
+                    classes.item,
+                    pathname.indexOf(route.path) > -1 && classes.itemActiveItem
+                  )}
+                  onClick={() => push(route.path)}
+                >
+                  <ListItemIcon className={classes.itemIcon}>
+                    <route.icon />
+                  </ListItemIcon>
+                  <ListItemText
+                    classes={{
+                      primary: classes.itemPrimary,
+                    }}
                   >
-                    <ListItemIcon className={classes.itemIcon}>
-                      <route.icon />
-                    </ListItemIcon>
-                    <ListItemText
-                      classes={{
-                        primary: classes.itemPrimary,
-                      }}
-                    >
-                      {route.name}
-                    </ListItemText>
-                  </ListItem>
-                </Link>
+                    {route.name}
+                  </ListItemText>
+                </ListItem>
               ))}
 
               <Divider className={classes.divider} />
@@ -150,6 +149,6 @@ Navigator.propTypes = {
 };
 
 export default compose(
-  connect(mapStateToProps, {}),
+  connect(mapStateToProps, { push }),
   withStyles(styles)
 )(Navigator);
