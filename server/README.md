@@ -153,7 +153,12 @@ Sample response
     "lastName": "Account",
     "role": "user",
     "permissions": {
-      "debug": false
+      "userInsert": false,
+      "userModify": false,
+      "userRead": false,
+      "postInsert": false,
+      "postModify": false,
+      "postRead": true
     },
     "provider": {
       "local": {
@@ -216,7 +221,12 @@ Sample response
     "lastName": "Account",
     "role": "user",
     "permissions": {
-      "debug": false
+      "userInsert": false,
+      "userModify": false,
+      "userRead": false,
+      "postInsert": false,
+      "postModify": false,
+      "postRead": true
     },
     "provider": {
       "facebook": {
@@ -280,7 +290,12 @@ Sample response
     "lastName": "Account",
     "role": "user",
     "permissions": {
-      "debug": false
+      "userInsert": false,
+      "userModify": false,
+      "userRead": false,
+      "postInsert": false,
+      "postModify": false,
+      "postRead": true
     },
     "provider": {
       "google": {
@@ -525,7 +540,12 @@ Sample response
     "lastName": "Account",
     "role": "user",
     "permissions": {
-      "debug": false
+      "userInsert": false,
+      "userModify": false,
+      "userRead": false,
+      "postInsert": false,
+      "postModify": false,
+      "postRead": true
     },
     "provider": {
       "local": {
@@ -675,7 +695,12 @@ Sample response
       "lastName": "Connor",
       "role": "root",
       "permissions": {
-        "debug": false
+        "userInsert": false,
+        "userModify": false,
+        "userRead": false,
+        "postInsert": false,
+        "postModify": false,
+        "postRead": true
       },
       "provider": {
         "local": {
@@ -694,7 +719,12 @@ Sample response
       "lastName": "Connor",
       "role": "user",
       "permissions": {
-        "debug": false
+        "userInsert": false,
+        "userModify": false,
+        "userRead": false,
+        "postInsert": false,
+        "postModify": false,
+        "postRead": true
       },
       "provider": {
         "local": {
@@ -744,7 +774,12 @@ Sample response
     "lastName": "Connor",
     "role": "root",
     "permissions": {
-      "debug": false
+      "userInsert": false,
+      "userModify": false,
+      "userRead": false,
+      "postInsert": false,
+      "postModify": false,
+      "postRead": true
     },
     "provider": {
       "local": {
@@ -787,7 +822,12 @@ Sample request body payload
 {
   "role": "admin",
   "permissions": {
-    "debug": true
+    "userInsert": true,
+    "userModify": true,
+    "userRead": true,
+    "postInsert": false,
+    "postModify": false,
+    "postRead": true
   }
 }
 ```
