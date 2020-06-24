@@ -2,19 +2,27 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Slide from '@material-ui/core/Slide';
 import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import { withStyles } from '@material-ui/core/styles';
 import { push } from 'connected-react-router';
-import { Account, Bell, Logout, Menu as MenuIcon } from 'mdi-material-ui';
+import {
+  Account,
+  Bell,
+  Logout,
+  Github,
+  Menu as MenuIcon,
+} from 'mdi-material-ui';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import {
@@ -23,6 +31,17 @@ import {
   getSignedInWith,
 } from '../store/selectors';
 import { signOut } from '../store/actions';
+
+import useScrollTrigger from '@material-ui/core/useScrollTrigger';
+
+function ShowOnScroll({ children }) {
+  const trigger = useScrollTrigger({ threshold: 48, disableHysteresis: true });
+  return (
+    <Slide in={trigger} direction="up">
+      <span>{children}</span>
+    </Slide>
+  );
+}
 
 const styles = (theme) => ({
   secondaryBar: {
@@ -77,7 +96,7 @@ class Header extends React.Component {
     return (
       <React.Fragment>
         <AppBar color="primary" position="sticky" elevation={0}>
-          <Toolbar>
+          <Toolbar variant="dense">
             <Grid container spacing={1} alignItems="center">
               <Hidden lgUp>
                 <Grid item>
@@ -92,9 +111,11 @@ class Header extends React.Component {
                 </Grid>
               </Hidden>
               <Grid item xs>
-                <Typography color="inherit" variant="h5" component="h1">
-                  {this.getBrand()}
-                </Typography>
+                <ShowOnScroll>
+                  <Typography color="inherit" variant="h6">
+                    {this.getBrand()}
+                  </Typography>
+                </ShowOnScroll>
               </Grid>
               <Grid item>
                 <Tooltip title="Alerts • No alerts">
@@ -139,6 +160,48 @@ class Header extends React.Component {
                     <ListItemText primary="Log out" />
                   </MenuItem>
                 </Menu>
+              </Grid>
+            </Grid>
+          </Toolbar>
+        </AppBar>
+        <AppBar
+          component="div"
+          className={classes.secondaryBar}
+          color="primary"
+          position="static"
+          elevation={0}
+        >
+          <Toolbar variant="dense">
+            <Grid container alignItems="center" spacing={1}>
+              <Grid item xs>
+                <Typography color="inherit" variant="h6">
+                  {this.getBrand()}
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Tooltip title="Demo on Expo">
+                  <Button
+                    className={classes.button}
+                    variant="outlined"
+                    color="inherit"
+                    size="small"
+                    target="_blank"
+                    href="https://expo.io/@t-ho/mern-stack"
+                  >
+                    Mobile
+                  </Button>
+                </Tooltip>
+              </Grid>
+              <Grid item>
+                <Tooltip title="Fork me on Github">
+                  <IconButton
+                    color="inherit"
+                    target="_blank"
+                    href="https://github.com/t-ho/mern-stack"
+                  >
+                    <Github />
+                  </IconButton>
+                </Tooltip>
               </Grid>
             </Grid>
           </Toolbar>

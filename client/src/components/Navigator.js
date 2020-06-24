@@ -24,6 +24,8 @@ const styles = (theme) => ({
   },
   categoryHeaderPrimary: {
     color: theme.palette.common.white,
+    fontSize: 16,
+    fontWeight: theme.typography.fontWeightMedium,
   },
   item: {
     paddingTop: 1,
@@ -45,18 +47,23 @@ const styles = (theme) => ({
     marginRight: theme.spacing(2),
   },
   drawerTitle: {
-    fontSize: 20,
     color: theme.palette.common.white,
+    fontSize: 20,
   },
   itemActiveItem: {
     color: theme.palette.primary.main,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
   },
   itemPrimary: {
-    fontSize: 'inherit',
+    fontSize: 14,
+    fontWeight: theme.typography.fontWeightMedium,
   },
   itemIcon: {
     minWidth: 'auto',
     marginRight: theme.spacing(2),
+    '& svg': {
+      fontSize: 20,
+    },
   },
   divider: {
     marginTop: theme.spacing(2),
