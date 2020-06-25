@@ -1,15 +1,15 @@
 import React from 'react';
+import Alert from '@material-ui/lab/Alert';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
+import Link from '@material-ui/core/Link';
+import Snackbar from '@material-ui/core/Snackbar';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import Snackbar from '@material-ui/core/Snackbar';
-import Alert from '@material-ui/lab/Alert';
 import { Field, reduxForm, SubmissionError } from 'redux-form';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -31,10 +31,10 @@ const styles = (theme) => ({
   },
   form: {
     width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(3),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
+    margin: theme.spacing(4, 0, 2),
   },
 });
 
@@ -60,7 +60,8 @@ class ResetPassword extends React.Component {
       error={touched && !!error}
       helperText={touched && error}
       variant="outlined"
-      margin="normal"
+      margin="none"
+      autoComplete="off"
       required
       fullWidth
       {...input}
@@ -92,23 +93,27 @@ class ResetPassword extends React.Component {
             Reset Your Password
           </Typography>
           <form className={classes.form} onSubmit={handleSubmit(this.onSubmit)}>
-            <Field
-              autoComplete="email"
-              component={this.renderTextField}
-              disabled={isProcessed && !errorMessage}
-              id="email"
-              label="Email Address"
-              name="email"
-            />
-            <Field
-              autoComplete="current-password"
-              component={this.renderTextField}
-              disabled={isProcessed && !errorMessage}
-              id="password"
-              label="Password"
-              name="password"
-              type="password"
-            />
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Field
+                  component={this.renderTextField}
+                  disabled={isProcessed && !errorMessage}
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Field
+                  component={this.renderTextField}
+                  disabled={isProcessed && !errorMessage}
+                  id="password"
+                  label="Password"
+                  name="password"
+                  type="password"
+                />
+              </Grid>
+            </Grid>
             <Button
               className={classes.submit}
               color="primary"

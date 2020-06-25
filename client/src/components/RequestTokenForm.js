@@ -30,10 +30,10 @@ const styles = (theme) => ({
   },
   form: {
     width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(3),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
+    margin: theme.spacing(4, 0, 2),
   },
 });
 
@@ -53,7 +53,8 @@ class RequestTokenForm extends React.Component {
       error={touched && !!error}
       helperText={touched && error}
       variant="outlined"
-      margin="normal"
+      margin="none"
+      autoComplete="off"
       required
       fullWidth
       {...input}
@@ -91,7 +92,6 @@ class RequestTokenForm extends React.Component {
               disabled={isProcessed && !errorMessage}
               label="Email Address"
               name="email"
-              autoComplete="email"
               component={this.renderTextField}
             />
             <Button

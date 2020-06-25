@@ -1,15 +1,15 @@
 import React from 'react';
+import Alert from '@material-ui/lab/Alert';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
+import Link from '@material-ui/core/Link';
+import Snackbar from '@material-ui/core/Snackbar';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import Snackbar from '@material-ui/core/Snackbar';
-import Alert from '@material-ui/lab/Alert';
 import { Field, reduxForm, SubmissionError } from 'redux-form';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -31,10 +31,10 @@ const styles = (theme) => ({
   },
   form: {
     width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(3),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
+    margin: theme.spacing(4, 0, 2),
   },
 });
 
@@ -58,7 +58,8 @@ class SignUp extends React.Component {
       error={touched && !!error}
       helperText={touched && error}
       variant="outlined"
-      margin="normal"
+      margin="none"
+      autoComplete="off"
       required
       fullWidth
       {...input}
@@ -88,14 +89,15 @@ class SignUp extends React.Component {
             Sign Up
           </Typography>
           <form className={classes.form} onSubmit={handleSubmit(this.onSubmit)}>
-            <Field
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
-              component={this.renderTextField}
-            />
-            <Grid container spacing={2}>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Field
+                  id="username"
+                  label="Username"
+                  name="username"
+                  component={this.renderTextField}
+                />
+              </Grid>
               <Grid item xs={12} sm={6}>
                 <Field
                   autoComplete="fname"
@@ -114,22 +116,24 @@ class SignUp extends React.Component {
                   component={this.renderTextField}
                 />
               </Grid>
+              <Grid item xs={12}>
+                <Field
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  component={this.renderTextField}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Field
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  component={this.renderTextField}
+                />
+              </Grid>
             </Grid>
-            <Field
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              component={this.renderTextField}
-            />
-            <Field
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              component={this.renderTextField}
-            />
             <Button
               className={classes.submit}
               color="primary"
