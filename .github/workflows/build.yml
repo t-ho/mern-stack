@@ -64,7 +64,7 @@ jobs:
         run: echo ::set-env name=SHORT_SHA::$(echo ${GITHUB_SHA:0:7})
       - uses: docker/build-push-action@v1
         with:
-          username: 0x8861
+          username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: 0x8861/mernstack-client
           path: .
@@ -83,7 +83,7 @@ jobs:
     steps:
       - uses: docker/build-push-action@v1
         with:
-          username: 0x8861
+          username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: 0x8861/mernstack-api-server
           path: .
@@ -101,7 +101,7 @@ jobs:
     steps:
       - uses: docker/build-push-action@v1
         with:
-          username: 0x8861
+          username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: 0x8861/mernstack-nginx-proxy
           path: .
