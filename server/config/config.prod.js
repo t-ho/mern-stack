@@ -11,7 +11,7 @@ let prodConfig = {
     title: 'MERN Stack', // TODO: Human friendly name
   },
   auth: {
-    verifyEmail: true, // If true, require email verification when signing up
+    verifyEmail: false, // If true, require email verification when signing up
     resetPassword: true, // If true, be able to reset password via email
   },
   cors: {

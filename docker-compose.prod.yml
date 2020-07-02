@@ -6,8 +6,6 @@ services:
     env_file: .env.prod
     environment:
       - NODE_ENV=production # Override the NODE_ENV in .env file
-    depends_on:
-      - mongo
 
   client:
     restart: always
