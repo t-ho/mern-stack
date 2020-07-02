@@ -1,0 +1,112 @@
+name: CI Testing
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: Test on Node ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Cache Node.js modules
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-${{ matrix.node-version }}-
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+
+      - run: npm install
+      - run: npm test
+    env:
+      CI: true
+      FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }}
+      FACEBOOK_APP_SECRET: ${{ secrets.FACEBOOK_APP_SECRET }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      MONGO_URI: mongodb://localhost:27017/merndb
+      NGINX_PROXY_PORT: 8080
+      NODE_ENV: development
+      PORT: 3000
+      SERVER_HOST: http://localhost
+      SERVER_PORT: 8861
+      SERVER_PUBLIC_URL: http://localhost:3000
+      SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+
+  build-and-push-client:
+    needs: test
+    name: Build and push client image to docker hub
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get short SHA of the commit
+        run: echo ::set-env name=SHORT_SHA::$(echo ${GITHUB_SHA:0:7})
+      - uses: docker/build-push-action@v1
+        with:
+          username: 0x8861
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: 0x8861/mernstack-client
+          path: .
+          dockerfile: ./client/Dockerfile.prod
+          build_args: facebook_app_id=${{ secrets.FACEBOOK_APP_ID }},google_client_id=${{ secrets.GOOGLE_CLIENT_ID }},version=sha-${{ env.SHORT_SHA }}
+          always_pull: true
+          tag_with_ref: true
+          tag_with_sha: true
+          push: true
+
+  build-and-push-api-server:
+    needs: test
+    name: Build and push api-server image to docker hub
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: docker/build-push-action@v1
+        with:
+          username: 0x8861
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: 0x8861/mernstack-api-server
+          path: .
+          dockerfile: ./server/Dockerfile.prod
+          always_pull: true
+          tag_with_ref: true
+          tag_with_sha: true
+          push: true
+
+  build-and-push-nginx-proxy:
+    needs: test
+    name: Build and push nginx-proxy image to docker hub
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: docker/build-push-action@v1
+        with:
+          username: 0x8861
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: 0x8861/mernstack-nginx-proxy
+          path: .
+          dockerfile: ./nginx-proxy/Dockerfile.prod
+          always_pull: true
+          tag_with_ref: true
+          tag_with_sha: true
+          push: true

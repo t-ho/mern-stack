@@ -28,8 +28,6 @@ const styles = (theme) => ({
     fontWeight: theme.typography.fontWeightMedium,
   },
   item: {
-    paddingTop: 1,
-    paddingBottom: 1,
     color: 'rgba(255, 255, 255, 0.7)',
     '&:hover,&:focus': {
       backgroundColor: 'rgba(255, 255, 255, 0.08)',
