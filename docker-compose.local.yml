@@ -1,17 +1,29 @@
 version: '3.8'
 services:
+  mongo: # Remove this if you use external MongoDB service such as MongoDB Atlas
+    restart: always
+    image: mongo:latest
+
   api-server:
     restart: always
-    image: 0x8861/mernstack-api-server:latest
+    build:
+      context: ./
+      dockerfile: ./server/Dockerfile.prod
     env_file: .env.prod
     environment:
       - NODE_ENV=production # Override the NODE_ENV in .env file
+      - MONGO_URI=mongodb://mongo/merndb # Remove this if you use external MongoDB service such as MongoDB Atlas
     depends_on:
       - mongo
 
   client:
     restart: always
-    image: 0x8861/mernstack-client:latest
+    build:
+      context: ./
+      dockerfile: ./client/Dockerfile.prod
+      args:
+        - facebook_app_id=${FACEBOOK_APP_ID}
+        - google_client_id=${GOOGLE_CLIENT_ID}
     environment:
       - TZ
     depends_on:
@@ -19,7 +31,9 @@ services:
 
   nginx-proxy:
     restart: always
-    image: 0x8861/mernstack-nginx-proxy:latest
+    build:
+      context: ./
+      dockerfile: ./nginx-proxy/Dockerfile.prod
     volumes:
       - /mern-stack/ssl:/etc/nginx/ssl
     ports:
