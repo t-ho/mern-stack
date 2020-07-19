@@ -29,7 +29,7 @@
     "dotenv": "^8.2.0",
     "figlet": "^1.4.0",
     "husky": "^4.2.5",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "ngrok": "^3.2.7",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
