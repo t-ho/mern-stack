@@ -34,11 +34,11 @@
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "helmet": "^3.23.1",
+    "helmet": "^4.0.0",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.15",
-    "mocha": "^8.0.1",
-    "mongoose": "^5.9.19",
+    "lodash": "^4.17.19",
+    "mocha": "^8.1.1",
+    "mongoose": "^5.9.28",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.4",
     "passport": "^0.4.1",
@@ -46,9 +46,9 @@
     "passport-google-token": "^0.1.2",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "sendgrid-template-helper": "^1.0.2",
+    "sendgrid-template-helper": "^1.0.3",
     "supertest": "^4.0.2",
-    "uuid": "^8.1.0"
+    "uuid": "^8.3.0"
   },
   "devDependencies": {}
 }
