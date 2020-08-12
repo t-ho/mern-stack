@@ -519,6 +519,8 @@ const sendEmailHelperAsync = (
       buttonText,
       url,
       signature: config.email.signature,
+      appTitle: config.app.title,
+      publicUrl: config.server.publicUrl,
     },
   });
 };

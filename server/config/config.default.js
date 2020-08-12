@@ -25,7 +25,7 @@ let defaultConfig = {
     options: null, // See https://www.npmjs.com/package/cors
   },
   email: {
-    from: 'no-reply@tdev.app', // TODO
+    from: 'no-reply@mernstack.tdev.app', // TODO
     to: '',
     signature: 'The MERN Team', // TODO
   },

@@ -18,7 +18,7 @@ let prodConfig = {
     enabled: false,
   },
   email: {
-    from: 'no-reply@mern.tdev.app', // TODO
+    from: 'no-reply@mernstack.tdev.app', // TODO
     to: '',
     signature: 'The MERN Team', // TODO
   },
