@@ -210,7 +210,6 @@ const updateOrInsert = (userProfile) => {
   };
 
   let provider = {
-    name: userProfile.provider,
     userId: userProfile.userId,
     picture: userProfile.picture,
   };
@@ -238,14 +237,7 @@ const updateOrInsert = (userProfile) => {
       );
     }
     // user existed, update provider
-    if (existingUser.provider[userProfile.provider]) {
-      existingUser.provider[userProfile.provider] = {
-        ...existingUser.provider[userProfile.provider],
-        ...provider,
-      };
-    } else {
-      existingUser.provider[userProfile.provider] = provider;
-    }
+    existingUser.provider[userProfile.provider] = provider;
     existingUser.firstName = userProfile.firstName;
     existingUser.lastName = userProfile.lastName;
     return existingUser.save();
