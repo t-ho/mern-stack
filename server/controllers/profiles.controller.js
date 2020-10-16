@@ -18,10 +18,62 @@ module.exports.getProfile = (req, res, next) => {
 };
 
 /**
+ * JOI schema for validating updatePassword payload
+ */
+const updatePasswordSchema = Joi.object({
+  currentPassword: Joi.string()
+    .min(8)
+    .messages(constants.CURRENT_PASSWORD_ERROR_MESSAGES)
+    .required(),
+  password: Joi.string()
+    .min(8)
+    .messages(constants.PASSWORD_ERROR_MESSAGES)
+    .required(),
+});
+
+/**
+ * @function updatePassword
+ * Get profile controller
+ *
+ * @param {string} [req.body.currentPassword] The current password to update
+ * @param {string} [req.body.password] The new password to update
+ */
+module.exports.updatePassword = (req, res, next) => {
+  if (req.user) {
+    updatePasswordSchema
+      .validateAsync(req.body, { stripUnknown: true })
+      .then((payload) => {
+        req.body = payload;
+        if (req.body.password === req.body.currentPassword) {
+          throw createError(
+            422,
+            'New password is the same as current password'
+          );
+        }
+        return req.user.comparePasswordAsync(req.body.currentPassword);
+      })
+      .then((matched) => {
+        if (!matched) {
+          throw createError(422, 'Current password is incorrect');
+        }
+        req.user.setSubId(); // invalidate all existing JWT tokens
+        return req.user.setPasswordAsync(req.body.password);
+      })
+      .then(() => {
+        return req.user.save();
+      })
+      .then((user) => {
+        let jwtTokenObj = user.generateJwtToken();
+        res.status(200).json({ ...jwtTokenObj });
+      })
+      .catch(next);
+  }
+};
+
+/**
  * JOI schema for validating updateProfile payload
  */
 const updateProfileSchema = Joi.object({
-  password: Joi.string().min(8).messages(constants.PASSWORD_ERROR_MESSAGES),
   firstName: Joi.string().trim(),
   lastName: Joi.string().trim(),
 });
@@ -30,7 +82,6 @@ const updateProfileSchema = Joi.object({
  * @function updateProfile
  * Get profile controller
  *
- * @param {string} [req.body.password] The password to update
  * @param {string} [req.body.firstName] The first name to update
  * @param {string} [req.body.lastName] The last name to update
  */
@@ -43,18 +94,14 @@ module.exports.updateProfile = (req, res, next) => {
       .validateAsync(req.body, { stripUnknown: true })
       .then((payload) => {
         req.body = payload;
-        const { password, ...others } = req.body;
-        _.merge(req.user, others);
-        if (password) {
-          req.user.setSubId(); // invalidate all existing JWT tokens
-          return req.user.setPasswordAsync(password);
-        }
-      })
-      .then(() => {
+        req.user = _.merge(req.user, req.body);
         return req.user.save();
       })
       .then((updatedUser) => {
-        res.status(200).json({ updatedFields: _.keys(req.body) });
+        res.status(200).json({
+          user: updatedUser.toJsonFor(req.user),
+          updatedFields: _.keys(req.body),
+        });
       })
       .catch(next);
   }

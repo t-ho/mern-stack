@@ -10,6 +10,8 @@ router.get('/', jwtAuthenticate, profilesCtrl.getProfile);
 
 router.put('/', jwtAuthenticate, profilesCtrl.updateProfile);
 
+router.put('/password', jwtAuthenticate, profilesCtrl.updatePassword);
+
 // get Public profile
 router.get('/:userId', profilesCtrl.getPublicProfile);
 

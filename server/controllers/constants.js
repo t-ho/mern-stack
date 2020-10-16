@@ -10,6 +10,12 @@ const PASSWORD_ERROR_MESSAGES = {
   'any.required': 'Password is required',
 };
 
+const CURRENT_PASSWORD_ERROR_MESSAGES = {
+  'string.empty': 'Current Password cannot be empty',
+  'string.min': 'Current Password must be at least 8 characters',
+  'any.required': 'Current Password is required',
+};
+
 const USERNAME_ERROR_MESSAGE = {
   'string.empty': 'Username cannot be empty',
   'string.pattern.base':
@@ -19,6 +25,7 @@ const USERNAME_ERROR_MESSAGE = {
 
 module.exports = {
   EMAIL_ERROR_MESSAGES,
+  CURRENT_PASSWORD_ERROR_MESSAGES,
   PASSWORD_ERROR_MESSAGES,
   USERNAME_ERROR_MESSAGE,
 };

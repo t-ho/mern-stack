@@ -609,7 +609,6 @@ Authorization: Bearer {JWT Token}
 
 | Property Name | Type     | Required | Description    |
 | ------------- | -------- | -------- | -------------- |
-| `password`    | _string_ | No       | New password   |
 | `firstName`   | _string_ | No       | New first name |
 | `lastName`    | _string_ | No       | New last name  |
 
@@ -617,7 +616,6 @@ Sample request body payload
 
 ```
 {
-  "password: "new-password",
   "firstName: "Sarah"
 }
 ```
@@ -626,16 +624,85 @@ Sample request body payload
 
 | Property Name   | Type           | Description             |
 | --------------- | -------------- | ----------------------- |
+| `user`          | _object_       | The updated user object |
 | `updatedFields` | _string array_ | Fields has been updated |
 
 Sample response
 
 ```
 {
+  "user": {
+    "id": "5ed72abbdbc55ffdf6d221c3",
+    "username": "root",
+    "email": "root@tdev.app",
+    "status": "active",
+    "firstName": "Sarah",
+    "lastName": "Account",
+    "role": "root",
+    "permissions": {
+      "userInsert": false,
+      "userModify": false,
+      "userRead": false
+    },
+    "provider": {
+      "local": {
+        "userId": "5ed72abbdbc55ffdf6d221c3"
+      }
+    },
+    "createdAt": "2020-06-03T04:44:43.980Z",
+    "updatedAt": "2020-10-16T18:37:12.632Z"
+  },
   "updatedFields": [
-    "password",
     "firstName"
   ]
+}
+```
+
+### Update Password
+
+- **Method:** `PUT`
+- **Content-Type:** `application/json`
+- **Authentication Header**
+
+```
+Authorization: Bearer {JWT Token}
+```
+
+- **Endpoint**
+
+```
+/api/profiles/password
+```
+
+- **Resquest Body Payload**
+
+| Property Name     | Type     | Required | Description      |
+| ----------------- | -------- | -------- | ---------------- |
+| `currentPassword` | _string_ | Yes      | Current password |
+| `password`        | _string_ | Yes      | New password     |
+
+Sample request body payload
+
+```
+{
+  "currentPassword: "current-password",
+  "password: "new-password",
+}
+```
+
+- **Response payload**
+
+| Property Name | Type     | Description               |
+| ------------- | -------- | ------------------------- |
+| `token`       | _string_ | New JWT token             |
+| `expiresAt`   | _number_ | Expires at time (seconds) |
+
+Sample response
+
+```
+{
+  "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZTI3ZTQ4OTY2OGEyYjQxZWUxNmY3NDIiLCJ1c2VySWQiOiI1ZTI0ZjhkM2M1ZGZmZjFmYzk1NDQ3ZDUiLCJpYXQiOjE1Nzk2NzY1OTgsImV4cCI6MTU4NDg2MDU5OH0.7DjINccJtzowF0Nf2DnMoBtKpWEzRKLqcpzzIByHuwnqXRHKduYHGfOgf1ak9t2qLHQzPwMw-FxOGtZGVvAucA",
+  "expiresAt": 1584860598,
 }
 ```
 

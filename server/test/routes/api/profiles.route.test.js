@@ -112,7 +112,7 @@ describe('ENDPOINT: PUT /api/profiles/', function () {
   it(`PUT ${endpoint} - JWT token not provided`, function (done) {
     request(app)
       .put(endpoint)
-      .send({ firstName: 'John', password: 'new-password' })
+      .send({ firstName: 'John' })
       .expect(401)
       .expect({ error: { message: 'No auth token' } }, done);
   });
@@ -121,7 +121,7 @@ describe('ENDPOINT: PUT /api/profiles/', function () {
     const existingAdmin = app.locals.existing.admin;
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.sub = 'invalid-sub-id';
-    const payload = { firstName: 'John', password: 'new-password' };
+    const payload = { firstName: 'John' };
     request(app)
       .put(endpoint)
       .send(payload)
@@ -134,7 +134,7 @@ describe('ENDPOINT: PUT /api/profiles/', function () {
     const existingAdmin = app.locals.existing.admin;
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.userId = '5e24db1d560ba309f0b0b5a8';
-    const payload = { firstName: 'John', password: 'new-password' };
+    const payload = { firstName: 'John' };
     request(app)
       .put(endpoint)
       .send(payload)
@@ -148,7 +148,7 @@ describe('ENDPOINT: PUT /api/profiles/', function () {
     let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
     decodedToken.iat = decodedToken.iat - 100;
     decodedToken.exp = decodedToken.iat - 50;
-    const payload = { firstName: 'John', password: 'new-password' };
+    const payload = { firstName: 'John' };
     request(app)
       .put(endpoint)
       .send(payload)
@@ -157,7 +157,7 @@ describe('ENDPOINT: PUT /api/profiles/', function () {
       .expect({ error: { message: 'jwt expired' } }, done);
   });
 
-  it(`PUT ${endpoint} - Can only update firstName, lastName and password`, function (done) {
+  it(`PUT ${endpoint} - Can only update firstName, lastName`, function (done) {
     const User = mongoose.model('User');
     let existingAdmin = app.locals.existing.admin;
     const payload = {
@@ -191,8 +191,25 @@ describe('ENDPOINT: PUT /api/profiles/', function () {
       .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
       .send(payload)
       .expect(200)
-      .expect({ updatedFields: ['firstName', 'lastName', 'password'] })
-      .then((res) => User.findById(existingAdmin._id))
+      .then((res) => {
+        expect(res.body.updatedFields)
+          .to.be.an('array')
+          .that.include.members(['firstName', 'lastName']);
+        expect(res.body.user).to.not.have.property('hashedPassword');
+        expect(res.body.user).to.not.have.property('password');
+        expect(res.body.user).to.not.have.property('subId');
+        expect(res.body.user).to.not.have.property('token');
+        expect(res.body.user).to.not.have.property('tokenPurpose');
+        expect(res.body.user).to.have.property('username');
+        expect(res.body.user).to.have.property('email');
+        expect(res.body.user).to.have.property('status');
+        expect(res.body.user).to.have.property('firstName');
+        expect(res.body.user).to.have.property('lastName');
+        expect(res.body.user).to.have.property('role');
+        expect(res.body.user).to.have.property('permissions');
+        expect(res.body.user).to.have.property('provider');
+        return User.findById(existingAdmin._id);
+      })
       .then((updatedUser) => {
         expect(updatedUser.toObject()).to.deep.include(
           _.pick(existingAdmin.toObject(), [
@@ -206,18 +223,12 @@ describe('ENDPOINT: PUT /api/profiles/', function () {
             'token',
             'tokenPurpose',
             'provider',
+            'hashedPassword',
+            'subId',
           ])
         );
         expect(updatedUser.firstName).to.be.equal(payload.firstName);
         expect(updatedUser.lastName).to.be.equal(payload.lastName);
-        // password changed
-        expect(updatedUser.hashedPassword).to.not.equal(payload.password);
-        expect(updatedUser.hashedPassword).to.not.equal(
-          existingAdmin.hashedPassword
-        );
-        expect(mongoose.Types.ObjectId.isValid(updatedUser.subId)).to.be.true;
-        expect(updatedUser.subId).to.not.equal(payload.subId);
-        expect(updatedUser.subId).to.not.equal(existingAdmin.subId);
 
         done();
       })
@@ -237,7 +248,6 @@ describe('ENDPOINT: PUT /api/profiles/', function () {
       .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
       .send(payload)
       .expect(200)
-      .expect({ updatedFields: ['firstName', 'lastName'] })
       .then((res) => User.findById(existingAdmin._id))
       .then((updatedUser) => {
         expect(updatedUser.toObject()).to.deep.include(
@@ -258,6 +268,163 @@ describe('ENDPOINT: PUT /api/profiles/', function () {
         );
         expect(updatedUser.firstName).to.be.equal(payload.firstName);
         expect(updatedUser.lastName).to.be.equal(payload.lastName);
+
+        done();
+      })
+      .catch(done);
+  });
+});
+
+describe('ENDPOINT: PUT /api/profiles/password', function () {
+  let endpoint = '/api/profiles/password';
+
+  it(`PUT ${endpoint} - JWT token not provided`, function (done) {
+    request(app)
+      .put(endpoint)
+      .send({ password: 'new-password', currentPassword: 'password' })
+      .expect(401)
+      .expect({ error: { message: 'No auth token' } }, done);
+  });
+
+  it(`PUT ${endpoint} - JWT token - invalid subId`, function (done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.sub = 'invalid-sub-id';
+    const payload = { password: 'new-password', currentPassword: 'password' };
+    request(app)
+      .put(endpoint)
+      .send(payload)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'Invalid JWT token' } }, done);
+  });
+
+  it(`PUT ${endpoint} - JWT token - not exist userId`, function (done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.userId = '5e24db1d560ba309f0b0b5a8';
+    const payload = { password: 'new-password', currentPassword: 'password' };
+    request(app)
+      .put(endpoint)
+      .send(payload)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'Invalid credentials' } }, done);
+  });
+
+  it(`PUT ${endpoint} - JWT token - expired token`, function (done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.iat = decodedToken.iat - 100;
+    decodedToken.exp = decodedToken.iat - 50;
+    const payload = { password: 'new-password', currentPassword: 'password' };
+    request(app)
+      .put(endpoint)
+      .send(payload)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'jwt expired' } }, done);
+  });
+
+  it(`PUT ${endpoint} - Current passowrd is required`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    const payload = { password: 'new-password' };
+    request(app)
+      .put(endpoint)
+      .send(payload)
+      .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
+      .expect(400)
+      .expect({ error: { message: 'Current Password is required' } }, done);
+  });
+
+  it(`PUT ${endpoint} - Password is required`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    const payload = { currentPassword: 'password' };
+    request(app)
+      .put(endpoint)
+      .send(payload)
+      .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
+      .expect(400)
+      .expect({ error: { message: 'Password is required' } }, done);
+  });
+
+  it(`PUT ${endpoint} - Password and current password are the same`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    const payload = { password: 'password', currentPassword: 'password' };
+    request(app)
+      .put(endpoint)
+      .send(payload)
+      .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
+      .expect(422)
+      .expect(
+        { error: { message: 'New password is the same as current password' } },
+        done
+      );
+  });
+
+  it(`PUT ${endpoint} - Current password is incorrect`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    const payload = {
+      password: 'new-password',
+      currentPassword: 'incorrect-password',
+    };
+    request(app)
+      .put(endpoint)
+      .send(payload)
+      .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
+      .expect(422)
+      .expect({ error: { message: 'Current password is incorrect' } }, done);
+  });
+
+  it(`PUT ${endpoint} - Update passowrd success`, function (done) {
+    const User = mongoose.model('User');
+    let existingAdmin = app.locals.existing.admin;
+    const payload = { password: 'new-password', currentPassword: 'password' };
+    let response = null;
+    request(app)
+      .put(endpoint)
+      .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
+      .send(payload)
+      .expect(200)
+      .then((res) => {
+        expect(res.body.expiresAt).to.be.a('number');
+        expect(res.body.token).to.be.a('string');
+        response = res;
+        return User.findById(existingAdmin._id);
+      })
+      .then((updatedUser) => {
+        expect(updatedUser.toObject()).to.deep.include(
+          _.pick(existingAdmin.toObject(), [
+            '_id',
+            'username',
+            'email',
+            'status',
+            'role',
+            'permissions',
+            'createdAt',
+            'token',
+            'tokenPurpose',
+            'provider',
+          ])
+        );
+        // password changed
+        expect(updatedUser.hashedPassword).to.not.equal(payload.password);
+        expect(updatedUser.hashedPassword).to.not.equal(
+          existingAdmin.hashedPassword
+        );
+        expect(mongoose.Types.ObjectId.isValid(updatedUser.subId)).to.be.true;
+        expect(updatedUser.subId).to.not.equal(payload.subId);
+        expect(updatedUser.subId).to.not.equal(existingAdmin.subId);
+
+        const newlyDecodedToken = decodeJwtToken(response.body.token);
+        expect(newlyDecodedToken.sub).to.be.equal(updatedUser.subId);
+        expect(newlyDecodedToken.userId).to.be.equal(
+          updatedUser._id.toString()
+        );
+        expect(newlyDecodedToken.exp).to.be.equal(response.body.expiresAt);
+        expect(newlyDecodedToken.iat).to.be.equal(
+          newlyDecodedToken.exp - config.jwt.expiresIn
+        );
 
         done();
       })
