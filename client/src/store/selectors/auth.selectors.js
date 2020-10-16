@@ -34,6 +34,18 @@ const isAuthorized = (user, route) => {
     return false;
   }
 
+  if (route.requiresRole === 'root' && user.role !== 'root') {
+    return false;
+  }
+
+  if (
+    route.requiresRole === 'admin' &&
+    user.role !== 'root' &&
+    user.role !== 'admin'
+  ) {
+    return false;
+  }
+
   if (!route.permissions) {
     return true;
   }
@@ -46,7 +58,7 @@ const isAuthorized = (user, route) => {
     ? route.permissions
     : [route.permissions];
 
-  if (route.requiresAny) {
+  if (route.requiresAnyPermissions) {
     return perms.some((perm) => !!user.permissions[perm]);
   }
 

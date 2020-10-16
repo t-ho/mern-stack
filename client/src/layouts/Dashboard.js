@@ -44,14 +44,23 @@ class Dashboard extends React.Component {
   renderSwitchRoutes = (routeCategories) => (
     <Switch>
       {routeCategories.map(({ routes }) =>
-        routes.map(({ path, permissions, requiresAny, component }) => (
-          <ProtectedRoute
-            path={path}
-            permissions={permissions}
-            requiresAny={requiresAny}
-            component={component}
-          />
-        ))
+        routes.map(
+          ({
+            path,
+            requiresRole,
+            permissions,
+            requiresAnyPermissions,
+            component,
+          }) => (
+            <ProtectedRoute
+              path={path}
+              requiresRole={requiresRole}
+              permissions={permissions}
+              requiresAnyPermissions={requiresAnyPermissions}
+              component={component}
+            />
+          )
+        )
       )}
       <Route path="/">
         <Redirect to="/dashboard/profile" />

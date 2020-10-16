@@ -6,6 +6,7 @@ import { getCurrentUser, getIsSignedIn } from '../../store/selectors';
 import { setAttemptedPath } from '../../store/actions';
 
 /**
+ * If requiresRole is set, the current user must have the same role or higher to continue.
  * If the current user is admin or root, he/she is authorized by default.
  * If the current user is normal user, then check his/her permssions.
  * After checking, if he/she is not authorized, redirect to default path.
@@ -16,13 +17,26 @@ class ProtectedRoute extends React.Component {
     const {
       currentUser,
       isSignedIn,
+      requiresRole,
       permissions,
-      requiresAny,
+      requiresAnyPermissions,
       location,
       setAttemptedPath,
     } = this.props;
     if (!isSignedIn) {
       setAttemptedPath(location.pathname);
+      return false;
+    }
+
+    if (requiresRole === 'root' && currentUser.role !== 'root') {
+      return false;
+    }
+
+    if (
+      requiresRole === 'admin' &&
+      currentUser.role !== 'root' &&
+      currentUser.role !== 'admin'
+    ) {
       return false;
     }
 
@@ -36,7 +50,7 @@ class ProtectedRoute extends React.Component {
 
     const perms = Array.isArray(permissions) ? permissions : [permissions];
 
-    if (requiresAny) {
+    if (requiresAnyPermissions) {
       return perms.some((perm) => !!currentUser.permissions[perm]);
     }
 
@@ -49,7 +63,7 @@ class ProtectedRoute extends React.Component {
       currentUser,
       isSignedIn,
       permissions,
-      requiresAny,
+      requiresAnyPermissions,
       ...rest
     } = this.props;
     return (
@@ -72,13 +86,14 @@ const mapStateToProps = (state) => {
 
 ProtectedRoute.propTypes = {
   component: PropTypes.any.isRequired,
+  requiresRole: PropTypes.string,
   permissions: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(PropTypes.string),
   ]),
-  // if requiresAny == true, at least one permission must pass to continue.
+  // if requiresAnyPermissions == true, at least one permission must pass to continue.
   // Otherwise, ALL permissions must be pass to continue.
-  requiresAny: PropTypes.bool,
+  requiresAnyPermissions: PropTypes.bool,
 };
 
 export default connect(mapStateToProps, { setAttemptedPath })(ProtectedRoute);

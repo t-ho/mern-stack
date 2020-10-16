@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { getCurrentUser, getIsSignedIn } from '../../store/selectors';
 
 /**
+ * If requiresRole is set, the current user must have the same role or higher to continue.
  * If the current user is admin or root, he/she is authorized by default.
  * If the current user is normal user, then check his/her permssions.
  * After checking, if he/she is authorized, render the children component. Otherwise, render nothing.
@@ -11,8 +12,26 @@ import { getCurrentUser, getIsSignedIn } from '../../store/selectors';
  */
 class ProtectedComponent extends React.Component {
   isAuthorized = () => {
-    const { currentUser, isSignedIn, permissions, requiresAny } = this.props;
+    const {
+      currentUser,
+      isSignedIn,
+      requiresRole,
+      permissions,
+      requiresAnyPermissions,
+    } = this.props;
     if (!isSignedIn) {
+      return false;
+    }
+
+    if (requiresRole === 'root' && currentUser.role !== 'root') {
+      return false;
+    }
+
+    if (
+      requiresRole === 'admin' &&
+      currentUser.role !== 'root' &&
+      currentUser.role !== 'admin'
+    ) {
       return false;
     }
 
@@ -26,7 +45,7 @@ class ProtectedComponent extends React.Component {
 
     const perms = Array.isArray(permissions) ? permissions : [permissions];
 
-    if (requiresAny) {
+    if (requiresAnyPermissions) {
       return perms.some((perm) => !!currentUser.permissions[perm]);
     }
 
@@ -46,13 +65,14 @@ const mapStateToProps = (state) => {
 };
 
 ProtectedComponent.propTypes = {
+  requiresRole: PropTypes.string,
   permissions: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(PropTypes.string),
   ]),
-  // if requiresAny == true, at least one permission must pass to continue.
+  // if requiresAnyPermissions == true, at least one permission must pass to continue.
   // Otherwise, ALL permissions must be pass to continue.
-  requiresAny: PropTypes.bool,
+  requiresAnyPermissions: PropTypes.bool,
 };
 
 export default connect(mapStateToProps, {})(ProtectedComponent);

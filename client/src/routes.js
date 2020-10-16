@@ -15,7 +15,7 @@ const routeCategories = [
         isHidden: false,
         component: UserList,
         permissions: ['userInsert', 'userRead', 'userModify'],
-        requiresAny: false,
+        requiresAnyPermissions: false,
         icon: AccountMultiple,
       },
     ],
