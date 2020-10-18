@@ -35,7 +35,7 @@ if (config.cors.enabled) {
 }
 
 // Support parsing of application/x-www-form-urlencoded post data
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.urlencoded({ extended: true }));
 
 // Support parsing of */* type post data
 app.use(bodyParser.json({ type: '*/*' }));
