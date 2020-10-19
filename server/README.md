@@ -359,6 +359,20 @@ Sample response
 /api/auth/verify-email/:token
 ```
 
+- **Resquest Body Payload**
+
+| Property Name | Type     | Required | Description          |
+| ------------- | -------- | -------- | -------------------- |
+| `password`    | _string_ | Yes      | The current password |
+
+Sample request body payload
+
+```
+{
+  "password": "password"
+}
+```
+
 - **Response Payload**
 
 | Property Name | Type     | Description |

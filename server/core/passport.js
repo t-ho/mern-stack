@@ -68,14 +68,12 @@ const jwtStrategy = new JwtStrategy(
           return done(null, false, { message: 'Invalid credentials' });
         }
 
-        if (user.status !== 'active') {
-          return done(null, false, {
-            message: 'Disabled or unverified account',
-          });
-        }
-
         if (user.subId !== jwtPayload.sub) {
           return done(null, false, { message: 'Invalid JWT token' });
+        }
+
+        if (user.status === 'disabled') {
+          return done(null, false, { message: 'Disabled account' });
         }
 
         return done(null, user);

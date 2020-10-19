@@ -119,9 +119,13 @@ export const signOut = () => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.SIGN_OUT_SUCCESS });
 };
 
-export const verifyEmail = (token) => (dispatch, getState, { mernApi }) => {
+export const verifyEmail = (formValues, token) => (
+  dispatch,
+  getState,
+  { mernApi }
+) => {
   dispatch({ type: actionTypes.VERIFY_EMAIL });
-  return mernApi.post(`/api/auth/verify-email/${token}`).then(
+  return mernApi.post(`/api/auth/verify-email/${token}`, formValues).then(
     (response) => {
       dispatch({ type: actionTypes.VERIFY_EMAIL_SUCCESS });
     },

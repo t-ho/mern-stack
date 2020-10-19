@@ -145,17 +145,30 @@ describe('ENDPOINT: POST /api/auth/signup', function () {
           .post(endpoint)
           .send(payload)
           .expect(201)
-          .expect({
-            message: 'Your account has been created successfully',
+          .then((res) => {
+            if (config.auth.verifyEmail) {
+              expect(res.body).to.deep.equal({
+                message: 'A verification email has been sent to your email',
+              });
+            } else {
+              expect(res.body).to.deep.equal({
+                message: 'Your account has been created successfully',
+              });
+            }
+
+            return User.findOne({ email: payload.email });
           })
-          .then((res) => User.findOne({ email: payload.email }))
           .then((user) => {
             user = user.toObject();
             expect(user).to.have.property('permissions');
             _.forOwn(user.permissions, (value, key) => {
               expect(value).to.be.false;
             });
-            expect(user.status).to.be.equal('active');
+            if (config.auth.verifyEmail) {
+              expect(user.status).to.be.equal('unverified-email');
+            } else {
+              expect(user.status).to.be.equal('active');
+            }
             expect(user.role).to.equal('user');
             expect(user.username).to.be.equal(existingUser.username);
             expect(user.email).to.be.equal(payload.email);
@@ -609,9 +622,15 @@ describe('ENDPOINT: POST /api/auth/verify-email/:token', function () {
   });
 
   if (config.auth.verifyEmail) {
+    it(`POST ${endpoint} - Password required`, function (done) {
+      const testValidation = createTestPayloadValidation(endpoint);
+      testValidation({}, 400, 'Password is required', done);
+    });
+
     it(`POST ${endpoint} - Token not existed`, function (done) {
       request(app)
         .post('/api/auth/verify-email/not-existed-token')
+        .send({ password: 'password' })
         .expect(422)
         .expect({ error: { message: 'Token expired' } }, done);
     });
@@ -624,10 +643,19 @@ describe('ENDPOINT: POST /api/auth/verify-email/:token', function () {
         .then((user) => {
           request(app)
             .post(endpoint)
+            .send({ password: 'password' })
             .expect(422)
             .expect({ error: { message: 'Token expired' } }, done);
         })
         .catch(done);
+    });
+
+    it(`POST ${endpoint} - Token existed but incorrect password`, function (done) {
+      request(app)
+        .post(endpoint)
+        .send({ password: 'incorrect-password' })
+        .expect(422)
+        .expect({ error: { message: 'Password is incorrect' } }, done);
     });
 
     it(`POST ${endpoint} - Email verified succeeded`, function (done) {
@@ -635,6 +663,7 @@ describe('ENDPOINT: POST /api/auth/verify-email/:token', function () {
       const User = mongoose.model('User');
       request(app)
         .post(endpoint)
+        .send({ password: 'password' })
         .expect(200)
         .expect({ message: 'Email verified' })
         .then((res) => User.findOne({ email: existingAdmin.email }))
@@ -665,6 +694,7 @@ describe('ENDPOINT: POST /api/auth/verify-email/:token', function () {
     it(`POST ${endpoint} - Email verification functionality is not available`, function (done) {
       request(app)
         .post(endpoint)
+        .send({ password: 'password' })
         .expect(422)
         .expect(
           {

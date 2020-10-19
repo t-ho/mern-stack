@@ -184,11 +184,11 @@ userSchema.methods.comparePasswordAsync = function (candidatePassword) {
  *
  * @returns {object} An object contains JWT token and expiresAt (seconds) property
  */
-userSchema.methods.generateJwtToken = function () {
+userSchema.methods.generateJwtToken = function (provider) {
   const iat = Math.floor(Date.now() / 1000);
   const expiresAt = iat + config.jwt.expiresIn;
   const token = jwt.sign(
-    { sub: this.subId, userId: this._id, iat },
+    { sub: this.subId, userId: this._id, iat, provider },
     config.jwt.secret,
     {
       algorithm: config.jwt.algorithm,

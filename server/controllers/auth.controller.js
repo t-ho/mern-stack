@@ -190,7 +190,7 @@ module.exports.validateLocalSignInPayload = (req, res, next) => {
  */
 const createSignInResponse = (user, provider) => {
   return {
-    ...user.generateJwtToken(),
+    ...user.generateJwtToken(provider),
     signedInWith: provider,
     user: user.toJsonFor(user),
   };
@@ -306,7 +306,6 @@ const signUpSchema = Joi.object({
  */
 module.exports.signUp = (req, res, next) => {
   let newUser;
-  let isOauthAccount = false;
   signUpSchema
     .validateAsync(req.body)
     .then((payload) => {
@@ -322,7 +321,6 @@ module.exports.signUp = (req, res, next) => {
             throw createError(422, 'Email is already in use');
           } else {
             newUser = existingUser;
-            isOauthAccount = true;
           }
         } else {
           throw createError(422, 'Username is already in use');
@@ -338,14 +336,14 @@ module.exports.signUp = (req, res, next) => {
       return newUser.setPasswordAsync(req.body.password);
     })
     .then(() => {
-      if (config.auth.verifyEmail && !isOauthAccount) {
+      if (config.auth.verifyEmail) {
         newUser.setToken('verify-email');
         newUser.status = 'unverified-email';
       }
       return newUser.save();
     })
     .then((user) => {
-      if (config.auth.verifyEmail && !isOauthAccount) {
+      if (config.auth.verifyEmail) {
         return sendVerificationEmailAsync(user).then((result) => {
           res.status(201).json({
             message: 'A verification email has been sent to your email',
@@ -361,33 +359,54 @@ module.exports.signUp = (req, res, next) => {
 };
 
 /**
+ * JOI schema for validating verifyEmail payload
+ */
+const verifyEmailSchema = Joi.object({
+  password: Joi.string().required().messages(constants.PASSWORD_ERROR_MESSAGES),
+});
+
+/**
  * @function verifyEmail
  * Verify email controller
  *
  * @param {string} req.params.token The verification email token
+ * @param {string} req.body.password The current password
  */
 module.exports.verifyEmail = (req, res, next) => {
-  if (!config.auth.verifyEmail) {
-    return next(
-      createError(422, 'Email verification functionality is not available')
-    );
-  }
+  let targetUser = null;
+  verifyEmailSchema
+    .validateAsync(req.body)
+    .then((payload) => {
+      req.body = payload;
+      if (!config.auth.verifyEmail) {
+        return next(
+          createError(422, 'Email verification functionality is not available')
+        );
+      }
 
-  if (!req.params.token) {
-    return next(createError(422, 'No token provided'));
-  }
+      if (!req.params.token) {
+        return next(createError(422, 'No token provided'));
+      }
 
-  return User.findOne({
-    token: req.params.token,
-    tokenPurpose: 'verify-email',
-  })
+      return User.findOne({
+        token: req.params.token,
+        tokenPurpose: 'verify-email',
+      });
+    })
     .then((user) => {
       if (!user) {
         throw createError(422, 'Token expired');
       }
-      user.clearToken();
-      user.status = 'active';
-      return user.save();
+      targetUser = user;
+      return targetUser.comparePasswordAsync(req.body.password);
+    })
+    .then((isMatch) => {
+      if (!isMatch) {
+        throw createError(422, 'Password is incorrect');
+      }
+      targetUser.clearToken();
+      targetUser.status = 'active';
+      return targetUser.save();
     })
     .then((user) => {
       res.status(200).json({ message: 'Email verified' });
