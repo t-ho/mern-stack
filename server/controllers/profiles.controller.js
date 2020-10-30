@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const createError = require('http-errors');
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 const _ = require('lodash');
 const constants = require('./constants');
 

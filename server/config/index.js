@@ -1,7 +1,7 @@
 const fspath = require('path');
 const dotenv = require('dotenv');
 const _ = require('lodash');
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 const chalk = require('chalk');
 
 dotenv.config({ path: fspath.resolve(__dirname, '../../.env') });

@@ -1,11 +1,11 @@
-import { YellowBox } from 'react-native';
+import { LogBox } from 'react-native';
 import { applyMiddleware, createStore } from 'redux';
 import reduxThunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import rootReducer from './reducers';
 import { mernApi } from './apis/mern';
 
-YellowBox.ignoreWarnings(['Remote debugger']);
+LogBox.ignoreLogs(['Remote debugger']);
 
 const configureStore = (initialState) => {
   const store = createStore(

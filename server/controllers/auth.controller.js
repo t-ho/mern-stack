@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const createError = require('http-errors');
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 const email = require('../core/sendgrid');
 const config = require('../config');
 const constants = require('./constants');

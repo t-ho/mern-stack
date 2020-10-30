@@ -1,4 +1,4 @@
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import * as Facebook from 'expo-facebook';
 import * as Google from 'expo-google-app-auth';
 import NavService from '../../navigation/NavigationService';

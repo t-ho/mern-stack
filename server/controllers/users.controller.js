@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 const _ = require('lodash');
 const createError = require('http-errors');
 
