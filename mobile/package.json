@@ -1,40 +1,46 @@
 {
-  "main": "node_modules/expo/AppEntry.js",
+  "name": "mernstack",
+  "version": "0.0.1",
+  "private": true,
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "eject": "expo eject"
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
   },
   "dependencies": {
-    "@react-native-community/async-storage": "~1.12.0",
-    "@react-native-community/masked-view": "0.1.10",
+    "@react-native-async-storage/async-storage": "^1.13.2",
+    "@react-native-community/masked-view": "^0.1.10",
     "axios": "^0.21.0",
-    "expo": "^39.0.3",
-    "expo-facebook": "~9.0.0",
-    "expo-google-app-auth": "^8.1.3",
     "react": "16.13.1",
-    "react-dom": "16.13.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.3.tar.gz",
-    "react-native-gesture-handler": "~1.7.0",
-    "react-native-paper": "^4.2.0",
-    "react-native-reanimated": "~1.13.0",
-    "react-native-safe-area-context": "3.1.4",
-    "react-native-screens": "~2.10.1",
-    "react-native-web": "~0.13.7",
+    "react-native": "0.63.3",
+    "react-native-gesture-handler": "^1.8.0",
+    "react-native-paper": "^4.3.0",
+    "react-native-reanimated": "^1.13.1",
+    "react-native-safe-area-context": "^3.1.8",
+    "react-native-screens": "^2.12.0",
+    "react-native-vector-icons": "^7.1.0",
     "react-navigation": "^4.4.3",
     "react-navigation-material-bottom-tabs": "^2.3.3",
-    "react-navigation-stack": "^2.9.0",
+    "react-navigation-stack": "^2.10.0",
     "react-redux": "^7.2.2",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "reselect": "^4.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.3",
-    "babel-plugin-inline-dotenv": "^1.6.0",
-    "babel-preset-expo": "^8.3.0"
+    "@babel/core": "^7.8.4",
+    "@babel/runtime": "^7.8.4",
+    "@react-native-community/eslint-config": "^1.1.0",
+    "babel-jest": "^25.1.0",
+    "eslint": "^6.5.1",
+    "jest": "^25.1.0",
+    "metro-react-native-babel-preset": "^0.59.0",
+    "react-test-renderer": "16.13.1"
   },
-  "private": true
+  "jest": {
+    "preset": "react-native"
+  }
 }

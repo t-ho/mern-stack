@@ -3,7 +3,7 @@ import { StyleSheet, SafeAreaView } from 'react-native';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withTheme } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { signOut } from '../store/actions';
 import { getCurrentUser, getSignedInWith } from '../store/selectors';
 import AppbarHeader from '../components/AppbarHeader';

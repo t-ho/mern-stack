@@ -1,6 +1,6 @@
-import AsyncStorage from '@react-native-community/async-storage';
-import * as Facebook from 'expo-facebook';
-import * as Google from 'expo-google-app-auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// import * as Facebook from 'expo-facebook';
+// import * as Google from 'expo-google-app-auth';
 import NavService from '../../navigation/NavigationService';
 import * as actionTypes from './types';
 
@@ -37,61 +37,61 @@ export const facebookSignIn = () => (dispatch, getState, { mernApi }) => {
     type: actionTypes.FACEBOOK_SIGN_IN,
     payload: { type: 'facebook' },
   });
-  return Facebook.initializeAsync(process.env.REACT_NATIVE_FACEBOOK_APP_ID)
-    .then(() => {
-      return Facebook.logInWithReadPermissionsAsync({
-        permissions: ['public_profile', 'email'],
-      });
-    })
-    .then((response) => {
-      if (response.type === 'success') {
-        return signInHelper(
-          '/api/auth/facebook',
-          { accessToken: response.token },
-          actionTypes.FACEBOOK_SIGN_IN_SUCCESS,
-          actionTypes.FACEBOOK_SIGN_IN_FAIL,
-          dispatch,
-          mernApi
-        );
-      } else {
-        throw new Error('Facebook sign-in cancelled');
-      }
-    })
-    .catch((err) => {
-      // Simply ignore cancellation or error
-      return Promise.resolve().then(() => {
-        dispatch({ type: actionTypes.FACEBOOK_SIGN_IN_FAIL });
-      });
-    });
+  // return Facebook.initializeAsync(process.env.REACT_NATIVE_FACEBOOK_APP_ID)
+  //   .then(() => {
+  //     return Facebook.logInWithReadPermissionsAsync({
+  //       permissions: ['public_profile', 'email'],
+  //     });
+  //   })
+  //   .then((response) => {
+  //     if (response.type === 'success') {
+  //       return signInHelper(
+  //         '/api/auth/facebook',
+  //         {accessToken: response.token},
+  //         actionTypes.FACEBOOK_SIGN_IN_SUCCESS,
+  //         actionTypes.FACEBOOK_SIGN_IN_FAIL,
+  //         dispatch,
+  //         mernApi,
+  //       );
+  //     } else {
+  //       throw new Error('Facebook sign-in cancelled');
+  //     }
+  //   })
+  //   .catch((err) => {
+  //     // Simply ignore cancellation or error
+  //     return Promise.resolve().then(() => {
+  //       dispatch({type: actionTypes.FACEBOOK_SIGN_IN_FAIL});
+  //     });
+  //   });
 };
 
 export const googleSignIn = () => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.GOOGLE_SIGN_IN, payload: { type: 'google' } });
-  return Google.logInAsync({
-    iosClientId: process.env.REACT_NATIVE_GOOGLE_IOS_CLIENT_ID,
-    androidClientId: process.env.REACT_NATIVE_GOOGLE_ANDROID_CLIENT_ID,
-    scopes: ['profile', 'email'],
-  })
-    .then((response) => {
-      if (response.type === 'success') {
-        return signInHelper(
-          '/api/auth/google',
-          { accessToken: response.accessToken },
-          actionTypes.GOOGLE_SIGN_IN_SUCCESS,
-          actionTypes.GOOGLE_SIGN_IN_FAIL,
-          dispatch,
-          mernApi
-        );
-      } else {
-        throw new Error('Google sign-in cancelled');
-      }
-    })
-    .catch((err) => {
-      // Simply ignore cancellation or error
-      return Promise.resolve().then(() => {
-        dispatch({ type: actionTypes.GOOGLE_SIGN_IN_FAIL });
-      });
-    });
+  // return Google.logInAsync({
+  //   iosClientId: process.env.REACT_NATIVE_GOOGLE_IOS_CLIENT_ID,
+  //   androidClientId: process.env.REACT_NATIVE_GOOGLE_ANDROID_CLIENT_ID,
+  //   scopes: ['profile', 'email'],
+  // })
+  //   .then((response) => {
+  //     if (response.type === 'success') {
+  //       return signInHelper(
+  //         '/api/auth/google',
+  //         {accessToken: response.accessToken},
+  //         actionTypes.GOOGLE_SIGN_IN_SUCCESS,
+  //         actionTypes.GOOGLE_SIGN_IN_FAIL,
+  //         dispatch,
+  //         mernApi,
+  //       );
+  //     } else {
+  //       throw new Error('Google sign-in cancelled');
+  //     }
+  //   })
+  //   .catch((err) => {
+  //     // Simply ignore cancellation or error
+  //     return Promise.resolve().then(() => {
+  //       dispatch({type: actionTypes.GOOGLE_SIGN_IN_FAIL});
+  //     });
+  //   });
 };
 
 export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
