@@ -38,7 +38,7 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
     - [x] Role-based access control
     - [x] Principle of least privilege
   - [x] User management - CRUD operations
-  - [x] Input validation and sanitization - [@hapi/joi](https://www.npmjs.com/package/@hapi/joi)
+  - [x] Input validation and sanitization - [joi](https://www.npmjs.com/package/joi)
   - [x] Integration testing - [mocha](https://www.npmjs.com/package/mocha) - [chai](https://www.npmjs.com/package/chai) - [supertest](https://www.npmjs.com/package/supertest)
   - [x] Docker support - [node:lts-buster](https://hub.docker.com/_/node)
     - [x] Dev mode - See [server/Dockerfile](https://github.com/t-ho/mern-stack/blob/master/server/Dockerfile)
@@ -99,19 +99,13 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
 - Directory `.github/workflows`
 - Todo:
   - [x] Testing workflow
-  - [ ] Building and deploying workflow
+  - [x] Building and deploying workflow
 
 ## Getting started
 
-### 1. Install `expo-cli`
+### 1. Clone the `mern-stack` repository
 
-To develop the mobile app, install `expo-cli` globally:
-
-```bash
-npm install -g expo-cli
-```
-
-### 2. Clone the `mern-stack` repository
+**If you want to use Expo for developing mobile app, please check out the [expo](https://github.com/t-ho/mern-stack/tree/expo) branch and see instructions [here](https://github.com/t-ho/mern-stack/blob/expo/README.md)**
 
 ```bash
 git clone https://github.com/t-ho/mern-stack.git
@@ -122,7 +116,7 @@ cp mobile/.env.example mobile/.env
 # Edit all three .env files to meet your requirements
 ```
 
-### 3. Install package dependencies
+### 2. Install package dependencies
 
 In the `root` directory, run:
 
@@ -130,7 +124,7 @@ In the `root` directory, run:
 npm install
 ```
 
-### 4. Start development servers
+### 3. Start development servers
 
 To start `server`, `client`, and `mobile`, run:
 
@@ -174,11 +168,18 @@ npm run server:mobile
 # Mobile - Expo DevTools is running at http://localhost:19002
 ```
 
+### 4. Run the mobile app in your emulator/simulator
+
+```bash
+cd mobile
+npx react-native run-android
+# or
+npx react-native run-ios
+```
+
 ### 5. Run the mobile app on your mobile devices
 
-- On iOS devices, install [Expo Client](https://apps.apple.com/us/app/expo-client/id982107779)
-- On Android devices, install [Expo](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US)
-- Then scan QR code displayed on your terminal to launch the app.
+- Please read the documenatation [here](https://reactnative.dev/docs/running-on-device)
 
 ### 6. Debug mobile app with `react-native-debugger`
 
