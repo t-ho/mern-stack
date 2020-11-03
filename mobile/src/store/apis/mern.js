@@ -1,9 +1,18 @@
 import axios from 'axios';
+import env from 'react-native-config';
 
-const serverUrl =
-  process.env.NODE_ENV === 'production'
-    ? process.env.REACT_NATIVE_API_SERVER_PROD_URL
-    : process.env.REACT_NATIVE_API_SERVER_NGROK_URL;
+if (!env.REACT_NATIVE_API_SERVER_URL) {
+  throw new Error('REACT_NATIVE_API_SERVER_URL envVar is missing');
+}
+
+if (env.REACT_NATIVE_ENV === 'development') {
+  console.log(
+    '[mern.js] REACT_NATIVE_API_SERVER_URL =',
+    env.REACT_NATIVE_API_SERVER_URL
+  );
+}
+
+const serverUrl = env.REACT_NATIVE_API_SERVER_URL;
 
 const mernApi = axios.create({
   baseURL: serverUrl,

@@ -1,4 +1,6 @@
 const { spawnSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 const ngrok = require('ngrok');
 const figlet = require('figlet');
 const dotenv = require('dotenv');
@@ -108,12 +110,14 @@ const runMobile = (command) => {
         )
       );
 
-      process.env.REACT_NATIVE_API_SERVER_NGROK_URL = ngrokUrl;
+      process.env.REACT_NATIVE_API_SERVER_URL = ngrokUrl;
       console.log(
         chalk.greenBright(
-          `[+] Export env var REACT_NATIVE_API_SERVER_NGROK_URL="${ngrokUrl}"\n`
+          `[+] Export env var REACT_NATIVE_API_SERVER_URL="${ngrokUrl}"`
         )
       );
+
+      updateMobileDotEnvFileSync(ngrokUrl);
 
       const mobileProcess = run(command);
 
@@ -123,6 +127,19 @@ const runMobile = (command) => {
         printExpiredUrlMessage(ngrokUrl);
       }, 8 * 60 * 60 * 1000); // 8 hours
     });
+};
+
+const updateMobileDotEnvFileSync = (ngrokUrl) => {
+  const dotEnvFile = path.resolve(__dirname, './mobile/.env');
+  let content = fs.readFileSync(dotEnvFile, { encoding: 'utf8' });
+  content = content.replace(
+    /^.*REACT_NATIVE_API_SERVER_URL.*$/gm,
+    `REACT_NATIVE_API_SERVER_URL=${ngrokUrl}`
+  );
+  fs.writeFileSync(dotEnvFile, content, { encoding: 'utf8' });
+  console.log(
+    chalk.greenBright(`[+] The file '${dotEnvFile}' has been updated\n`)
+  );
 };
 
 const printExpiredUrlMessage = (ngrokUrl) => {

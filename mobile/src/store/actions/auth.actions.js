@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import * as Facebook from 'expo-facebook';
 // import * as Google from 'expo-google-app-auth';
+import env from 'react-native-config';
 import NavService from '../../navigation/NavigationService';
 import * as actionTypes from './types';
 
@@ -37,7 +38,7 @@ export const facebookSignIn = () => (dispatch, getState, { mernApi }) => {
     type: actionTypes.FACEBOOK_SIGN_IN,
     payload: { type: 'facebook' },
   });
-  // return Facebook.initializeAsync(process.env.REACT_NATIVE_FACEBOOK_APP_ID)
+  // return Facebook.initializeAsync(env.REACT_NATIVE_FACEBOOK_APP_ID)
   //   .then(() => {
   //     return Facebook.logInWithReadPermissionsAsync({
   //       permissions: ['public_profile', 'email'],
@@ -68,8 +69,8 @@ export const facebookSignIn = () => (dispatch, getState, { mernApi }) => {
 export const googleSignIn = () => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.GOOGLE_SIGN_IN, payload: { type: 'google' } });
   // return Google.logInAsync({
-  //   iosClientId: process.env.REACT_NATIVE_GOOGLE_IOS_CLIENT_ID,
-  //   androidClientId: process.env.REACT_NATIVE_GOOGLE_ANDROID_CLIENT_ID,
+  //   iosClientId: env.REACT_NATIVE_GOOGLE_IOS_CLIENT_ID,
+  //   androidClientId: env.REACT_NATIVE_GOOGLE_ANDROID_CLIENT_ID,
   //   scopes: ['profile', 'email'],
   // })
   //   .then((response) => {

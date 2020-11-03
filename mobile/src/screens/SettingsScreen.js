@@ -16,11 +16,7 @@ class SettingsScreen extends React.Component {
   static navigationOptions = {
     title,
     tabBarIcon: ({ tintColor }) => (
-      <MaterialCommunityIcons
-        name="settings-outline"
-        size={24}
-        color={tintColor}
-      />
+      <MaterialCommunityIcons name="cog-outline" size={24} color={tintColor} />
     ),
     tabBarAccessibilityLabel: 'Settings Screen',
   };
