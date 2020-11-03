@@ -15,6 +15,7 @@
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* mernstackTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* mernstackTests.m */; };
+		521504EA25521ABB00EE781D /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521504E925521ABB00EE781D /* File.swift */; };
 		6FAFB3E5CEABB5AE90C4ADF6 /* libPods-mernstack-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5434D9891D2391BEE0FBDE57 /* libPods-mernstack-tvOS.a */; };
 		8152A7B60A6D66E1B511CCCF /* libPods-mernstack-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EBFFAEF0AF45D9BE937262FF /* libPods-mernstack-tvOSTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
@@ -56,6 +57,8 @@
 		485F31D46B2AAEC7C70C8BE1 /* libPods-mernstack-mernstackTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mernstack-mernstackTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		51C123F9EF56256138E83ACB /* Pods-mernstack-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mernstack-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-mernstack-tvOSTests/Pods-mernstack-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5207CBC18168399306195519 /* Pods-mernstack-mernstackTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mernstack-mernstackTests.debug.xcconfig"; path = "Target Support Files/Pods-mernstack-mernstackTests/Pods-mernstack-mernstackTests.debug.xcconfig"; sourceTree = "<group>"; };
+		521504E825521ABA00EE781D /* mernstack-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "mernstack-Bridging-Header.h"; sourceTree = "<group>"; };
+		521504E925521ABB00EE781D /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		5434D9891D2391BEE0FBDE57 /* libPods-mernstack-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mernstack-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CCC3F4BF206353C206AC3E3 /* Pods-mernstack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mernstack.release.xcconfig"; path = "Target Support Files/Pods-mernstack/Pods-mernstack.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = mernstack/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -159,12 +162,14 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				521504E925521ABB00EE781D /* File.swift */,
 				13B07FAE1A68108700A75B9A /* mernstack */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* mernstackTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				C4207B0278D90CCBA4B4AB4E /* Pods */,
+				521504E825521ABA00EE781D /* mernstack-Bridging-Header.h */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -293,7 +298,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1210;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -383,6 +388,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-mernstack/Pods-mernstack-resources.sh",
+				"${PODS_ROOT}/FBSDKCoreKit/FacebookSDKStrings.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -403,6 +409,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FacebookSDKStrings.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
@@ -447,6 +454,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-mernstack-mernstackTests/Pods-mernstack-mernstackTests-resources.sh",
+				"${PODS_ROOT}/FBSDKCoreKit/FacebookSDKStrings.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -467,6 +475,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FacebookSDKStrings.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
@@ -632,6 +641,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				521504EA25521ABB00EE781D /* File.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -673,6 +683,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5207CBC18168399306195519 /* Pods-mernstack-mernstackTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -696,6 +707,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3885DDC1FA5C0CA4ACECFD56 /* Pods-mernstack-mernstackTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = mernstackTests/Info.plist;
@@ -729,6 +741,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = app.tdev.mernstack;
 				PRODUCT_NAME = mernstack;
+				SWIFT_OBJC_BRIDGING_HEADER = "mernstack-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -751,6 +764,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = app.tdev.mernstack;
 				PRODUCT_NAME = mernstack;
+				SWIFT_OBJC_BRIDGING_HEADER = "mernstack-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

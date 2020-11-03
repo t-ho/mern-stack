@@ -16,6 +16,7 @@
     "react": "16.13.1",
     "react-native": "0.63.3",
     "react-native-config": "^1.4.0",
+    "react-native-fbsdk": "^2.0.0",
     "react-native-gesture-handler": "^1.8.0",
     "react-native-paper": "^4.3.0",
     "react-native-reanimated": "^1.13.1",

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Mern Stack</string>
+    <string name="facebook_app_id">[YOUR_FACEBOOK_APP_ID]</string>
 </resources>

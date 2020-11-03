@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import * as Facebook from 'expo-facebook';
+import { LoginManager, AccessToken } from 'react-native-fbsdk';
 // import * as Google from 'expo-google-app-auth';
 import env from 'react-native-config';
 import NavService from '../../navigation/NavigationService';
@@ -38,32 +38,30 @@ export const facebookSignIn = () => (dispatch, getState, { mernApi }) => {
     type: actionTypes.FACEBOOK_SIGN_IN,
     payload: { type: 'facebook' },
   });
-  // return Facebook.initializeAsync(env.REACT_NATIVE_FACEBOOK_APP_ID)
-  //   .then(() => {
-  //     return Facebook.logInWithReadPermissionsAsync({
-  //       permissions: ['public_profile', 'email'],
-  //     });
-  //   })
-  //   .then((response) => {
-  //     if (response.type === 'success') {
-  //       return signInHelper(
-  //         '/api/auth/facebook',
-  //         {accessToken: response.token},
-  //         actionTypes.FACEBOOK_SIGN_IN_SUCCESS,
-  //         actionTypes.FACEBOOK_SIGN_IN_FAIL,
-  //         dispatch,
-  //         mernApi,
-  //       );
-  //     } else {
-  //       throw new Error('Facebook sign-in cancelled');
-  //     }
-  //   })
-  //   .catch((err) => {
-  //     // Simply ignore cancellation or error
-  //     return Promise.resolve().then(() => {
-  //       dispatch({type: actionTypes.FACEBOOK_SIGN_IN_FAIL});
-  //     });
-  //   });
+  return LoginManager.logInWithPermissions(['public_profile', 'email'])
+    .then((result) => {
+      if (result.isCancelled) {
+        throw new Error('Facebook sign-in cancelled');
+      } else {
+        return AccessToken.getCurrentAccessToken();
+      }
+    })
+    .then((data) => {
+      return signInHelper(
+        '/api/auth/facebook',
+        { accessToken: data.accessToken.toString() },
+        actionTypes.FACEBOOK_SIGN_IN_SUCCESS,
+        actionTypes.FACEBOOK_SIGN_IN_FAIL,
+        dispatch,
+        mernApi
+      );
+    })
+    .catch((err) => {
+      // Simply ignore cancellation or error
+      return Promise.resolve().then(() => {
+        dispatch({ type: actionTypes.FACEBOOK_SIGN_IN_FAIL });
+      });
+    });
 };
 
 export const googleSignIn = () => (dispatch, getState, { mernApi }) => {
