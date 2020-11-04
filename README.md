@@ -70,7 +70,7 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
 ### 3. React Native - Mobile
 
 - Directory `mobile`
-- Created by using [expo-cli](https://www.npmjs.com/package/expo-cli). To switch to _bare_ workflow, please see docs [here](https://docs.expo.io/introduction/managed-vs-bare)
+- Created by using [react-native-cli](https://github.com/react-native-community/cli). If you want to use Expo, please check out [expo](https://github.com/t-ho/mern-stack/tree/expo) brand and see docs [here](https://github.com/t-ho/mern-stack/blob/expo/README.md)
 - Todo:
   - [x] Redux store - [react-redux](https://www.npmjs.com/package/react-redux)
   - [x] Router - [react-navigation](https://reactnavigation.org)
