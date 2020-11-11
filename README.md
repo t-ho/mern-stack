@@ -165,7 +165,6 @@ Or to start `server` and `mobile` only, run:
 # In the root directory (mern):
 npm run server:mobile
 # Server API is running at http://localhost:SERVER_PORT (http://localhost:8861 by default)
-# Mobile - Expo DevTools is running at http://localhost:19002
 ```
 
 ### 4. Run the mobile app in your emulator/simulator
