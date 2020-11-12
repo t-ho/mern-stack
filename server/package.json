@@ -43,7 +43,7 @@
     "nodemon": "^2.0.6",
     "passport": "^0.4.1",
     "passport-facebook-token": "^4.0.0",
-    "passport-google-token": "^0.1.2",
+    "passport-google-id-token": "^0.4.7",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "sendgrid-template-helper": "^1.0.3",

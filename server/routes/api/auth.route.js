@@ -5,7 +5,7 @@ const createAuthenticationStrategy = require('../../middleware/createAuthenticat
 const router = express.Router();
 const jwtAuthenticate = createAuthenticationStrategy('jwt');
 const localAuthenticate = createAuthenticationStrategy('local');
-const googleAuthenticate = createAuthenticationStrategy('google-token');
+const googleAuthenticate = createAuthenticationStrategy('google-id-token');
 const facebookAuthenticate = createAuthenticationStrategy('facebook-token');
 
 router.post(

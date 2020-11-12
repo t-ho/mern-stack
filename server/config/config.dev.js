@@ -12,9 +12,7 @@ let devConfig = {
   morgan: {
     format: 'dev', // TODO: possible values: combined, common, dev, short, tiny
   },
-  oauth: {
-    storeTokens: false, // If true, the OAuth accessToken and refreshToken will be stored in database
-  },
+  oauth: {},
   seed: {
     logging: true,
     users: [

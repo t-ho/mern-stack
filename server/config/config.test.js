@@ -15,9 +15,7 @@ let testConfig = {
   mongo: {
     testUri: `mongodb://localhost:27017/${defaultConfig.app.name}_test`,
   },
-  oauth: {
-    storeTokens: true, // If true, the OAuth accessToken and refreshToken will be stored in database
-  },
+  oauth: {},
   seed: {
     logging: false,
     users: [

@@ -4,7 +4,7 @@ const LocalStrategy = require('passport-local');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const FacebookTokenStrategy = require('passport-facebook-token');
-const GoogleTokenStrategy = require('passport-google-token').Strategy;
+const GoogleIdTokenStrategy = require('passport-google-id-token');
 const config = require('../config/index');
 
 const User = mongoose.model('User');
@@ -82,27 +82,24 @@ const jwtStrategy = new JwtStrategy(
   }
 );
 
-// Create Google Token Strategy
-const googleTokenStrategy = new GoogleTokenStrategy(
+// Create Google Id Token Strategy
+const googleIdTokenStrategy = new GoogleIdTokenStrategy(
   {
     clientID: config.oauth.google.clientId,
-    clientSecret: config.oauth.google.clientSecret,
   },
-  function (accessToken, refreshToken, profile, done) {
+  function ({ payload: profile }, googleId, done) {
     const userProfile = {
       provider: 'google',
-      userId: profile.id,
-      email: profile._json.email,
+      userId: googleId,
+      email: profile.email,
       username: generateUsername(
-        profile._json.email,
-        profile._json.given_name,
-        profile._json.family_name
+        profile.email,
+        profile.given_name,
+        profile.family_name
       ),
-      firstName: profile._json.given_name,
-      lastName: profile._json.family_name,
-      picture: profile._json.picture,
-      accessToken,
-      refreshToken,
+      firstName: profile.given_name,
+      lastName: profile.family_name,
+      picture: profile.picture,
     };
 
     updateOrInsert(userProfile)
@@ -132,8 +129,6 @@ const facebookTokenStrategy = new FacebookTokenStrategy(
       firstName: profile._json.first_name,
       lastName: profile._json.last_name,
       picture: profile.photos[0].value,
-      accessToken,
-      refreshToken,
     };
 
     updateOrInsert(userProfile)
@@ -211,10 +206,6 @@ const updateOrInsert = (userProfile) => {
     userId: userProfile.userId,
     picture: userProfile.picture,
   };
-  if (config.oauth.storeTokens) {
-    provider.accessToken = userProfile.accessToken;
-    provider.refreshToken = userProfile.refreshToken;
-  }
 
   return User.findOne(query).then((existingUser) => {
     if (!existingUser) {
@@ -243,7 +234,7 @@ const updateOrInsert = (userProfile) => {
 };
 
 passport.use(facebookTokenStrategy);
-passport.use(googleTokenStrategy);
+passport.use(googleIdTokenStrategy);
 passport.use(jwtStrategy);
 passport.use(localStrategy);
 
