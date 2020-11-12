@@ -70,7 +70,7 @@ class SignIn extends React.Component {
 
   onGoogleResponse = (response) => {
     const payload = {
-      accessToken: response.accessToken,
+      idToken: response.tokenId,
     };
     this.props.googleSignIn(payload).then(() => {
       // FIXME:
