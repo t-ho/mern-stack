@@ -60,7 +60,6 @@ let defaultConfig = {
     root: fspath.normalize(`${__dirname}/..`),
   },
   oauth: {
-    storeTokens: false, // If true, the OAuth accessToken and refreshToken will be stored in database
     google: {
       clientId:
         'This will be overriden by environment variable GOOGLE_CLIENT_ID',

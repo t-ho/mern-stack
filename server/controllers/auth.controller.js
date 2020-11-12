@@ -207,11 +207,10 @@ module.exports.localSignIn = (req, res, next) => {
 };
 
 /**
- * JOI schema for validating oauthSignIn payload
+ * JOI schema for validating googleSignIn payload
  */
-const oauthSignInSchema = Joi.object({
-  accessToken: Joi.string().required(),
-  refreshToken: Joi.string(),
+const googleSignInSchema = Joi.object({
+  idToken: Joi.string().required(),
 });
 
 /**
@@ -222,13 +221,10 @@ const oauthSignInSchema = Joi.object({
  * @param {string} [req.body.refreshToken] The Google refreshToken
  */
 module.exports.validateGoogleSignInPayload = (req, res, next) => {
-  oauthSignInSchema
+  googleSignInSchema
     .validateAsync(req.body)
     .then((payload) => {
-      req.body = { access_token: payload.accessToken };
-      if (payload.refreshToken) {
-        req.body.refresh_token = payload.refreshToken;
-      }
+      req.body = { id_token: payload.idToken };
       next();
     })
     .catch(next);
@@ -245,6 +241,14 @@ module.exports.googleSignIn = (req, res, next) => {
 };
 
 /**
+ * JOI schema for validating facebookSignIn payload
+ */
+const facebookSignInSchema = Joi.object({
+  accessToken: Joi.string().required(),
+  refreshToken: Joi.string(),
+});
+
+/**
  * @function validateFacebookSignInPayload
  * Validate Facebook sign-in payload
  *
@@ -252,7 +256,7 @@ module.exports.googleSignIn = (req, res, next) => {
  * @param {string} [req.body.refreshToken] The Facebook refreshToken
  */
 module.exports.validateFacebookSignInPayload = (req, res, next) => {
-  oauthSignInSchema
+  facebookSignInSchema
     .validateAsync(req.body)
     .then((payload) => {
       req.body = { access_token: payload.accessToken };

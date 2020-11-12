@@ -252,16 +252,15 @@ Sample response
 
 - **Resquest Body Payload**
 
-| Property Name  | Type     | Required | Description              |
-| -------------- | -------- | -------- | ------------------------ |
-| `accessToken`  | _string_ | Yes      | The Google access token  |
-| `refreshToken` | _string_ | No       | The Google refresh token |
+| Property Name | Type     | Required | Description         |
+| ------------- | -------- | -------- | ------------------- |
+| `idToken`     | _string_ | Yes      | The Google ID token |
 
 Sample request body payload
 
 ```
 {
-  "accessToken": "ya29.ImC_B0mUYTJfjnd7fCgZvIc6WWjj3GxMC0LwiOyhqDIQBJyAJN9eSRCLNDcr6bXCtHn5oSNOsB-Es2AIIOso-ZMBe0w31K2Ud85dpq3ep4tZI6uftTq_Vjjnzf4esuVO73c"
+  "idToken": "eyJhbGciOiJSUzI1NiksImtpZCI6ImYwOTJiNjEyZTliNjQ0N2RlYjEwNjg1YmI4ZmZhOGFlNjJmNmFhOTEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiIxMzQ2NzUwNjIwMDMtbHRhbDY2cGo3bHR0NHF1ZW9rdjdkbjg4b3E4cHZmbjIuYXBwcy5nb29nbGV1c2VyY29udGVudC5Yb20iLCJhdWQiOiIxMzQ2NzUwNjIwMDMtdM5nZmZvazNuOGV1ZjUzczlxcWZsOWt1c3BqaDRggGUuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDgwMzQyNzQ2NzMzMTk2NDI2NjIiLCJlbWFpbCI6InRlc3Rlci5obXRAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF0X2hhc2giOiJOMDRZdFNZZVl5WUoycS1VNUhZTmlnIiwibm9uY2UiOiJOenlrbW9rNnZZVzAzUURHZ2UyLXVSREozaEJoUTljSm5qX0pyRXdLRlNFIiwibmFtZSI6InQgaG8iLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EtL0FPaDE0R2h0ck8zOHF4bFM5R1ZqUHdXVEdhSVlZZ0lIYUtKVVlxY3F1Z1JsPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6InQiLCJmYW1pbHlfbmFtZSI6ImhvIiwibG9jYWxlIjoiZW4iLCJpYXQiOjE2MDUwODY2NDIsImV4cCI6MTYwNTA5MDI0Mn0.142V5YJdBaoR_jPK7-g87cgLFFkFWxu1fbxEXRh8HHQLveCmiMgb9XvoZyxpe6hthNUAyzB4Jtq-ijgzwaEY6W4OLr3sczngi9SluqmM2YORLa0p6PIPgJKr-e3rJjIQBgM_4Ye-p8fAl8YzZyHduPzT7gS2Xie5HUZ9BHOh4jtPpKx6z1goE4Ev9apdyCVt6XbVzN5gsBHEHM3YQAU0KN4WbJzEvYSkaTjoRAGE3_naaTzv5EvyiR08n5lB9Y37LMEJeohf_SMCpaXsyWkzduf2aP2Rb-KUH_EkJXsYZVuDr9lP5FzGUDgbeeyv08HThYGEOPuwAEfKSRVbcOH3mw"
 }
 ```
 

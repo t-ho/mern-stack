@@ -31,7 +31,7 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
     - [x] Sign up - [bcrypt](https://www.npmjs.com/package/bcrypt)
     - [x] Local login - [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) - [passport-jwt](https://www.npmjs.com/package/passport-jwt)
     - [x] Facebook login - [passport-facebook-token](https://www.npmjs.com/package/passport-facebook-token)
-    - [x] Google login - [passport-google-token](https://www.npmjs.com/package/passport-google-token)
+    - [x] Google login - [passport-google-id-token](https://www.npmjs.com/package/passport-google-id-token)
     - [x] Email verification
     - [x] Password reset email
   - [x] Authorization system
@@ -165,7 +165,6 @@ Or to start `server` and `mobile` only, run:
 # In the root directory (mern):
 npm run server:mobile
 # Server API is running at http://localhost:SERVER_PORT (http://localhost:8861 by default)
-# Mobile - Expo DevTools is running at http://localhost:19002
 ```
 
 ### 4. Run the mobile app in your emulator/simulator

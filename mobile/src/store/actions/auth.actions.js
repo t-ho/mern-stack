@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LoginManager, AccessToken } from 'react-native-fbsdk';
-// import * as Google from 'expo-google-app-auth';
+import { GoogleSignin } from '@react-native-community/google-signin';
 import env from 'react-native-config';
 import NavService from '../../navigation/NavigationService';
 import * as actionTypes from './types';
@@ -56,6 +56,10 @@ export const facebookSignIn = () => (dispatch, getState, { mernApi }) => {
         mernApi
       );
     })
+    .then(() => {
+      // Remove Facebook user session after getting JWT token from backend server
+      return LoginManager.logOut();
+    })
     .catch((err) => {
       // Simply ignore cancellation or error
       return Promise.resolve().then(() => {
@@ -64,33 +68,38 @@ export const facebookSignIn = () => (dispatch, getState, { mernApi }) => {
     });
 };
 
+GoogleSignin.configure({
+  webClientId: env.REACT_NATIVE_GOOGLE_WEB_CLIENT_ID,
+  iosClientId: env.REACT_NATIVE_GOOGLE_IOS_CLIENT_ID,
+  offlineAccess: false,
+});
+
 export const googleSignIn = () => (dispatch, getState, { mernApi }) => {
   dispatch({ type: actionTypes.GOOGLE_SIGN_IN, payload: { type: 'google' } });
-  // return Google.logInAsync({
-  //   iosClientId: env.REACT_NATIVE_GOOGLE_IOS_CLIENT_ID,
-  //   androidClientId: env.REACT_NATIVE_GOOGLE_ANDROID_CLIENT_ID,
-  //   scopes: ['profile', 'email'],
-  // })
-  //   .then((response) => {
-  //     if (response.type === 'success') {
-  //       return signInHelper(
-  //         '/api/auth/google',
-  //         {accessToken: response.accessToken},
-  //         actionTypes.GOOGLE_SIGN_IN_SUCCESS,
-  //         actionTypes.GOOGLE_SIGN_IN_FAIL,
-  //         dispatch,
-  //         mernApi,
-  //       );
-  //     } else {
-  //       throw new Error('Google sign-in cancelled');
-  //     }
-  //   })
-  //   .catch((err) => {
-  //     // Simply ignore cancellation or error
-  //     return Promise.resolve().then(() => {
-  //       dispatch({type: actionTypes.GOOGLE_SIGN_IN_FAIL});
-  //     });
-  //   });
+  return GoogleSignin.hasPlayServices()
+    .then(() => {
+      return GoogleSignin.signIn();
+    })
+    .then((response) => {
+      return signInHelper(
+        '/api/auth/google',
+        { idToken: response.idToken },
+        actionTypes.GOOGLE_SIGN_IN_SUCCESS,
+        actionTypes.GOOGLE_SIGN_IN_FAIL,
+        dispatch,
+        mernApi
+      );
+    })
+    .then(() => {
+      // Remove Google user session after getting JWT token from backend server
+      return GoogleSignin.signOut();
+    })
+    .catch((err) => {
+      // Simply ignore cancellation or error
+      return Promise.resolve().then(() => {
+        dispatch({ type: actionTypes.GOOGLE_SIGN_IN_FAIL });
+      });
+    });
 };
 
 export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {

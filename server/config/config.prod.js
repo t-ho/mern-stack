@@ -33,9 +33,7 @@ let prodConfig = {
   paths: {
     root: fspath.normalize(`${__dirname}/..`),
   },
-  oauth: {
-    storeTokens: false, // If true, the OAuth accessToken and refreshToken will be stored in database
-  },
+  oauth: {},
   seed: {
     logging: true,
     users: [

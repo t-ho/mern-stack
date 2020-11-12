@@ -27,11 +27,15 @@
 			<string>mernstack</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<!-- FIXME: -->
 				<string>fb[YOUR_FACEBOOK_APP_ID]</string>
+				<!-- FIXME: reversed google-ios-client-id-->
+				<string>[YOUR_REVERSED_GOOGLE_IOS_CLIENT_ID]</string>
 			</array>
 		</dict>
 	</array>
 	<key>FacebookAppID</key>
+	<!-- FIXME: -->
 	<string>[YOUR_FACEBOOK_APP_ID]</string>
 	<key>FacebookDisplayName</key>
 	<string>MERN Stack</string>
