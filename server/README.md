@@ -22,6 +22,7 @@
   - [Get User Profile - `GET /api/profiles`](#get-user-profile)
   - [Get User Public Profile - `GET /api/profiles/:userId`](#get-user-public-profile)
   - [Update User Profile - `PUT /api/profiles`](#update-user-profile)
+  - [Update Password - `PUT /api/profiles/password`](#update-password)
 - [Users](#users)
   - [Get Users - `GET /api/users`](#get-users)
   - [Get User - `GET /api/users/:userId`](#get-user)

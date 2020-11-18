@@ -24,8 +24,9 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
 
 ### 1. API Server
 
+**NOTE: The full API documentation can be found [here](https://tdev.app/mern-stack/server)**
+
 - Directory `server`
-- The full API documentation can be found [here](https://tdev.app/mern-stack/server)
 - Todo:
   - [x] Authentication system - [passport](https://www.npmjs.com/package/passport)
     - [x] Sign up - [bcrypt](https://www.npmjs.com/package/bcrypt)
