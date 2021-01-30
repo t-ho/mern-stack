@@ -5,8 +5,7 @@ const StatusBar = (props) => {
   return (
     <NativeStatusBar
       barStyle={'light-content'}
-      translucent
-      backgroundColor={'transparent'}
+      backgroundColor={'#F4F4F4'}
       animated
       {...props}
     />

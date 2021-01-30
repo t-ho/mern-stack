@@ -15,7 +15,7 @@ class AppbarHeader extends React.Component {
     }
     return (
       <>
-        <StatusBar />
+        <StatusBar backgroundColor={theme.colors.primary} />
         <Appbar.Header style={styles.appbar}>
           <Appbar.Content title={this.props.title} />
           {avatarUri ? (
