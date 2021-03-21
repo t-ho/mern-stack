@@ -5,7 +5,8 @@ const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const FacebookTokenStrategy = require('passport-facebook-token');
 const GoogleIdTokenStrategy = require('passport-google-id-token');
-const config = require('../config/index');
+const config = require('../config');
+const constants = require('./constants');
 
 const User = mongoose.model('User');
 
@@ -36,19 +37,7 @@ const localStrategy = new LocalStrategy(
             return done(null, false, { message: 'Password is incorrect' });
           }
 
-          if (config.auth.verifyEmail) {
-            if (user.status === 'unverified-email') {
-              return done(null, false, { message: 'Email is not verified' });
-            }
-          }
-
-          if (user.status !== 'active') {
-            return done(null, false, {
-              message: 'Your account is disabled',
-            });
-          }
-
-          return done(null, user);
+          handleAuthByCheckingUserStatus(user, done, constants.PROVIDER_LOCAL);
         });
       })
       .catch(done);
@@ -72,11 +61,7 @@ const jwtStrategy = new JwtStrategy(
           return done(null, false, { message: 'Invalid JWT token' });
         }
 
-        if (user.status === 'disabled') {
-          return done(null, false, { message: 'Disabled account' });
-        }
-
-        return done(null, user);
+        handleAuthByCheckingUserStatus(user, done, jwtPayload.provider);
       })
       .catch(done);
   }
@@ -89,7 +74,7 @@ const googleIdTokenStrategy = new GoogleIdTokenStrategy(
   },
   function ({ payload: profile }, googleId, done) {
     const userProfile = {
-      provider: 'google',
+      provider: constants.PROVIDER_GOOGLE,
       userId: googleId,
       email: profile.email,
       username: generateUsername(
@@ -102,15 +87,11 @@ const googleIdTokenStrategy = new GoogleIdTokenStrategy(
       picture: profile.picture,
     };
 
-    updateOrInsert(userProfile)
-      .then((user) => {
-        done(null, user);
-      })
-      .catch(done);
+    handleOAuth(userProfile, done, constants.PROVIDER_GOOGLE);
   }
 );
 
-// Create Google Token Strategy
+// Create Facebook Token Strategy
 const facebookTokenStrategy = new FacebookTokenStrategy(
   {
     clientID: config.oauth.facebook.clientId,
@@ -118,7 +99,7 @@ const facebookTokenStrategy = new FacebookTokenStrategy(
   },
   function (accessToken, refreshToken, profile, done) {
     const userProfile = {
-      provider: 'facebook',
+      provider: constants.PROVIDER_FACEBOOK,
       userId: profile.id,
       email: profile._json.email,
       username: generateUsername(
@@ -131,11 +112,7 @@ const facebookTokenStrategy = new FacebookTokenStrategy(
       picture: profile.photos[0].value,
     };
 
-    updateOrInsert(userProfile)
-      .then((user) => {
-        done(null, user);
-      })
-      .catch(done);
+    handleOAuth(userProfile, done, constants.PROVIDER_FACEBOOK);
   }
 );
 
@@ -188,7 +165,7 @@ const findUniqueUsername = (possibleUsername) => {
  *
  * @param {object} userProfile The user profile
  *
- * @returns {Promise} Resolve with the updated user or newly created user
+ * @returns {Promise} Resolve with the object {user, isNewUser}
  */
 const updateOrInsert = (userProfile) => {
   let query = {
@@ -209,8 +186,8 @@ const updateOrInsert = (userProfile) => {
 
   return User.findOne(query).then((existingUser) => {
     if (!existingUser) {
-      return findUniqueUsername(userProfile.username).then(
-        (availableUsername) => {
+      return findUniqueUsername(userProfile.username)
+        .then((availableUsername) => {
           let user = new User({
             email: userProfile.email,
             username: availableUsername,
@@ -222,15 +199,84 @@ const updateOrInsert = (userProfile) => {
           });
           user.setSubId();
           return user.save();
-        }
-      );
+        })
+        .then((user) => {
+          return { user, isNewUser: true };
+        });
     }
-    // user existed, update provider
+    // user already exists, update provider
     existingUser.provider[userProfile.provider] = provider;
     existingUser.firstName = userProfile.firstName;
     existingUser.lastName = userProfile.lastName;
-    return existingUser.save();
+    return existingUser.save().then((user) => {
+      return { user, isNewUser: false };
+    });
   });
+};
+
+/**
+ * Handle authentication based on user status.
+ * Note: The specified user must be not null
+ *
+ * @param {object} user
+ * @param {function} done
+ * @param {bool} isOAuth
+ *
+ * @returns
+ */
+const handleAuthByCheckingUserStatus = (
+  user,
+  done,
+  provider = constants.PROVIDER_LOCAL
+) => {
+  // Make sure user exists
+  if (!user) {
+    return done(null, false, { message: 'User does not exist' });
+  }
+
+  // authorized
+  if (
+    user.status === constants.STATUS_ACTIVE ||
+    // unverified-email status should NOT block the user who signed in with Google or Facebook OAuth
+    (user.status === constants.STATUS_UNVERIFIED_EMAIL &&
+      provider !== constants.PROVIDER_LOCAL)
+  ) {
+    user.signedInWithProvider = provider;
+    return done(null, user);
+  }
+
+  // Before denying all other statuses, return helpful message where possible
+
+  if (user.status === constants.STATUS_DISABLED) {
+    return done(null, false, { message: 'Account is disabled' });
+  }
+
+  if (config.auth.verifyEmail && provider === constants.PROVIDER_LOCAL) {
+    if (user.status === constants.STATUS_UNVERIFIED_EMAIL) {
+      return done(null, false, { message: 'Email is not verified' });
+    }
+  }
+
+  done(null, false, { message: 'Account status is invalid' });
+};
+
+/**
+ * Handle OAuth authentication
+ *
+ * @param {object} userProfile
+ * @param {function} done
+ */
+const handleOAuth = (userProfile, done, provider) => {
+  updateOrInsert(userProfile)
+    .then(({ user, isNewUser }) => {
+      if (isNewUser) {
+        return done(null, user);
+      }
+
+      // user already exists, need to check the status
+      handleAuthByCheckingUserStatus(user, done, provider);
+    })
+    .catch(done);
 };
 
 passport.use(facebookTokenStrategy);
