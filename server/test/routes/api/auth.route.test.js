@@ -57,6 +57,31 @@ describe('ENDPOINT: POST /api/auth/signup', function () {
     testValidation(payload, 400, 'Password is required', done);
   });
 
+  it(`POST ${endpoint} - Status is not allowed`, function (done) {
+    const payload = {
+      username: 'john',
+      email: 'john@tdev.app',
+      password: 'qweasdzxc',
+      status: 'active',
+    };
+
+    testValidation(payload, 400, '"status" is not allowed', done);
+  });
+
+  it(`POST ${endpoint} - Permissions is not allowed`, function (done) {
+    const payload = {
+      username: 'john',
+      email: 'john@tdev.app',
+      password: 'qweasdzxc',
+      permissions: {
+        userInsert: true,
+        userModify: true,
+      },
+    };
+
+    testValidation(payload, 400, '"permissions" is not allowed', done);
+  });
+
   it(`POST ${endpoint} - Email existed`, function (done) {
     const payload = {
       username: 'john',
@@ -254,6 +279,7 @@ describe('ENDPOINT: POST /api/auth/signin', function () {
         expect(decodedToken.iat).to.be.equal(
           decodedToken.exp - config.jwt.expiresIn
         );
+        expect(decodedToken.provider).to.be.equal('local');
         expect(res.body.user.id).to.be.equal(existingAdmin._id.toString());
         expect(res.body.user).to.have.property('createdAt');
         expect(res.body.user).to.have.property('updatedAt');
@@ -750,6 +776,78 @@ describe('ENDPOINT: POST /api/auth/verify-token', function () {
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .expect(401)
       .expect({ error: { message: 'jwt expired' } }, done);
+  });
+
+  it(`POST ${endpoint} - JWT token - disabled account - local provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'local';
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .post(endpoint)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`POST ${endpoint} - JWT token - disabled account - google provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'google';
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .post(endpoint)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`POST ${endpoint} - JWT token - disabled account - facebook provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'facebook';
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .post(endpoint)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`POST ${endpoint} - JWT token - unverified-email - local provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'local';
+    existingAdmin.status = 'unverified-email';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .post(endpoint)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .then((res) => {
+          if (config.auth.verifyEmail) {
+            expect(res.body).to.deep.equal({
+              error: { message: 'Email is not verified' },
+            });
+          } else {
+            expect(res.body).to.deep.equal({
+              error: { message: 'Account status is invalid' },
+            });
+          }
+          done();
+        })
+        .catch(done);
+    });
   });
 
   it(`POST ${endpoint} - JWT Token - jwt token verification succeeded`, function (done) {

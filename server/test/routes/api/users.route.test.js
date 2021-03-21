@@ -178,6 +178,81 @@ describe('ENDPOINT: GET /api/users/:id', function () {
       .expect({ error: { message: 'jwt expired' } }, done);
   });
 
+  it(`GET ${endpoint} - JWT token - disabled account - local provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'local';
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .get(`${endpoint}/${app.locals.existing.user._id}`)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`GET ${endpoint} - JWT token - disabled account - google provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'google';
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .get(`${endpoint}/${app.locals.existing.user._id}`)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`GET ${endpoint} - JWT token - disabled account - facebook provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'facebook';
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .get(`${endpoint}/${app.locals.existing.user._id}`)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`GET ${endpoint} - JWT token - unverified-email - local provider`, function (done) {
+    let existingUser = app.locals.existing.user;
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'local';
+    const payload = { role: 'admin' };
+    existingAdmin.status = 'unverified-email';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .put(`${endpoint}/${existingUser._id}`)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .send(payload)
+        .expect(401)
+        .then((res) => {
+          if (config.auth.verifyEmail) {
+            expect(res.body).to.deep.equal({
+              error: { message: 'Email is not verified' },
+            });
+          } else {
+            expect(res.body).to.deep.equal({
+              error: { message: 'Account status is invalid' },
+            });
+          }
+          done();
+        })
+        .catch(done);
+    });
+  });
+
   it(`GET ${endpoint}/:userId - Params - Invalid userId`, function (done) {
     let existingUser = app.locals.existing.user;
     request(app)
@@ -324,6 +399,90 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
       .send(payload)
       .expect(401)
       .expect({ error: { message: 'jwt expired' } }, done);
+  });
+
+  it(`PUT ${endpoint} - JWT token - disabled account - local provider`, function (done) {
+    let existingUser = app.locals.existing.user;
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'local';
+    const payload = { role: 'admin' };
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .put(`${endpoint}/${existingUser._id}`)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .send(payload)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`PUT ${endpoint} - JWT token - disabled account - google provider`, function (done) {
+    let existingUser = app.locals.existing.user;
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'google';
+    const payload = { role: 'admin' };
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .put(`${endpoint}/${existingUser._id}`)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .send(payload)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`PUT ${endpoint} - JWT token - disabled account - facebook provider`, function (done) {
+    let existingUser = app.locals.existing.user;
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'facebook';
+    const payload = { role: 'admin' };
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .put(`${endpoint}/${existingUser._id}`)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .send(payload)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`PUT ${endpoint} - JWT token - unverified-email - local provider`, function (done) {
+    let existingUser = app.locals.existing.user;
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'local';
+    const payload = { role: 'admin' };
+    existingAdmin.status = 'unverified-email';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .put(`${endpoint}/${existingUser._id}`)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .send(payload)
+        .expect(401)
+        .then((res) => {
+          if (config.auth.verifyEmail) {
+            expect(res.body).to.deep.equal({
+              error: { message: 'Email is not verified' },
+            });
+          } else {
+            expect(res.body).to.deep.equal({
+              error: { message: 'Account status is invalid' },
+            });
+          }
+          done();
+        })
+        .catch(done);
+    });
   });
 
   it(`PUT ${endpoint}/:userId - Params - Invalid userId`, function (done) {
@@ -506,7 +665,6 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
       subId: '5e24db1d560ba309f0b0b5a8',
       permissions: {
         // this will be updated
-        userInsert: true,
         userModify: true,
         userRead: false,
       },
@@ -635,6 +793,83 @@ describe('ENDPOINT: DELETE /api/users/:userId', function () {
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .expect(401)
       .expect({ error: { message: 'jwt expired' } }, done);
+  });
+
+  it(`DELETE ${endpoint} - JWT token - disabled account - local provider`, function (done) {
+    let existingUser = app.locals.existing.user;
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'local';
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .delete(`${endpoint}/${existingUser._id}`)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`DELETE ${endpoint} - JWT token - disabled account - google provider`, function (done) {
+    let existingUser = app.locals.existing.user;
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'google';
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .delete(`${endpoint}/${existingUser._id}`)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`DELETE ${endpoint} - JWT token - disabled account - facebook provider`, function (done) {
+    let existingUser = app.locals.existing.user;
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'facebook';
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .delete(`${endpoint}/${existingUser._id}`)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`DELETE ${endpoint} - JWT token - unverified-email - local provider`, function (done) {
+    let existingUser = app.locals.existing.user;
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'local';
+    const payload = { role: 'admin' };
+    existingAdmin.status = 'unverified-email';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .delete(`${endpoint}/${existingUser._id}`)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .then((res) => {
+          if (config.auth.verifyEmail) {
+            expect(res.body).to.deep.equal({
+              error: { message: 'Email is not verified' },
+            });
+          } else {
+            expect(res.body).to.deep.equal({
+              error: { message: 'Account status is invalid' },
+            });
+          }
+          done();
+        })
+        .catch(done);
+    });
   });
 
   it(`DELETE ${endpoint}/:userId - Params - Invalid userId`, function (done) {

@@ -4,10 +4,10 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 const seed = require('../core/seed');
 
-const generateJwtToken = (user) => {
+const generateJwtToken = (user, provider) => {
   const iat = Math.floor(Date.now() / 1000);
   const token = jwt.sign(
-    { sub: user.subId, userId: user._id, iat },
+    { sub: user.subId, userId: user._id, iat, provider },
     config.jwt.secret,
     {
       algorithm: config.jwt.algorithm,
@@ -42,7 +42,7 @@ beforeEach(function (done) {
   seed.createUsers(config.seed.users).then((users) => {
     app.locals.existing = {};
     users.forEach((user) => {
-      user.jwtToken = generateJwtToken(user);
+      user.jwtToken = generateJwtToken(user, 'local');
       app.locals.existing[[user.username]] = user;
     });
     done();

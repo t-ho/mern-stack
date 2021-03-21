@@ -157,7 +157,87 @@ describe('ENDPOINT: PUT /api/profiles/', function () {
       .expect({ error: { message: 'jwt expired' } }, done);
   });
 
-  it(`PUT ${endpoint} - Can only update firstName, lastName`, function (done) {
+  it(`PUT ${endpoint} - JWT token - disabled account - local provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'local';
+    const payload = { firstName: 'John' };
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .put(endpoint)
+        .send(payload)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`PUT ${endpoint} - JWT token - disabled account - google provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'google';
+    const payload = { firstName: 'John' };
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .put(endpoint)
+        .send(payload)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`PUT ${endpoint} - JWT token - disabled account - facebook provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'facebook';
+    const payload = { firstName: 'John' };
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .put(endpoint)
+        .send(payload)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`PUT ${endpoint} - JWT token - unverified-email - local provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'local';
+    const payload = { firstName: 'John' };
+    existingAdmin.status = 'unverified-email';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .put(endpoint)
+        .send(payload)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .then((res) => {
+          if (config.auth.verifyEmail) {
+            expect(res.body).to.deep.equal({
+              error: { message: 'Email is not verified' },
+            });
+          } else {
+            expect(res.body).to.deep.equal({
+              error: { message: 'Account status is invalid' },
+            });
+          }
+          done();
+        })
+        .catch(done);
+    });
+  });
+
+  it(`PUT ${endpoint} - Can only update firstName, lastName, displayName`, function (done) {
     const User = mongoose.model('User');
     let existingAdmin = app.locals.existing.admin;
     const payload = {
@@ -171,7 +251,6 @@ describe('ENDPOINT: PUT /api/profiles/', function () {
       role: 'root',
       subId: '5e24db1d560ba309f0b0b5a8',
       permissions: {
-        userInsert: true,
         userModify: true,
         userRead: true,
       },
@@ -324,6 +403,86 @@ describe('ENDPOINT: PUT /api/profiles/password', function () {
       .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .expect(401)
       .expect({ error: { message: 'jwt expired' } }, done);
+  });
+
+  it(`PUT ${endpoint} - JWT token - disabled account - local provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'local';
+    const payload = { password: 'new-password', currentPassword: 'password' };
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .put(endpoint)
+        .send(payload)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`PUT ${endpoint} - JWT token - disabled account - google provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'google';
+    const payload = { password: 'new-password', currentPassword: 'password' };
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .put(endpoint)
+        .send(payload)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`PUT ${endpoint} - JWT token - disabled account - facebook provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'facebook';
+    const payload = { password: 'new-password', currentPassword: 'password' };
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .put(endpoint)
+        .send(payload)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`PUT ${endpoint} - JWT token - unverified-email - local provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'local';
+    const payload = { password: 'new-password', currentPassword: 'password' };
+    existingAdmin.status = 'unverified-email';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .put(endpoint)
+        .send(payload)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .then((res) => {
+          if (config.auth.verifyEmail) {
+            expect(res.body).to.deep.equal({
+              error: { message: 'Email is not verified' },
+            });
+          } else {
+            expect(res.body).to.deep.equal({
+              error: { message: 'Account status is invalid' },
+            });
+          }
+          done();
+        })
+        .catch(done);
+    });
   });
 
   it(`PUT ${endpoint} - Current passowrd is required`, function (done) {
