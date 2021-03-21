@@ -1,4 +1,5 @@
 const fspath = require('path');
+const constants = require('../core/constants');
 
 /**
  * Default configuration
@@ -40,7 +41,7 @@ let defaultConfig = {
   },
   morgan: {
     enabled: true,
-    format: 'dev', // TODO: possible values: combined, common, dev, short, tiny
+    format: constants.MORGAN_FORMAT_DEV, // TODO: possible values: combined, common, dev, short, tiny
     options: null, // See https://www.npmjs.com/package/morgan
   },
   mongo: {

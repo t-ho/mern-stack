@@ -3,7 +3,7 @@ const createError = require('http-errors');
 const Joi = require('joi');
 const email = require('../core/sendgrid');
 const config = require('../config');
-const constants = require('./constants');
+const constants = require('../core/constants');
 
 const User = mongoose.model('User');
 
@@ -14,11 +14,11 @@ const resetPasswordSchema = Joi.object({
   email: Joi.string()
     .required()
     .email()
-    .messages(constants.EMAIL_ERROR_MESSAGES),
+    .messages(constants.ERROR_MESSAGE_EMAIL),
   password: Joi.string()
     .required()
     .min(8)
-    .messages(constants.PASSWORD_ERROR_MESSAGES),
+    .messages(constants.ERROR_MESSAGE_PASSWORD),
 });
 
 /**
@@ -50,7 +50,7 @@ module.exports.resetPassword = (req, res, next) => {
       return User.findOne({
         email: req.body.email,
         token: req.params.token,
-        tokenPurpose: 'reset-password',
+        tokenPurpose: constants.TOKEN_PURPOSE_RESET_PASSWORD,
       });
     })
     .then((user) => {
@@ -78,8 +78,13 @@ const sendTokenSchema = Joi.object({
   email: Joi.string()
     .required()
     .email()
-    .messages(constants.EMAIL_ERROR_MESSAGES),
-  tokenPurpose: Joi.string().required().valid('verify-email', 'reset-password'),
+    .messages(constants.ERROR_MESSAGE_EMAIL),
+  tokenPurpose: Joi.string()
+    .required()
+    .valid(
+      constants.TOKEN_PURPOSE_VERIFY_EMAIL,
+      constants.TOKEN_PURPOSE_RESET_PASSWORD
+    ),
 });
 
 /**
@@ -94,7 +99,7 @@ module.exports.sendToken = (req, res, next) => {
     .validateAsync(req.body)
     .then((payload) => {
       req.body = payload;
-      if (req.body.tokenPurpose === 'reset-password') {
+      if (req.body.tokenPurpose === constants.TOKEN_PURPOSE_RESET_PASSWORD) {
         if (!config.auth.resetPassword) {
           return next(
             createError(422, 'Password reset functionality is not available')
@@ -102,7 +107,7 @@ module.exports.sendToken = (req, res, next) => {
         }
         return sendPasswordResetToken(req, res, next);
       }
-      if (req.body.tokenPurpose === 'verify-email') {
+      if (req.body.tokenPurpose === constants.TOKEN_PURPOSE_VERIFY_EMAIL) {
         if (!config.auth.verifyEmail) {
           return next(
             createError(
@@ -153,9 +158,9 @@ module.exports.verifyToken = (req, res, next) => {
 const signInSchema = Joi.object({
   username: Joi.string()
     .pattern(/^[a-zA-Z0-9.\-_]{4,30}$/)
-    .messages(constants.USERNAME_ERROR_MESSAGE),
-  email: Joi.string().email().messages(constants.EMAIL_ERROR_MESSAGES),
-  password: Joi.string().required().messages(constants.PASSWORD_ERROR_MESSAGES),
+    .messages(constants.ERROR_MESSAGE_USERNAME),
+  email: Joi.string().email().messages(constants.ERROR_MESSAGE_EMAIL),
+  password: Joi.string().required().messages(constants.ERROR_MESSAGE_PASSWORD),
 })
   .xor('username', 'email')
   .messages({ 'object.missing': 'Either username or email must be provided' });
@@ -202,7 +207,7 @@ const createSignInResponse = (user, provider) => {
  */
 module.exports.localSignIn = (req, res, next) => {
   if (req.user) {
-    res.json(createSignInResponse(req.user, 'local'));
+    res.json(createSignInResponse(req.user, constants.PROVIDER_LOCAL));
   }
 };
 
@@ -236,7 +241,7 @@ module.exports.validateGoogleSignInPayload = (req, res, next) => {
  */
 module.exports.googleSignIn = (req, res, next) => {
   if (req.user) {
-    res.json(createSignInResponse(req.user, 'google'));
+    res.json(createSignInResponse(req.user, constants.PROVIDER_GOOGLE));
   }
 };
 
@@ -274,7 +279,7 @@ module.exports.validateFacebookSignInPayload = (req, res, next) => {
  */
 module.exports.facebookSignIn = (req, res, next) => {
   if (req.user) {
-    res.json(createSignInResponse(req.user, 'facebook'));
+    res.json(createSignInResponse(req.user, constants.PROVIDER_FACEBOOK));
   }
 };
 
@@ -285,15 +290,15 @@ const signUpSchema = Joi.object({
   username: Joi.string()
     .required()
     .pattern(/^[a-zA-Z0-9.\-_]{4,30}$/)
-    .messages(constants.USERNAME_ERROR_MESSAGE),
+    .messages(constants.ERROR_MESSAGE_USERNAME),
   email: Joi.string()
     .required()
     .email()
-    .messages(constants.EMAIL_ERROR_MESSAGES),
+    .messages(constants.ERROR_MESSAGE_EMAIL),
   password: Joi.string()
     .required()
     .min(8)
-    .messages(constants.PASSWORD_ERROR_MESSAGES),
+    .messages(constants.ERROR_MESSAGE_PASSWORD),
   firstName: Joi.string().trim(),
   lastName: Joi.string().trim(),
 });
@@ -341,8 +346,8 @@ module.exports.signUp = (req, res, next) => {
     })
     .then(() => {
       if (config.auth.verifyEmail) {
-        newUser.setToken('verify-email');
-        newUser.status = 'unverified-email';
+        newUser.setToken(constants.TOKEN_PURPOSE_VERIFY_EMAIL);
+        newUser.status = constants.STATUS_UNVERIFIED_EMAIL;
       }
       return newUser.save();
     })
@@ -366,7 +371,7 @@ module.exports.signUp = (req, res, next) => {
  * JOI schema for validating verifyEmail payload
  */
 const verifyEmailSchema = Joi.object({
-  password: Joi.string().required().messages(constants.PASSWORD_ERROR_MESSAGES),
+  password: Joi.string().required().messages(constants.ERROR_MESSAGE_PASSWORD),
 });
 
 /**
@@ -394,7 +399,7 @@ module.exports.verifyEmail = (req, res, next) => {
 
       return User.findOne({
         token: req.params.token,
-        tokenPurpose: 'verify-email',
+        tokenPurpose: constants.TOKEN_PURPOSE_VERIFY_EMAIL,
       });
     })
     .then((user) => {
@@ -409,7 +414,7 @@ module.exports.verifyEmail = (req, res, next) => {
         throw createError(422, 'Password is incorrect');
       }
       targetUser.clearToken();
-      targetUser.status = 'active';
+      targetUser.status = constants.STATUS_ACTIVE;
       return targetUser.save();
     })
     .then((user) => {
@@ -471,7 +476,7 @@ const sendVerificationEmailToken = (req, res, next) => {
       if (!user) {
         throw createError(422, 'Email not associated with any acount');
       }
-      if (user.status !== 'unverified-email') {
+      if (user.status !== constants.STATUS_UNVERIFIED_EMAIL) {
         throw createError(422, 'Email already verified');
       }
       user.setToken(req.body.tokenPurpose);

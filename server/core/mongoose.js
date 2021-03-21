@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
-const config = require('../config/index');
+const config = require('../config');
 const seed = require('./seed');
+const constants = require('./constants');
 
 require('../models');
 
@@ -10,7 +11,7 @@ mongoose.set('useCreateIndex', true); // FIXME: fix deprecation warnings
 mongoose.set('useNewUrlParser', true); // FIXME: fix deprecation warnings
 mongoose.set('useUnifiedTopology', true); // FIXME: fix deprecation warnings
 
-if (config.env !== 'test') {
+if (config.env !== constants.ENV_TEST) {
   mongoose.connect(config.mongo.uri);
   mongoose.connection.once('open', () => {
     seed.createUsers(config.seed.users);

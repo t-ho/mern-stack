@@ -220,7 +220,7 @@ const updateOrInsert = (userProfile) => {
  *
  * @param {object} user
  * @param {function} done
- * @param {bool} isOAuth
+ * @param {string} provider Default: 'local'
  *
  * @returns
  */

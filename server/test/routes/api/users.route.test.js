@@ -518,7 +518,7 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
     const payload = { role: 'not-user-admin-or-root' };
     testInvalidPayload(
       payload,
-      '"role" must be one of [root, admin, user]',
+      '"role" must be one of [admin, root, user]',
       done
     );
   });

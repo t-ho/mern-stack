@@ -10,6 +10,7 @@ const createError = require('http-errors');
 const routes = require('../routes');
 const passport = require('./passport');
 const config = require('../config/index');
+const constants = require('./constants');
 
 // App Setup
 const app = express();
@@ -60,7 +61,7 @@ app.use((req, res, next) => {
 // error handler
 // print stacktrace during development
 // and send stacktrace to client
-if (config.env === 'development') {
+if (config.env === constants.ENV_DEV) {
   app.use((err, req, res, next) => {
     console.log(err.stack);
     res

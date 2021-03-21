@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const _ = require('lodash');
 const { v4: uuidv4 } = require('uuid');
 const config = require('../config');
+const constants = require('../core/constants');
 
 // By defaulf, we don't store oauth accessToken and refreshToken
 const providerDataSchema = new mongoose.Schema({
@@ -61,14 +62,18 @@ const userSchema = new mongoose.Schema(
     lastName: { type: String, trim: true },
     status: {
       type: String,
-      enum: ['active', 'disabled', 'unverified-email'],
-      default: 'active',
+      enum: [
+        constants.STATUS_ACTIVE,
+        constants.STATUS_DISABLED,
+        constants.STATUS_UNVERIFIED_EMAIL,
+      ],
+      default: constants.STATUS_ACTIVE,
       index: true,
     },
     role: {
       type: String,
-      enum: ['user', 'admin', 'root'],
-      default: 'user',
+      enum: [constants.ROLE_ADMIN, constants.ROLE_ROOT, constants.ROLE_USER],
+      default: constants.ROLE_USER,
       index: true,
     },
     // The permissions field will allow a normal user to perform

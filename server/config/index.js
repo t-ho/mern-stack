@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const _ = require('lodash');
 const Joi = require('joi');
 const chalk = require('chalk');
+const constants = require('../core/constants');
 
 dotenv.config({ path: fspath.resolve(__dirname, '../../.env') });
 
@@ -16,7 +17,11 @@ const envVarsSchema = Joi.object({
   GOOGLE_CLIENT_SECRET: Joi.string().required(),
   JWT_SECRET: Joi.string().required(),
   MONGO_URI: Joi.string().uri().required(),
-  NODE_ENV: Joi.string().valid('development', 'production', 'test'),
+  NODE_ENV: Joi.string().valid(
+    constants.ENV_DEV,
+    constants.ENV_PROD,
+    constants.ENV_TEST
+  ),
   SERVER_HOST: Joi.string().required(),
   SERVER_PORT: Joi.number().required(),
   SERVER_PUBLIC_URL: Joi.string().uri().required(),
@@ -63,11 +68,11 @@ let envConfig = {
 
 let config = {};
 
-if (envConfig.env === 'development') {
+if (envConfig.env === constants.ENV_DEV) {
   config = require('./config.dev');
-} else if (envConfig.env === 'production') {
+} else if (envConfig.env === constants.ENV_PROD) {
   config = require('./config.prod');
-} else if (envConfig.env === 'test') {
+} else if (envConfig.env === constants.ENV_TEST) {
   config = require('./config.test');
 }
 

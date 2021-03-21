@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const defaultConfig = require('./config.default');
+const constants = require('../core/constants');
 
 /**
  * Configuration for development environment
@@ -10,7 +11,7 @@ let devConfig = {
     resetPassword: true, // If true, be able to reset password via email
   },
   morgan: {
-    format: 'dev', // TODO: possible values: combined, common, dev, short, tiny
+    format: constants.MORGAN_FORMAT_DEV, // TODO: possible values: combined, common, dev, short, tiny
   },
   oauth: {},
   seed: {
@@ -22,7 +23,7 @@ let devConfig = {
         password: 'password',
         firstName: 'Root',
         lastName: 'Account',
-        role: 'root',
+        role: constants.ROLE_ROOT,
       },
       {
         username: 'admin',
@@ -30,7 +31,7 @@ let devConfig = {
         password: 'password',
         firstName: 'Admin',
         lastName: 'Account',
-        role: 'admin',
+        role: constants.ROLE_ADMIN,
       },
       {
         username: 'user',
@@ -38,7 +39,7 @@ let devConfig = {
         password: 'password',
         firstName: 'User',
         lastName: 'Account',
-        role: 'user',
+        role: constants.ROLE_USER,
       },
     ],
   },
