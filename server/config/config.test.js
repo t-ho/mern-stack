@@ -6,8 +6,8 @@ const defaultConfig = require('./config.default');
  */
 let testConfig = {
   auth: {
-    verifyEmail: false, // If true, require email verification when signing up
-    resetPassword: false, // If true, be able to reset password via email
+    verifyEmail: true, // If true, require email verification when signing up
+    resetPassword: true, // If true, be able to reset password via email
   },
   morgan: {
     format: 'dev', // TODO: possible values: combined, common, dev, short, tiny
@@ -26,6 +26,7 @@ let testConfig = {
         firstName: 'Root',
         lastName: 'Account',
         role: 'root',
+        status: 'active',
         provider: {
           google: {
             userId: 'google-user-id-01',
@@ -48,6 +49,7 @@ let testConfig = {
         firstName: 'AnotherRoot',
         lastName: 'Account',
         role: 'root',
+        status: 'active',
         provider: {
           google: {
             userId: 'google-user-id-01',
@@ -70,6 +72,7 @@ let testConfig = {
         firstName: 'Admin',
         lastName: 'Account',
         role: 'admin',
+        status: 'active',
         provider: {
           google: {
             userId: 'google-user-id-02',
@@ -92,6 +95,7 @@ let testConfig = {
         firstName: 'AnotherAdmin',
         lastName: 'Account',
         role: 'admin',
+        status: 'active',
         provider: {
           google: {
             userId: 'google-user-id-02',
@@ -114,8 +118,8 @@ let testConfig = {
         firstName: 'SpecialUser',
         lastName: 'Account',
         role: 'user',
+        status: 'active',
         permissions: {
-          userInsert: true,
           userModify: true,
           userRead: true,
         },
@@ -141,8 +145,8 @@ let testConfig = {
         firstName: 'AnotherSpecialUser',
         lastName: 'Account',
         role: 'user',
+        status: 'active',
         permissions: {
-          userInsert: true,
           userModify: true,
           userRead: true,
         },
@@ -168,6 +172,7 @@ let testConfig = {
         firstName: 'User',
         lastName: 'Account',
         role: 'user',
+        status: 'active',
         provider: {
           google: {
             userId: 'google-user-id-03',
@@ -190,6 +195,7 @@ let testConfig = {
         firstName: 'AnotherUser',
         lastName: 'Account',
         role: 'user',
+        status: 'active',
         provider: {
           google: {
             userId: 'google-user-id-03',
