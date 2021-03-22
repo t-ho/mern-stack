@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Joi = require('joi');
 const _ = require('lodash');
 const createError = require('http-errors');
+const constants = require('../core/constants');
 
 const User = mongoose.model('User');
 
@@ -18,8 +19,16 @@ const getUsersSchema = Joi.object({
   email: Joi.string().email(),
   firstName: Joi.string().trim(),
   lastName: Joi.string().trim(),
-  status: Joi.string().valid('active', 'disabled', 'unverified-email'),
-  role: Joi.string().valid('root', 'admin', 'user'),
+  status: Joi.string().valid(
+    constants.STATUS_ACTIVE,
+    constants.STATUS_DISABLED,
+    constants.STATUS_UNVERIFIED_EMAIL
+  ),
+  role: Joi.string().valid(
+    constants.ROLE_ADMIN,
+    constants.ROLE_ROOT,
+    constants.ROLE_USER
+  ),
   permissions: Joi.string().trim(),
 });
 
@@ -59,7 +68,7 @@ module.exports.getUsers = (req, res, next) => {
           {
             [`permissions.${req.query.permissions}`]: true,
           },
-          { role: { $in: ['root', 'admin'] } },
+          { role: { $in: [constants.ROLE_ROOT, constants.ROLE_ADMIN] } },
         ];
       }
       return Promise.all([
@@ -127,8 +136,16 @@ module.exports.deleteUser = (req, res, next) => {
  * Joi schema for validating updateUser payload
  */
 const updateUserSchema = Joi.object({
-  role: Joi.string().valid('root', 'admin', 'user'),
-  status: Joi.string().valid('active', 'disabled', 'unverified-email'),
+  role: Joi.string().valid(
+    constants.ROLE_ADMIN,
+    constants.ROLE_ROOT,
+    constants.ROLE_USER
+  ),
+  status: Joi.string().valid(
+    constants.STATUS_ACTIVE,
+    constants.STATUS_DISABLED,
+    constants.STATUS_UNVERIFIED_EMAIL
+  ),
   permissions: Joi.object(),
 });
 
@@ -147,8 +164,10 @@ module.exports.updateUser = (req, res, next) => {
       req.body = payload;
       if (req.body.role) {
         if (
-          (req.user.role === 'admin' && req.body.role !== 'user') ||
-          (req.user.role === 'user' && req.body.role !== 'user')
+          (req.user.role === constants.ROLE_ADMIN &&
+            req.body.role !== constants.ROLE_USER) ||
+          (req.user.role === constants.ROLE_USER &&
+            req.body.role !== constants.ROLE_USER)
         ) {
           throw createError(403, 'Forbidden action');
         }

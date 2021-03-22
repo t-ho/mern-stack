@@ -1,6 +1,7 @@
 const fspath = require('path');
 const _ = require('lodash');
 const defaultConfig = require('./config.default');
+const constants = require('../core/constants');
 
 /**
  * Configuration for Production environment
@@ -28,7 +29,7 @@ let prodConfig = {
   },
   morgan: {
     enabled: true,
-    format: 'combined', // TODO: possible values: combined, common, dev, short, tiny
+    format: constants.MORGAN_FORMAT_COMBINED, // TODO: possible values: combined, common, dev, short, tiny
   },
   paths: {
     root: fspath.normalize(`${__dirname}/..`),
@@ -43,7 +44,7 @@ let prodConfig = {
         password: 'qweasdzxc',
         firstName: 'Root',
         lastName: 'Account',
-        role: 'root',
+        role: constants.ROLE_ROOT,
       },
       {
         username: 'admin',
@@ -51,7 +52,7 @@ let prodConfig = {
         password: 'qweasdzxc',
         firstName: 'Admin',
         lastName: 'Account',
-        role: 'admin',
+        role: constants.ROLE_ADMIN,
       },
     ],
   },

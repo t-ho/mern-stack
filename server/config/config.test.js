@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const defaultConfig = require('./config.default');
+const constants = require('../core/constants');
 
 /**
  * Configuration for development environment
@@ -11,6 +12,7 @@ let testConfig = {
   },
   morgan: {
     format: 'dev', // TODO: possible values: combined, common, dev, short, tiny
+    format: constants.MORGAN_FORMAT_DEV, // TODO: possible values: combined, common, dev, short, tiny
   },
   mongo: {
     testUri: `mongodb://localhost:27017/${defaultConfig.app.name}_test`,
@@ -25,8 +27,8 @@ let testConfig = {
         password: 'password',
         firstName: 'Root',
         lastName: 'Account',
-        role: 'root',
-        status: 'active',
+        role: constants.ROLE_ROOT,
+        status: constants.STATUS_ACTIVE,
         provider: {
           google: {
             userId: 'google-user-id-01',
@@ -48,8 +50,8 @@ let testConfig = {
         password: 'password',
         firstName: 'AnotherRoot',
         lastName: 'Account',
-        role: 'root',
-        status: 'active',
+        role: constants.ROLE_ROOT,
+        status: constants.STATUS_ACTIVE,
         provider: {
           google: {
             userId: 'google-user-id-01',
@@ -71,8 +73,8 @@ let testConfig = {
         password: 'password',
         firstName: 'Admin',
         lastName: 'Account',
-        role: 'admin',
-        status: 'active',
+        role: constants.ROLE_ADMIN,
+        status: constants.STATUS_ACTIVE,
         provider: {
           google: {
             userId: 'google-user-id-02',
@@ -94,8 +96,8 @@ let testConfig = {
         password: 'password',
         firstName: 'AnotherAdmin',
         lastName: 'Account',
-        role: 'admin',
-        status: 'active',
+        role: constants.ROLE_ADMIN,
+        status: constants.STATUS_ACTIVE,
         provider: {
           google: {
             userId: 'google-user-id-02',
@@ -117,8 +119,8 @@ let testConfig = {
         password: 'password',
         firstName: 'SpecialUser',
         lastName: 'Account',
-        role: 'user',
-        status: 'active',
+        role: constants.ROLE_USER,
+        status: constants.STATUS_ACTIVE,
         permissions: {
           userModify: true,
           userRead: true,
@@ -144,8 +146,8 @@ let testConfig = {
         password: 'password',
         firstName: 'AnotherSpecialUser',
         lastName: 'Account',
-        role: 'user',
-        status: 'active',
+        role: constants.ROLE_USER,
+        status: constants.STATUS_ACTIVE,
         permissions: {
           userModify: true,
           userRead: true,
@@ -171,8 +173,8 @@ let testConfig = {
         password: 'password',
         firstName: 'User',
         lastName: 'Account',
-        role: 'user',
-        status: 'active',
+        role: constants.ROLE_USER,
+        status: constants.STATUS_ACTIVE,
         provider: {
           google: {
             userId: 'google-user-id-03',
@@ -194,8 +196,8 @@ let testConfig = {
         password: 'password',
         firstName: 'AnotherUser',
         lastName: 'Account',
-        role: 'user',
-        status: 'active',
+        role: constants.ROLE_USER,
+        status: constants.STATUS_ACTIVE,
         provider: {
           google: {
             userId: 'google-user-id-03',

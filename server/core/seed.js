@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const chalk = require('chalk');
-const config = require('../config/index');
+const config = require('../config');
 
 /**
  * @function createUsers

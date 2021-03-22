@@ -1,4 +1,5 @@
 const createError = require('http-errors');
+const constants = require('../core/constants');
 
 const createRequiresRoleMiddleware = (role) => {
   return (req, res, next) => {
@@ -6,18 +7,19 @@ const createRequiresRoleMiddleware = (role) => {
       return next(createError(403, 'Forbidden action'));
     }
 
-    if (role === 'user') {
+    if (role === constants.ROLE_USER) {
       return next();
     }
 
     if (
-      role === 'admin' &&
-      (req.user.role === 'root' || req.user.role === 'admin')
+      role === constants.ROLE_ADMIN &&
+      (req.user.role === constants.ROLE_ROOT ||
+        req.user.role === constants.ROLE_ADMIN)
     ) {
       return next();
     }
 
-    if (role === 'root' && req.user.role === 'root') {
+    if (role === constants.ROLE_ROOT && req.user.role === constants.ROLE_ROOT) {
       return next();
     }
 

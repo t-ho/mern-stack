@@ -1,6 +1,7 @@
 const createError = require('http-errors');
 const _ = require('lodash');
 const config = require('../config');
+const constants = require('../core/constants');
 
 /**
  * @function
@@ -21,8 +22,8 @@ const createAuthorizationMiddleware = (modelName, action) => {
   return (req, res, next) => {
     if (
       req.user &&
-      (req.user.role === 'root' ||
-        req.user.role === 'admin' ||
+      (req.user.role === constants.ROLE_ROOT ||
+        req.user.role === constants.ROLE_ADMIN ||
         req.user.hasPermission(permission))
     ) {
       return next();

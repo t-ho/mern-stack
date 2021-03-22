@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const createError = require('http-errors');
 const Joi = require('joi');
 const _ = require('lodash');
-const constants = require('./constants');
+const constants = require('../core/constants');
 
 const User = mongoose.model('User');
 
@@ -23,11 +23,11 @@ module.exports.getProfile = (req, res, next) => {
 const updatePasswordSchema = Joi.object({
   currentPassword: Joi.string()
     .min(8)
-    .messages(constants.CURRENT_PASSWORD_ERROR_MESSAGES)
+    .messages(constants.ERROR_MESSAGE_CURRENT_PASSWORD)
     .required(),
   password: Joi.string()
     .min(8)
-    .messages(constants.PASSWORD_ERROR_MESSAGES)
+    .messages(constants.ERROR_MESSAGE_PASSWORD)
     .required(),
 });
 

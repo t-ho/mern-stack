@@ -1,5 +1,6 @@
 const createError = require('http-errors');
 const _ = require('lodash');
+const constants = require('../core/constants');
 
 /**
  * @function
@@ -33,7 +34,7 @@ const createUserAuthorizationMiddleware = (action) => {
       return next(createError(403, 'Forbidden action'));
     }
 
-    if (req.user.role === 'root') {
+    if (req.user.role === constants.ROLE_ROOT) {
       return next();
     }
 
@@ -50,11 +51,14 @@ const createUserAuthorizationMiddleware = (action) => {
     if (!targetUser) {
       return next(createError(500, 'res.locals.targetUser is undefined.'));
     }
-    if (req.user.role === 'admin' && targetUser.role === 'user') {
+    if (
+      req.user.role === constants.ROLE_ADMIN &&
+      targetUser.role === constants.ROLE_USER
+    ) {
       return next();
     } else if (
-      req.user.role === 'user' &&
-      targetUser.role === 'user' &&
+      req.user.role === constants.ROLE_USER &&
+      targetUser.role === constants.ROLE_USER &&
       targetUser.permissions['userModify'] === false
     ) {
       return next();
