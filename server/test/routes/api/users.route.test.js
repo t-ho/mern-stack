@@ -685,10 +685,26 @@ describe('ENDPOINT: PUT /api/users/:userId', function () {
       .set('Authorization', `Bearer ${currentUser.jwtToken}`)
       .send(payload)
       .expect(200)
-      .expect({
-        updatedFields: ['status', 'role', 'permissions'],
+      .then((res) => {
+        expect(res.body.updatedFields)
+          .to.be.an('array')
+          .that.include.members(['status', 'role', 'permissions']);
+        expect(res.body.user).to.not.have.property('hashedPassword');
+        expect(res.body.user).to.not.have.property('password');
+        expect(res.body.user).to.not.have.property('subId');
+        expect(res.body.user).to.not.have.property('token');
+        expect(res.body.user).to.not.have.property('tokenPurpose');
+        expect(res.body.user).to.have.property('username');
+        expect(res.body.user).to.have.property('email');
+        expect(res.body.user).to.have.property('status');
+        expect(res.body.user).to.have.property('firstName');
+        expect(res.body.user).to.have.property('lastName');
+        expect(res.body.user).to.have.property('role');
+        expect(res.body.user).to.have.property('permissions');
+        expect(res.body.user).to.have.property('provider');
+
+        return User.findById(targetUser._id);
       })
-      .then((res) => User.findById(targetUser._id))
       .then((updatedUser) => {
         expect(updatedUser.toObject()).to.deep.include(
           _.pick(targetUser.toObject(), [
