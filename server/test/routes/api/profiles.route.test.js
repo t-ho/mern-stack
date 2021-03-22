@@ -521,6 +521,38 @@ describe('ENDPOINT: PUT /api/profiles/password', function () {
       );
   });
 
+  it(`PUT ${endpoint} -  Token with facebook provider should not be allowed to update password`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'facebook';
+    const payload = { password: 'new-password', currentPassword: 'password' };
+    request(app)
+      .put(endpoint)
+      .send(payload)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(403)
+      .expect(
+        { error: { message: 'Cannot change the password of OAuth account' } },
+        done
+      );
+  });
+
+  it(`PUT ${endpoint} -  Token with google provider should not be allowed to update password`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'facebook';
+    const payload = { password: 'new-password', currentPassword: 'password' };
+    request(app)
+      .put(endpoint)
+      .send(payload)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(403)
+      .expect(
+        { error: { message: 'Cannot change the password of OAuth account' } },
+        done
+      );
+  });
+
   it(`PUT ${endpoint} - Current password is incorrect`, function (done) {
     let existingAdmin = app.locals.existing.admin;
     const payload = {
@@ -584,6 +616,7 @@ describe('ENDPOINT: PUT /api/profiles/password', function () {
         expect(newlyDecodedToken.iat).to.be.equal(
           newlyDecodedToken.exp - config.jwt.expiresIn
         );
+        expect(newlyDecodedToken.provider).to.be.equal('local');
 
         done();
       })
