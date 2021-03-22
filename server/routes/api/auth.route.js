@@ -22,7 +22,11 @@ router.post(
   authCtrl.googleSignIn
 );
 
-router.post('/verify-jwt-token', jwtAuthenticate, authCtrl.verifyJwtToken);
+router.post(
+  '/invalidate-all-jwt-tokens',
+  jwtAuthenticate,
+  authCtrl.invalidateAllJwtTokens
+);
 
 router.post('/reset-password/:token', authCtrl.resetPassword);
 
@@ -38,5 +42,7 @@ router.post(
 router.post('/signup', authCtrl.signUp);
 
 router.post('/verify-email/:token', authCtrl.verifyEmail);
+
+router.post('/verify-jwt-token', jwtAuthenticate, authCtrl.verifyJwtToken);
 
 module.exports = router;

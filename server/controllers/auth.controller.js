@@ -124,6 +124,26 @@ module.exports.sendToken = (req, res, next) => {
 };
 
 /**
+ * @function invalidateAllJwtTokens
+ * Invalidate all issued JWT tokens
+ *
+ */
+module.exports.invalidateAllJwtTokens = (req, res, next) => {
+  if (req.user) {
+    // Invalidate all JWT tokens by set new subId
+    req.user.setSubId();
+    return req.user
+      .save()
+      .then((user) => {
+        res
+          .status(200)
+          .json({ message: 'All JWT tokens have been invalidated' });
+      })
+      .catch(next);
+  }
+};
+
+/**
  * JOI schema for validating verifyToken payload
  */
 const verifyTokenSchema = Joi.object({
