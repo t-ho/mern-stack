@@ -859,27 +859,70 @@ describe('ENDPOINT: POST /api/auth/verify-token', function () {
       .expect({ status: 'pass' }, done);
   });
 
-  it(`POST ${endpoint} - JWT Token - verification and refresh succeeded`, function (done) {
-    let existingAdmin = app.locals.existing.admin;
+  const testVerifyAndRefreshTokenSuccess = (existingUser, provider, done) => {
+    let decodedToken = decodeJwtToken(existingUser.jwtToken);
+    if (provider) {
+      decodedToken.provider = provider;
+    }
+
     request(app)
       .post(endpoint)
-      .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
       .send({ refreshToken: true })
       .expect(200)
       .then((res) => {
         expect(res.body.status).to.be.equal('pass');
         expect(res.body.expiresAt).to.be.a('number');
         const newlyDecodedToken = decodeJwtToken(res.body.token);
-        expect(newlyDecodedToken.sub).to.be.equal(existingAdmin.subId);
+        expect(newlyDecodedToken.sub).to.be.equal(existingUser.subId);
         expect(newlyDecodedToken.userId).to.be.equal(
-          existingAdmin._id.toString()
+          existingUser._id.toString()
         );
         expect(newlyDecodedToken.exp).to.be.equal(res.body.expiresAt);
         expect(newlyDecodedToken.iat).to.be.equal(
           newlyDecodedToken.exp - config.jwt.expiresIn
         );
+        expect(newlyDecodedToken.provider).to.be.equal(decodedToken.provider);
         done();
       })
       .catch(done);
+  };
+
+  it(`POST ${endpoint} - JWT Token - verification and refresh succeeded`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    testVerifyAndRefreshTokenSuccess(existingAdmin, null, done);
+  });
+
+  it(`POST ${endpoint} - JWT Token (facebook provider) - verification and refresh succeeded`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    testVerifyAndRefreshTokenSuccess(existingAdmin, 'facebook', done);
+  });
+
+  it(`POST ${endpoint} - JWT Token (facebook provider - unverified-email) - verification and refresh succeeded`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    existingAdmin.status = 'unverified-email';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      testVerifyAndRefreshTokenSuccess(existingAdmin, 'facebook', done);
+    });
+  });
+
+  it(`POST ${endpoint} - JWT Token (google provider) - verification and refresh succeeded`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    testVerifyAndRefreshTokenSuccess(existingAdmin, 'google', done);
+  });
+
+  it(`POST ${endpoint} - JWT Token (google provider - unverified-email) - verification and refresh succeeded`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    existingAdmin.status = 'unverified-email';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      testVerifyAndRefreshTokenSuccess(existingAdmin, 'google', done);
+    });
+  });
+
+  it(`POST ${endpoint} - JWT Token (local provider) - verification and refresh succeeded`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    testVerifyAndRefreshTokenSuccess(existingAdmin, 'local', done);
   });
 });

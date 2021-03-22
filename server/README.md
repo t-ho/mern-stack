@@ -918,6 +918,7 @@ Sample request body payload
 | Property Name   | Type           | Description             |
 | --------------- | -------------- | ----------------------- |
 | `updatedFields` | _string array_ | Fields has been updated |
+| `user`          | _object_       | Updated user info       |
 
 Sample response
 
@@ -926,7 +927,31 @@ Sample response
   "updatedFields": [
     "role",
     "permissions"
-  ]
+  ],
+  "user": {
+    "id": "5e24d42cf7dddf012cd496b2",
+    "username": "tester",
+    "email": "test@test.com",
+    "status": "active",
+    "firstName": "Sarah",
+    "lastName": "Connor",
+    "role": "admin",
+    "permissions": {
+      "userInsert": true,
+      "userModify": true,
+      "userRead": true,
+      "postInsert": false,
+      "postModify": false,
+      "postRead": true
+    },
+    "provider": {
+      "local": {
+        "userId": "5e24d42cf7dddf012cd496b2"
+      }
+    },
+    "createdAt": "2020-01-19T22:11:56.779Z",
+    "updatedAt": "2020-01-19T23:18:47.897Z"
+  }
 }
 ```
 

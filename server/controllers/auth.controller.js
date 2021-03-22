@@ -141,12 +141,14 @@ module.exports.verifyToken = (req, res, next) => {
     .then((payload) => {
       req.body = payload;
       if (req.user) {
+        let result = { status: 'pass' };
         if (req.body.refreshToken) {
-          jwtTokenObj = req.user.generateJwtToken();
-          res.status(200).json({ status: 'pass', ...jwtTokenObj });
-        } else {
-          res.status(200).json({ status: 'pass' });
+          result = {
+            ...result,
+            ...req.user.generateJwtToken(req.user.signedInWithProvider),
+          };
         }
+        res.status(200).json(result);
       }
     })
     .catch(next);

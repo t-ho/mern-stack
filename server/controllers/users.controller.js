@@ -176,7 +176,10 @@ module.exports.updateUser = (req, res, next) => {
       return res.locals.targetUser.save();
     })
     .then((updatedUser) => {
-      res.status(200).json({ updatedFields: _.keys(req.body) });
+      res.status(200).json({
+        updatedFields: _.keys(req.body),
+        user: updatedUser.toJsonFor(req.user),
+      });
     })
     .catch(next);
 };
