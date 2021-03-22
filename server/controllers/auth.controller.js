@@ -127,7 +127,8 @@ module.exports.sendToken = (req, res, next) => {
  * JOI schema for validating verifyToken payload
  */
 const verifyTokenSchema = Joi.object({
-  refreshToken: Joi.boolean(),
+  refreshToken: Joi.boolean().default(false),
+  refreshUser: Joi.boolean().default(false),
 });
 
 /**
@@ -141,13 +142,22 @@ module.exports.verifyToken = (req, res, next) => {
     .then((payload) => {
       req.body = payload;
       if (req.user) {
-        let result = { status: 'pass' };
+        let result = { message: 'JWT token is valid' };
+
         if (req.body.refreshToken) {
           result = {
             ...result,
             ...req.user.generateJwtToken(req.user.signedInWithProvider),
           };
         }
+
+        if (req.body.refreshUser) {
+          result = {
+            ...result,
+            user: req.user.toJsonFor(req.user),
+          };
+        }
+
         res.status(200).json(result);
       }
     })
