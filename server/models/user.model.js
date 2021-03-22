@@ -163,7 +163,9 @@ userSchema.methods.setSubId = function () {
  *
  * Call this function when updating the user password
  *
- * @param {Promise} password Resolve with null value
+ * @param {*} password
+ *
+ * @returns {Promise} Resolve with null value
  */
 userSchema.methods.setPasswordAsync = function (password) {
   const saltRounds = 10;
@@ -174,6 +176,8 @@ userSchema.methods.setPasswordAsync = function (password) {
 
 /**
  * Compare candidate password with the stored one
+ *
+ * @param {string} candidatePassword The candidate password
  *
  * @returns {Promise} Resolve with a boolean value
  */
@@ -187,9 +191,13 @@ userSchema.methods.comparePasswordAsync = function (candidatePassword) {
 /**
  * Generate JWT token for authentication
  *
+ * @param {string} provider Default value: 'local'
+ *
  * @returns {object} An object contains JWT token and expiresAt (seconds) property
  */
-userSchema.methods.generateJwtToken = function (provider) {
+userSchema.methods.generateJwtToken = function (
+  provider = constants.PROVIDER_LOCAL
+) {
   const iat = Math.floor(Date.now() / 1000);
   const expiresAt = iat + config.jwt.expiresIn;
   const token = jwt.sign(

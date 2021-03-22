@@ -50,6 +50,9 @@ module.exports.updatePassword = (req, res, next) => {
             'New password is the same as current password'
           );
         }
+        if (req.user.signedInWithProvider !== constants.PROVIDER_LOCAL) {
+          throw createError(403, 'Cannot change the password of OAuth account');
+        }
         return req.user.comparePasswordAsync(req.body.currentPassword);
       })
       .then((matched) => {
@@ -63,7 +66,7 @@ module.exports.updatePassword = (req, res, next) => {
         return req.user.save();
       })
       .then((user) => {
-        let jwtTokenObj = user.generateJwtToken();
+        let jwtTokenObj = user.generateJwtToken(req.user.signedInWithProvider);
         res.status(200).json({ ...jwtTokenObj });
       })
       .catch(next);
