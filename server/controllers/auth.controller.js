@@ -132,11 +132,13 @@ const verifyTokenSchema = Joi.object({
 });
 
 /**
- * @function verifyToken
+ * @function verifyJwtToken
  * Verify JWT token
  *
+ * @param {boolean} req.body.refreshToken If true, a new JWT token will be included in the response
+ * @param {boolean} req.body.refreshUser If true, an user object will be included in the response
  */
-module.exports.verifyToken = (req, res, next) => {
+module.exports.verifyJwtToken = (req, res, next) => {
   verifyTokenSchema
     .validateAsync(req.body)
     .then((payload) => {

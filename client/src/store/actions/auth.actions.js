@@ -71,18 +71,20 @@ export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
       });
     }
     mernApi.setAuthToken(authInfo.token);
-    return mernApi.post('/api/auth/verify-token', { refreshToken: true }).then(
-      (response) => {
-        authInfo.token = response.data.token;
-        authInfo.expiresAt = response.data.expiresAt;
-        dispatch(
-          signInSuccess(authInfo, actionTypes.TRY_LOCAL_SIGN_IN_SUCCESS)
-        );
-      },
-      (err) => {
-        dispatch(tryLocalSignInFail());
-      }
-    );
+    return mernApi
+      .post('/api/auth/verify-jwt-token', { refreshToken: true })
+      .then(
+        (response) => {
+          authInfo.token = response.data.token;
+          authInfo.expiresAt = response.data.expiresAt;
+          dispatch(
+            signInSuccess(authInfo, actionTypes.TRY_LOCAL_SIGN_IN_SUCCESS)
+          );
+        },
+        (err) => {
+          dispatch(tryLocalSignInFail());
+        }
+      );
   } catch (err) {
     dispatch(tryLocalSignInFail(err));
   }
