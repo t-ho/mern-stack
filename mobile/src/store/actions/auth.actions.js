@@ -114,11 +114,15 @@ export const tryLocalSignIn = () => (dispatch, getState, { mernApi }) => {
       }
       mernApi.setAuthToken(authInfo.token);
       return mernApi
-        .post('/api/auth/verify-token', { refreshToken: true })
+        .post('/api/auth/verify-jwt-token', {
+          refreshToken: true,
+          refreshUser: true,
+        })
         .then(
           (response) => {
             authInfo.token = response.data.token;
             authInfo.expiresAt = response.data.expiresAt;
+            authInfo.user = response.data.user;
             dispatch(
               signInSuccess(authInfo, actionTypes.TRY_LOCAL_SIGN_IN_SUCCESS)
             );
