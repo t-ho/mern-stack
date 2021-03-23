@@ -734,6 +734,164 @@ describe('ENDPOINT: POST /api/auth/verify-email/:token', function () {
   }
 });
 
+describe('ENDPOINT: POST /api/auth/invalidate-all-jwt-tokens', function () {
+  let endpoint = '/api/auth/invalidate-all-jwt-tokens';
+
+  it(`POST ${endpoint} - JWT token not provided`, function (done) {
+    request(app)
+      .post(endpoint)
+      .expect(401)
+      .expect({ error: { message: 'No auth token' } }, done);
+  });
+
+  it(`POST ${endpoint} - JWT token - invalid subId`, function (done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.sub = 'invalid-sub-id';
+    request(app)
+      .post(endpoint)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'Invalid JWT token' } }, done);
+  });
+
+  it(`POST ${endpoint} - JWT token - not exist userId`, function (done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.userId = '5e24db1d560ba309f0b0b5a8';
+    request(app)
+      .post(endpoint)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'Invalid credentials' } }, done);
+  });
+
+  it(`POST ${endpoint} - JWT token - expired token`, function (done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.iat = decodedToken.iat - 100;
+    decodedToken.exp = decodedToken.iat - 50;
+    request(app)
+      .post(endpoint)
+      .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+      .expect(401)
+      .expect({ error: { message: 'jwt expired' } }, done);
+  });
+
+  it(`POST ${endpoint} - JWT token - disabled account - local provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'local';
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .post(endpoint)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`POST ${endpoint} - JWT token - disabled account - google provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'google';
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .post(endpoint)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`POST ${endpoint} - JWT token - disabled account - facebook provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'facebook';
+    existingAdmin.status = 'disabled';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .post(endpoint)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .expect({ error: { message: 'Account is disabled' } }, done);
+    });
+  });
+
+  it(`POST ${endpoint} - JWT token - unverified-email - local provider`, function (done) {
+    let existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    decodedToken.provider = 'local';
+    existingAdmin.status = 'unverified-email';
+    existingAdmin.save().then((u) => {
+      existingAdmin = u;
+      request(app)
+        .post(endpoint)
+        .set('Authorization', `Bearer ${createJwtToken(decodedToken)}`)
+        .expect(401)
+        .then((res) => {
+          if (config.auth.verifyEmail) {
+            expect(res.body).to.deep.equal({
+              error: { message: 'Email is not verified' },
+            });
+          } else {
+            expect(res.body).to.deep.equal({
+              error: { message: 'Account status is invalid' },
+            });
+          }
+          done();
+        })
+        .catch(done);
+    });
+  });
+
+  it(`POST ${endpoint} - JWT Token - Invalidating all JWT tokens succeeded`, function (done) {
+    const existingAdmin = app.locals.existing.admin;
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    const User = mongoose.model('User');
+    request(app)
+      .post(endpoint)
+      .set('Authorization', `Bearer ${existingAdmin.jwtToken}`)
+      .expect(200)
+      .then((res) => {
+        expect(res.body.message).to.be.equal(
+          'All JWT tokens have been invalidated'
+        );
+        return User.findById(existingAdmin._id);
+      })
+      .then((updatedUser) => {
+        expect(updatedUser.toObject()).to.deep.include(
+          _.pick(existingAdmin.toObject(), [
+            '_id',
+            'username',
+            'firtName',
+            'lastName',
+            'email',
+            'status',
+            'role',
+            'permissions',
+            'createdAt',
+            'token',
+            'tokenPurpose',
+            'provider',
+            'hashedPassword',
+          ])
+        );
+        expect(updatedUser.subId).to.be.a('string');
+        expect(mongoose.Types.ObjectId.isValid(updatedUser.subId)).to.be.true;
+        expect(updatedUser.subId).to.not.equal(existingAdmin.subId);
+        expect(updatedUser.subId).to.not.equal(decodedToken.sub);
+        done();
+      })
+      .catch(done);
+  });
+});
+
 describe('ENDPOINT: POST /api/auth/verify-jwt-token', function () {
   let endpoint = '/api/auth/verify-jwt-token';
 
