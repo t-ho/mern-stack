@@ -570,7 +570,12 @@ describe('ENDPOINT: PUT /api/profiles/password', function () {
   it(`PUT ${endpoint} - Update passowrd success`, function (done) {
     const User = mongoose.model('User');
     let existingAdmin = app.locals.existing.admin;
-    const payload = { password: 'new-password', currentPassword: 'password' };
+    let decodedToken = decodeJwtToken(existingAdmin.jwtToken);
+    const payload = {
+      password: 'new-password',
+      currentPassword: 'password',
+      subId: '60592551fc72e0ad2a1da0b8', // This subId will be ignored
+    };
     let response = null;
     request(app)
       .put(endpoint)
@@ -588,6 +593,8 @@ describe('ENDPOINT: PUT /api/profiles/password', function () {
           _.pick(existingAdmin.toObject(), [
             '_id',
             'username',
+            'firtName',
+            'lastName',
             'email',
             'status',
             'role',
@@ -604,10 +611,12 @@ describe('ENDPOINT: PUT /api/profiles/password', function () {
           existingAdmin.hashedPassword
         );
         expect(mongoose.Types.ObjectId.isValid(updatedUser.subId)).to.be.true;
+        expect(updatedUser.subId).to.not.equal(decodedToken.sub);
         expect(updatedUser.subId).to.not.equal(payload.subId);
         expect(updatedUser.subId).to.not.equal(existingAdmin.subId);
 
         const newlyDecodedToken = decodeJwtToken(response.body.token);
+        expect(newlyDecodedToken.sub).to.not.equal(existingAdmin.subId);
         expect(newlyDecodedToken.sub).to.be.equal(updatedUser.subId);
         expect(newlyDecodedToken.userId).to.be.equal(
           updatedUser._id.toString()
