@@ -12,14 +12,14 @@ router.post(
   '/facebook',
   authCtrl.validateFacebookSignInPayload,
   facebookAuthenticate,
-  authCtrl.facebookSignIn
+  authCtrl.signIn
 );
 
 router.post(
   '/google',
   authCtrl.validateGoogleSignInPayload,
   googleAuthenticate,
-  authCtrl.googleSignIn
+  authCtrl.signIn
 );
 
 router.post(
@@ -36,7 +36,7 @@ router.post(
   '/signin',
   authCtrl.validateLocalSignInPayload,
   localAuthenticate,
-  authCtrl.localSignIn
+  authCtrl.signIn
 );
 
 router.post('/signup', authCtrl.signUp);

@@ -189,7 +189,7 @@ module.exports.verifyJwtToken = (req, res, next) => {
 /**
  * JOI schema for validating signIn payload
  */
-const signInSchema = Joi.object({
+const localSignInSchema = Joi.object({
   username: Joi.string()
     .pattern(/^[a-zA-Z0-9.\-_]{4,30}$/)
     .messages(constants.ERROR_MESSAGE_USERNAME),
@@ -208,7 +208,7 @@ const signInSchema = Joi.object({
  * @param {string} req.body.password The password to login
  */
 module.exports.validateLocalSignInPayload = (req, res, next) => {
-  signInSchema
+  localSignInSchema
     .validateAsync(req.body)
     .then((payload) => {
       req.body = payload;
@@ -218,31 +218,6 @@ module.exports.validateLocalSignInPayload = (req, res, next) => {
       next();
     })
     .catch(next);
-};
-
-/**
- * @function createSignInResponse
- * Create sign-in response payload
- *
- * @param {Object} user The user object
- * @param {string} provider The sign-in provider. It could be facebook, local or google
- */
-const createSignInResponse = (user, provider) => {
-  return {
-    ...user.generateJwtToken(provider),
-    signedInWith: provider,
-    user: user.toJsonFor(user),
-  };
-};
-
-/**
- * @function localSignIn
- * Response with user info
- */
-module.exports.localSignIn = (req, res, next) => {
-  if (req.user) {
-    res.json(createSignInResponse(req.user, constants.PROVIDER_LOCAL));
-  }
 };
 
 /**
@@ -267,16 +242,6 @@ module.exports.validateGoogleSignInPayload = (req, res, next) => {
       next();
     })
     .catch(next);
-};
-
-/**
- * @function googleSignIn
- * Response with user info
- */
-module.exports.googleSignIn = (req, res, next) => {
-  if (req.user) {
-    res.json(createSignInResponse(req.user, constants.PROVIDER_GOOGLE));
-  }
 };
 
 /**
@@ -308,12 +273,16 @@ module.exports.validateFacebookSignInPayload = (req, res, next) => {
 };
 
 /**
- * @function facebookSignIn
+ * @function signIn
  * Response with user info
  */
-module.exports.facebookSignIn = (req, res, next) => {
+module.exports.signIn = (req, res, next) => {
   if (req.user) {
-    res.json(createSignInResponse(req.user, constants.PROVIDER_FACEBOOK));
+    res.status(200).json({
+      ...req.user.generateJwtToken(req.user.signedInWithProvider),
+      signedInWith: req.user.signedInWithProvider,
+      user: req.user.toJsonFor(req.user),
+    });
   }
 };
 
