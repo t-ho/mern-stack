@@ -193,6 +193,7 @@ const updateOrInsert = (userProfile) => {
             username: availableUsername,
             firstName: userProfile.firstName,
             lastName: userProfile.lastName,
+            status: constants.STATUS_ACTIVE,
             provider: {
               [userProfile.provider]: provider,
             },
@@ -269,11 +270,7 @@ const handleAuthByCheckingUserStatus = (
 const handleOAuth = (userProfile, done, provider) => {
   updateOrInsert(userProfile)
     .then(({ user, isNewUser }) => {
-      if (isNewUser) {
-        return done(null, user);
-      }
-
-      // user already exists, need to check the status
+      // check the status
       handleAuthByCheckingUserStatus(user, done, provider);
     })
     .catch(done);
