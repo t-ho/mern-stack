@@ -108,7 +108,7 @@ class ResetPassword extends React.Component {
                   component={this.renderTextField}
                   disabled={isProcessed && !errorMessage}
                   id="password"
-                  label="Password"
+                  label="New Password"
                   name="password"
                   type="password"
                 />

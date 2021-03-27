@@ -1,5 +1,5 @@
 export const required = (value) =>
-  !value || (value && value.trim() === '') ? 'Requied' : undefined;
+  !value || (value && value.trim() === '') ? 'Required' : undefined;
 
 export const email = (value) =>
   value &&
