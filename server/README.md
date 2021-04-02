@@ -11,6 +11,7 @@
 - [Authentication](#authentication)
   - [Sign Up - `POST /api/auth/signup`](#sign-up)
   - [Sign In With Email - `POST /api/auth/signin`](#sign-in-with-email)
+  - [Sign In With Apple - `POST /api/auth/apple`](#sign-in-with-apple)
   - [Sign In With Facebook - `POST /api/auth/facebook`](#sign-in-with-facebook)
   - [Sign In With Google - `POST /api/auth/google`](#sign-in-with-google)
   - [Send Verification Email - `POST /api/auth/send-token`](#send-verification-email)
@@ -165,6 +166,80 @@ Sample response
     "provider": {
       "local": {
         "userId": "5e47a9600cac851790f29662"
+      }
+    },
+    "createdAt": "2020-02-15T08:18:40.429Z",
+    "updatedAt": "2020-02-15T08:18:40.429Z"
+  }
+}
+```
+
+### Sign In With Apple
+
+- **Method:** `POST`
+- **Content-Type:** `application/json`
+- **Endpoint**
+
+```
+/api/auth/apple
+```
+
+- **Resquest Body Payload**
+
+| Property Name | Type     | Required | Description                  |
+| ------------- | -------- | -------- | ---------------------------- |
+| `code`        | _string_ | Yes      | The Apple authorization code |
+| `user`        | _string_ | No       | The user object              |
+
+Sample request body payload
+
+```
+{
+  "code": "c99a498c3274c4536b25fa497ab843fd6.0.srqwv.j5XSP_uk87Et1xsKlMUEFw",
+  "user: {
+    "name": {
+      "firstName": "User",
+      "lastName": "Account"
+    }
+  }
+}
+```
+
+- **Response Payload**
+
+| Property Name  | Type     | Description                                          |
+| -------------- | -------- | ---------------------------------------------------- |
+| `token`        | _string_ | JWT token                                            |
+| `expiresAt`    | _number_ | Expires at time (seconds)                            |
+| `signedInWith` | _string_ | The auth provider that the user used to sign in with |
+| `user`         | _object_ | User info                                            |
+
+Sample response
+
+```
+{
+  "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZTQ3YTk2MDBjYWM4NTE3OTBmMjk2NjMiLCJ1c2VySWQiOiI1ZTQ3YTk2MDBjYWM4NTE3OTBmMjk2NjIiLCJpYXQiOjE1ODE4MDk2ODYsImV4cCI6MTU4Njk5MzY4Nn0.6rjee9HpGVP-IsKfGBAiqU8Y6FHuuBN25odKZExig7liOhJd2lq_eUn8JUOtz7QpRX5RvGYzbzlxdRED0boNVA",
+  "expiresAt": 1586993686,
+  "signedInWith": "apple",
+  "user": {
+    "id": "5e47a9600cac851790f29662",
+    "username": "sn824b2zsd",
+    "email": "sn824b2zsd@privaterelay.appleid.com",
+    "status": "active",
+    "firstName": "User",
+    "lastName": "Account",
+    "role": "user",
+    "permissions": {
+      "userInsert": false,
+      "userModify": false,
+      "userRead": false,
+      "postInsert": false,
+      "postModify": false,
+      "postRead": true
+    },
+    "provider": {
+      "apple": {
+        "userId": "001765.bfe650a68ab3407caf263826e4fac791.2416",
       }
     },
     "createdAt": "2020-02-15T08:18:40.429Z",

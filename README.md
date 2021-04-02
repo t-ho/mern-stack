@@ -31,6 +31,7 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
   - [x] Authentication system - [passport](https://www.npmjs.com/package/passport)
     - [x] Sign up - [bcrypt](https://www.npmjs.com/package/bcrypt)
     - [x] Local login - [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) - [passport-jwt](https://www.npmjs.com/package/passport-jwt)
+    - [x] Apple login - [@nicokaiser/passport-apple](https://www.npmjs.com/package/@nicokaiser/passport-apple)
     - [x] Facebook login - [passport-facebook-token](https://www.npmjs.com/package/passport-facebook-token)
     - [x] Google login - [passport-google-id-token](https://www.npmjs.com/package/passport-google-id-token)
     - [x] Email verification
@@ -71,7 +72,7 @@ MERN stack is intended to provide a starting point for building full-stack JavaS
 ### 3. React Native - Mobile
 
 - Directory `mobile`
-- Created by using [react-native-cli](https://github.com/react-native-community/cli). If you want to use Expo, please check out [expo](https://github.com/t-ho/mern-stack/tree/expo) brand and see docs [here](https://github.com/t-ho/mern-stack/blob/expo/README.md)
+- Created by using [react-native-cli](https://github.com/react-native-community/cli). If you want to use Expo, please check out [expo](https://github.com/t-ho/mern-stack/tree/expo) branch and see docs [here](https://github.com/t-ho/mern-stack/blob/expo/README.md)
 - Todo:
   - [x] Redux store - [react-redux](https://www.npmjs.com/package/react-redux)
   - [x] Router - [react-navigation](https://reactnavigation.org)
