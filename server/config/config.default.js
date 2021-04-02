@@ -21,8 +21,11 @@ let defaultConfig = {
       'This will be overriden by environment variable APPLE_PRIVATE_KEY',
   },
   auth: {
-    verifyEmail: false, // If true, require email verification when signing up
+    appleSignIn: false,
+    facebookSignIn: false,
+    googleSignIn: false,
     resetPassword: false, // If true, be able to reset password via email
+    verifyEmail: false, // If true, require email verification when signing up
   },
   compression: {
     enabled: false,

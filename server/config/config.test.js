@@ -7,8 +7,11 @@ const constants = require('../core/constants');
  */
 let testConfig = {
   auth: {
-    verifyEmail: true, // If true, require email verification when signing up
+    appleSignIn: true,
+    facebookSignIn: true,
+    googleSignIn: true,
     resetPassword: true, // If true, be able to reset password via email
+    verifyEmail: true, // If true, require email verification when signing up
   },
   morgan: {
     format: 'dev', // TODO: possible values: combined, common, dev, short, tiny

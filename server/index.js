@@ -13,8 +13,15 @@ const server = http.createServer(app);
 server.listen(config.server.port);
 console.log(chalk.cyanBright(`\n--:[ ${config.app.title} ]:--`));
 console.log(chalk.green(`[*] Environment: ${config.env}`));
+console.log(chalk.gray(`[*] Auth - Apple sign-in: ${config.auth.appleSignIn}`));
 console.log(
   chalk.gray(`[*] Auth - Email verification: ${config.auth.verifyEmail}`)
+);
+console.log(
+  chalk.gray(`[*] Auth - Facebook sign-in: ${config.auth.facebookSignIn}`)
+);
+console.log(
+  chalk.gray(`[*] Auth - Google sign-in: ${config.auth.googleSignIn}`)
 );
 console.log(
   chalk.gray(`[*] Auth - Password reset: ${config.auth.resetPassword}`)

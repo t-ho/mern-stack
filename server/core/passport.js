@@ -45,6 +45,8 @@ const localStrategy = new LocalStrategy(
   }
 );
 
+passport.use(localStrategy);
+
 // Create JWT Strategy
 const jwtStrategy = new JwtStrategy(
   {
@@ -68,80 +70,94 @@ const jwtStrategy = new JwtStrategy(
   }
 );
 
-// Create Apple Strategy
-const appleStrategy = new AppleStrategy(
-  {
-    clientID: config.apple.clientId,
-    teamID: config.apple.teamId,
-    keyID: config.apple.keyId,
-    key: config.apple.privateKey,
-    scope: ['name', 'email'],
-  },
-  function (accessToken, refreshToken, profile, done) {
-    const { id, name: { firstName, lastName } = {}, email } = profile;
-    // Note: the firstName and lastName properties are only available on the first login
-    const userProfile = {
-      provider: constants.PROVIDER_APPLE,
-      userId: id,
-      email,
-      username: generateUsername(email, firstName, lastName, id),
-      firstName,
-      lastName,
-      picture: profile.picture,
-    };
+passport.use(jwtStrategy);
 
-    handleOAuth(userProfile, done, constants.PROVIDER_APPLE);
-  }
-);
+if (config.auth.appleSignIn) {
+  // Create Apple Strategy
+  const appleStrategy = new AppleStrategy(
+    {
+      clientID: config.apple.clientId,
+      teamID: config.apple.teamId,
+      keyID: config.apple.keyId,
+      key: config.apple.privateKey,
+      scope: ['name', 'email'],
+    },
+    function (accessToken, refreshToken, profile, done) {
+      const { id, name: { firstName, lastName } = {}, email } = profile;
+      // Note: the firstName and lastName properties are only available on the first login
+      const userProfile = {
+        provider: constants.PROVIDER_APPLE,
+        userId: id,
+        email,
+        username: generateUsername(email, firstName, lastName, id),
+        firstName,
+        lastName,
+        picture: profile.picture,
+      };
 
-// Create Google Id Token Strategy
-const googleIdTokenStrategy = new GoogleIdTokenStrategy(
-  {
-    clientID: config.oauth.google.clientId,
-  },
-  function ({ payload: profile }, googleId, done) {
-    const userProfile = {
-      provider: constants.PROVIDER_GOOGLE,
-      userId: googleId,
-      email: profile.email,
-      username: generateUsername(
-        profile.email,
-        profile.given_name,
-        profile.family_name
-      ),
-      firstName: profile.given_name,
-      lastName: profile.family_name,
-      picture: profile.picture,
-    };
+      handleOAuth(userProfile, done, constants.PROVIDER_APPLE);
+    }
+  );
 
-    handleOAuth(userProfile, done, constants.PROVIDER_GOOGLE);
-  }
-);
+  passport.use(appleStrategy);
+}
 
-// Create Facebook Token Strategy
-const facebookTokenStrategy = new FacebookTokenStrategy(
-  {
-    clientID: config.oauth.facebook.clientId,
-    clientSecret: config.oauth.facebook.clientSecret,
-  },
-  function (accessToken, refreshToken, profile, done) {
-    const userProfile = {
-      provider: constants.PROVIDER_FACEBOOK,
-      userId: profile.id,
-      email: profile._json.email,
-      username: generateUsername(
-        profile._json.email,
-        profile._json.given_name,
-        profile._json.family_name
-      ),
-      firstName: profile._json.first_name,
-      lastName: profile._json.last_name,
-      picture: profile.photos[0].value,
-    };
+if (config.auth.facebookSignIn) {
+  // Create Facebook Token Strategy
+  const facebookTokenStrategy = new FacebookTokenStrategy(
+    {
+      clientID: config.oauth.facebook.clientId,
+      clientSecret: config.oauth.facebook.clientSecret,
+    },
+    function (accessToken, refreshToken, profile, done) {
+      const userProfile = {
+        provider: constants.PROVIDER_FACEBOOK,
+        userId: profile.id,
+        email: profile._json.email,
+        username: generateUsername(
+          profile._json.email,
+          profile._json.given_name,
+          profile._json.family_name
+        ),
+        firstName: profile._json.first_name,
+        lastName: profile._json.last_name,
+        picture: profile.photos[0].value,
+      };
 
-    handleOAuth(userProfile, done, constants.PROVIDER_FACEBOOK);
-  }
-);
+      handleOAuth(userProfile, done, constants.PROVIDER_FACEBOOK);
+    }
+  );
+
+  passport.use(facebookTokenStrategy);
+}
+
+if (config.auth.googleSignIn) {
+  // Create Google Id Token Strategy
+  const googleIdTokenStrategy = new GoogleIdTokenStrategy(
+    {
+      clientID: config.oauth.google.clientId,
+    },
+    function ({ payload: profile }, googleId, done) {
+      const userProfile = {
+        provider: constants.PROVIDER_GOOGLE,
+        userId: googleId,
+        email: profile.email,
+        username: generateUsername(
+          profile.email,
+          profile.given_name,
+          profile.family_name
+        ),
+        firstName: profile.given_name,
+        lastName: profile.family_name,
+        picture: profile.picture,
+      };
+
+      handleOAuth(userProfile, done, constants.PROVIDER_GOOGLE);
+    }
+  );
+
+  passport.use(googleIdTokenStrategy);
+}
 
 /**
  * @function generateRandomNumber
@@ -307,11 +323,5 @@ const handleOAuth = (userProfile, done, provider) => {
     })
     .catch(done);
 };
-
-passport.use(appleStrategy);
-passport.use(facebookTokenStrategy);
-passport.use(googleIdTokenStrategy);
-passport.use(jwtStrategy);
-passport.use(localStrategy);
 
 module.exports = passport;

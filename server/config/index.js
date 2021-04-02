@@ -11,21 +11,19 @@ dotenv.config({ path: fspath.resolve(__dirname, '../../.env') });
  * Joi schema for validating environment variables
  */
 const envVarsSchema = Joi.object({
-  APPLE_CLIENT_ID: Joi.string().required(),
-  APPLE_KEY_ID: Joi.string().required(),
-  APPLE_PRIVATE_KEY: Joi.string().required(),
-  APPLE_TEAM_ID: Joi.string().required(),
-  FACEBOOK_APP_ID: Joi.string().required(),
-  FACEBOOK_APP_SECRET: Joi.string().required(),
-  GOOGLE_CLIENT_ID: Joi.string().required(),
-  GOOGLE_CLIENT_SECRET: Joi.string().required(),
+  APPLE_CLIENT_ID: Joi.string(),
+  APPLE_KEY_ID: Joi.string(),
+  APPLE_PRIVATE_KEY: Joi.string(),
+  APPLE_TEAM_ID: Joi.string(),
+  FACEBOOK_APP_ID: Joi.string(),
+  FACEBOOK_APP_SECRET: Joi.string(),
+  GOOGLE_CLIENT_ID: Joi.string(),
+  GOOGLE_CLIENT_SECRET: Joi.string(),
   JWT_SECRET: Joi.string().required(),
   MONGO_URI: Joi.string().uri().required(),
-  NODE_ENV: Joi.string().valid(
-    constants.ENV_DEV,
-    constants.ENV_PROD,
-    constants.ENV_TEST
-  ),
+  NODE_ENV: Joi.string()
+    .valid(constants.ENV_DEV, constants.ENV_PROD, constants.ENV_TEST)
+    .required(),
   SERVER_HOST: Joi.string().required(),
   SERVER_PORT: Joi.number().required(),
   SERVER_PUBLIC_URL: Joi.string().uri().required(),
