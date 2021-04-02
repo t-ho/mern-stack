@@ -13,6 +13,13 @@ let defaultConfig = {
     name: 'mern', // TODO: Lowercase, URL compatible name
     title: 'MERN Stack', // TODO: Human friendly name
   },
+  apple: {
+    clientId: 'This will be overriden by environment variable APPLE_CLIENT_ID',
+    teamId: 'This will be overriden by environment variable APPLE_TEAM_ID',
+    keyId: 'This will be overriden by environment variable APPLE_KEY_ID',
+    privateKey:
+      'This will be overriden by environment variable APPLE_PRIVATE_KEY',
+  },
   auth: {
     verifyEmail: false, // If true, require email verification when signing up
     resetPassword: false, // If true, be able to reset password via email

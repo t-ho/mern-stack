@@ -3,6 +3,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
+const AppleStrategy = require('@nicokaiser/passport-apple');
 const FacebookTokenStrategy = require('passport-facebook-token');
 const GoogleIdTokenStrategy = require('passport-google-id-token');
 const config = require('../config');
@@ -64,6 +65,32 @@ const jwtStrategy = new JwtStrategy(
         handleAuthByCheckingUserStatus(user, done, jwtPayload.provider);
       })
       .catch(done);
+  }
+);
+
+// Create Apple Strategy
+const appleStrategy = new AppleStrategy(
+  {
+    clientID: config.apple.clientId,
+    teamID: config.apple.teamId,
+    keyID: config.apple.keyId,
+    key: config.apple.privateKey,
+    scope: ['name', 'email'],
+  },
+  function (accessToken, refreshToken, profile, done) {
+    const { id, name: { firstName, lastName } = {}, email } = profile;
+    // Note: the firstName and lastName properties are only available on the first login
+    const userProfile = {
+      provider: constants.PROVIDER_APPLE,
+      userId: id,
+      email,
+      username: generateUsername(email, firstName, lastName, id),
+      firstName,
+      lastName,
+      picture: profile.picture,
+    };
+
+    handleOAuth(userProfile, done, constants.PROVIDER_APPLE);
   }
 );
 
@@ -136,12 +163,14 @@ const generateRandomNumber = () => {
  *
  * @returns {string} the username
  */
-const generateUsername = (email, firstName, lastName) => {
+const generateUsername = (email, firstName, lastName, id) => {
   let username = '';
   if (email) {
     username = email.split('@')[0];
   } else if (firstName && lastName) {
     username = `${firstName}${lastName}${generateRandomNumber()}`;
+  } else if (id) {
+    username = id;
   }
   return username.toLowerCase();
 };
@@ -207,8 +236,11 @@ const updateOrInsert = (userProfile) => {
     }
     // user already exists, update provider
     existingUser.provider[userProfile.provider] = provider;
-    existingUser.firstName = userProfile.firstName;
-    existingUser.lastName = userProfile.lastName;
+    // Note: firstName and lastName are only available on the first Apple login
+    if (userProfile.provider !== constants.PROVIDER_APPLE) {
+      existingUser.firstName = userProfile.firstName;
+      existingUser.lastName = userProfile.lastName;
+    }
     return existingUser.save().then((user) => {
       return { user, isNewUser: false };
     });
@@ -276,6 +308,7 @@ const handleOAuth = (userProfile, done, provider) => {
     .catch(done);
 };
 
+passport.use(appleStrategy);
 passport.use(facebookTokenStrategy);
 passport.use(googleIdTokenStrategy);
 passport.use(jwtStrategy);

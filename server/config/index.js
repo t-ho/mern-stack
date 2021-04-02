@@ -11,6 +11,10 @@ dotenv.config({ path: fspath.resolve(__dirname, '../../.env') });
  * Joi schema for validating environment variables
  */
 const envVarsSchema = Joi.object({
+  APPLE_CLIENT_ID: Joi.string().required(),
+  APPLE_KEY_ID: Joi.string().required(),
+  APPLE_PRIVATE_KEY: Joi.string().required(),
+  APPLE_TEAM_ID: Joi.string().required(),
   FACEBOOK_APP_ID: Joi.string().required(),
   FACEBOOK_APP_SECRET: Joi.string().required(),
   GOOGLE_CLIENT_ID: Joi.string().required(),
@@ -39,6 +43,12 @@ if (error) {
 }
 
 let envConfig = {
+  apple: {
+    clientId: value.APPLE_CLIENT_ID,
+    keyId: value.APPLE_KEY_ID,
+    privateKey: value.APPLE_PRIVATE_KEY.replace(/\\n/gm, '\n'),
+    teamId: value.APPLE_TEAM_ID,
+  },
   env: value.NODE_ENV,
   jwt: {
     secret: value.JWT_SECRET,

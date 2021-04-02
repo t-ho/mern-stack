@@ -94,15 +94,24 @@ const userSchema = new mongoose.Schema(
     // Do NOT set directly, call user.setToken(tokenPurpose) user.clearToken()
     // to set and clear token and tokenPurpose
     token: { type: String, index: true },
-    tokenPurpose: { type: String, enum: ['verify-email', 'reset-password'] },
+    tokenPurpose: {
+      type: String,
+      enum: [
+        constants.TOKEN_PURPOSE_VERIFY_EMAIL,
+        constants.TOKEN_PURPOSE_RESET_PASSWORD,
+      ],
+    },
     provider: {
-      local: {
+      apple: {
+        type: providerDataSchema,
+      },
+      facebook: {
         type: providerDataSchema,
       },
       google: {
         type: providerDataSchema,
       },
-      facebook: {
+      local: {
         type: providerDataSchema,
       },
     },
@@ -238,7 +247,7 @@ userSchema.methods.clearToken = function () {
  * Otherwise, false
  */
 userSchema.methods.hasPermission = function (permission) {
-  if (this.role === 'admin' || this.role === 'root') {
+  if (this.role === constants.ROLE_ADMIN || this.role === constants.ROLE_ROOT) {
     return true;
   }
   return !!this.permissions[permission];
