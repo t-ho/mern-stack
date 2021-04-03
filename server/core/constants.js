@@ -30,6 +30,7 @@ const MORGAN_FORMAT_DEV = 'dev';
 const MORGAN_FORMAT_SHORT = 'short';
 const MORGAN_FORMAT_TINY = 'tiny';
 
+const PROVIDER_APPLE = 'apple';
 const PROVIDER_FACEBOOK = 'facebook';
 const PROVIDER_GOOGLE = 'google';
 const PROVIDER_LOCAL = 'local';
@@ -61,6 +62,7 @@ module.exports = {
   MORGAN_FORMAT_SHORT,
   MORGAN_FORMAT_TINY,
 
+  PROVIDER_APPLE,
   PROVIDER_FACEBOOK,
   PROVIDER_GOOGLE,
   PROVIDER_LOCAL,

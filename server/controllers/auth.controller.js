@@ -221,6 +221,36 @@ module.exports.validateLocalSignInPayload = (req, res, next) => {
 };
 
 /**
+ * JOI schema for validating oauthSignIn payload
+ */
+const appleSignInSchema = Joi.object({
+  code: Joi.string().trim().required(),
+  user: Joi.object({
+    name: Joi.object({
+      firstName: Joi.string().allow(null),
+      lastName: Joi.string().allow(null),
+    }),
+  }),
+});
+
+/**
+ * @function validateAppleSignInPayload
+ * Validate Apple sign-in payload
+ *
+ * @param {string} req.body.code The authorization code
+ * @param {string} [req.body.user] The user object
+ */
+module.exports.validateAppleSignInPayload = (req, res, next) => {
+  appleSignInSchema
+    .validateAsync(req.body, { stripUnknown: true })
+    .then((payload) => {
+      req.body = payload;
+      next();
+    })
+    .catch(next);
+};
+
+/**
  * JOI schema for validating googleSignIn payload
  */
 const googleSignInSchema = Joi.object({

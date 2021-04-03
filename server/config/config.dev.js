@@ -7,8 +7,11 @@ const constants = require('../core/constants');
  */
 let devConfig = {
   auth: {
-    verifyEmail: true, // If true, require email verification when signing up
-    resetPassword: true, // If true, be able to reset password via email
+    appleSignIn: false,
+    facebookSignIn: false,
+    googleSignIn: false,
+    resetPassword: false, // If true, be able to reset password via email
+    verifyEmail: false, // If true, require email verification when signing up
   },
   morgan: {
     format: constants.MORGAN_FORMAT_DEV, // TODO: possible values: combined, common, dev, short, tiny
