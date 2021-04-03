@@ -44,7 +44,9 @@ let envConfig = {
   apple: {
     clientId: value.APPLE_CLIENT_ID,
     keyId: value.APPLE_KEY_ID,
-    privateKey: value.APPLE_PRIVATE_KEY?.replace(/\\n/gm, '\n'),
+    privateKey: value.APPLE_PRIVATE_KEY
+      ? value.APPLE_PRIVATE_KEY.replace(/\\n/gm, '\n')
+      : null,
     teamId: value.APPLE_TEAM_ID,
   },
   env: value.NODE_ENV,
