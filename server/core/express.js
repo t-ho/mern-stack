@@ -4,7 +4,6 @@ const express = require('express');
 const compression = require('compression');
 const helmet = require('helmet');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const createError = require('http-errors');
 const routes = require('../routes');
@@ -36,10 +35,10 @@ if (config.cors.enabled) {
 }
 
 // Support parsing of application/x-www-form-urlencoded post data
-// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(express.urlencoded({ extended: true }));
 
 // Support parsing of */* type post data
-app.use(bodyParser.json({ type: '*/*' }));
+app.use(express.json({ type: '*/*' }));
 
 app.use(passport.initialize());
 

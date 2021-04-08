@@ -26,7 +26,6 @@
   "dependencies": {
     "@nicokaiser/passport-apple": "^0.2.1",
     "bcrypt": "^5.0.1",
-    "body-parser": "^1.19.0",
     "chai": "^4.3.4",
     "chalk": "^4.1.0",
     "compression": "^1.7.4",
