@@ -23,6 +23,7 @@
     "react-native-reanimated": "^1.13.2",
     "react-native-safe-area-context": "^3.1.9",
     "react-native-screens": "^2.17.1",
+    "react-native-sensitive-info": "^6.0.0-alpha.9",
     "react-native-vector-icons": "^7.1.0",
     "react-navigation": "^4.4.3",
     "react-navigation-material-bottom-tabs": "^2.3.3",

@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SensitiveInfo from 'react-native-sensitive-info';
 import { LoginManager, AccessToken } from 'react-native-fbsdk';
 import { GoogleSignin } from '@react-native-community/google-signin';
 import env from 'react-native-config';
@@ -227,23 +228,43 @@ const signInHelper = (
     });
 };
 
+const STORAGE_KEY_JWT_TOKEN = 'jwtToken';
+const STORAGE_KEY_AUTH_INFO = 'authInfo';
+const sensitiveInfoOptions = {
+  sharedPreferencesName: 'mernstack-app',
+  keychainService: 'mernstack-app',
+};
+
 const setAuthInfoAsync = (authInfo, mernApi) => {
-  mernApi.setAuthToken(authInfo.token);
-  return AsyncStorage.setItem('authInfo', JSON.stringify(authInfo)).then(
+  const { token, ...rest } = authInfo;
+  mernApi.setAuthToken(token);
+  return Promise.all([
+    SensitiveInfo.setItem(STORAGE_KEY_JWT_TOKEN, token, sensitiveInfoOptions),
+    AsyncStorage.setItem(STORAGE_KEY_AUTH_INFO, JSON.stringify(rest)),
+  ]).then(
     () => {},
     (err) => {}
   );
 };
 
 const getAuthInfoAsync = () => {
-  return AsyncStorage.getItem('authInfo').then((authInfo) => {
-    return JSON.parse(authInfo);
+  return Promise.all([
+    SensitiveInfo.getItem(STORAGE_KEY_JWT_TOKEN, sensitiveInfoOptions),
+    AsyncStorage.getItem(STORAGE_KEY_AUTH_INFO).then(JSON.parse),
+  ]).then(([token, authInfo]) => {
+    if (token && authInfo) {
+      return { ...authInfo, token };
+    }
+    return null;
   });
 };
 
 const clearAuthInfoAsync = (mernApi) => {
   mernApi.setAuthToken('');
-  return AsyncStorage.removeItem('authInfo').then(
+  return Promise.all([
+    SensitiveInfo.deleteItem(STORAGE_KEY_JWT_TOKEN, sensitiveInfoOptions),
+    AsyncStorage.removeItem(STORAGE_KEY_AUTH_INFO),
+  ]).then(
     () => {},
     (err) => {}
   );
