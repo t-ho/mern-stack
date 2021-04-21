@@ -45,10 +45,17 @@ class SignInScreen extends React.Component {
   };
 
   render() {
-    const { colors } = this.props.theme;
+    const {
+      clearErrorMessage,
+      errorMessage,
+      isProcessing,
+      theme: { colors },
+      type,
+      unloadAuthScreen,
+    } = this.props;
     return (
       <SafeAreaView forceInset={{ top: 'always' }} style={styles.container}>
-        <NavigationEvents onWillBlur={this.props.unloadAuthScreen} />
+        <NavigationEvents onWillBlur={unloadAuthScreen} />
         <StatusBar barStyle="dark-content" />
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : null}
@@ -75,7 +82,8 @@ class SignInScreen extends React.Component {
                 keyboardType="email-address"
                 onChangeText={(email) => this.setState({ email })}
                 onSubmitEditing={this.onEmailSignIn}
-                disabled={this.props.isSigning}
+                onFocus={clearErrorMessage}
+                disabled={isProcessing}
               />
               <Spacer />
               <TextInput
@@ -88,18 +96,19 @@ class SignInScreen extends React.Component {
                 autoCorrect={false}
                 onChangeText={(password) => this.setState({ password })}
                 onSubmitEditing={this.onEmailSignIn}
-                disabled={this.props.isSigning}
+                onFocus={clearErrorMessage}
+                disabled={isProcessing}
               />
               <View style={styles.navLinks}>
                 <NavLink
                   text="Forgot password?"
                   routeName="RequestPasswordReset"
-                  disabled={this.props.isSigning}
+                  disabled={isProcessing}
                 />
                 <NavLink
                   text="Register instead!"
                   routeName="SignUp"
-                  disabled={this.props.isSigning}
+                  disabled={isProcessing}
                 />
               </View>
             </Spacer>
@@ -108,8 +117,8 @@ class SignInScreen extends React.Component {
                 mode="contained"
                 accessibilityLabel="Sign In"
                 onPress={this.onEmailSignIn}
-                loading={this.props.isSigning && this.props.type === 'email'}
-                disabled={this.props.isSigning}
+                loading={isProcessing && type === 'email'}
+                disabled={isProcessing}
               >
                 Sign In
               </Button>
@@ -120,25 +129,24 @@ class SignInScreen extends React.Component {
             <Spacer>
               <OAuthButtons />
             </Spacer>
-            {this.props.errorMessage === 'Email is not verified' && (
+            {errorMessage === 'Email is not verified' && (
               <NavLink
                 text="Have not received verification email?"
                 routeName="RequestVerificationEmail"
-                disabled={this.props.isSigning}
+                disabled={isProcessing}
               />
             )}
           </ScrollView>
           <Snackbar
-            visible={this.props.errorMessage}
-            onDismiss={this.props.clearErrorMessage}
+            visible={errorMessage}
+            onDismiss={clearErrorMessage}
             action={{
               label: 'Dismiss',
               accessibilityLabel: 'Dismiss',
               onPress: () => {},
             }}
-            style={{ backgroundColor: colors.error }}
           >
-            {this.props.errorMessage}
+            {errorMessage}
           </Snackbar>
         </KeyboardAvoidingView>
       </SafeAreaView>
@@ -149,7 +157,7 @@ class SignInScreen extends React.Component {
 const mapStateToProps = (state) => {
   return {
     errorMessage: getError(state),
-    isSigning: getProcessing(state),
+    isProcessing: getProcessing(state),
     type: getType(state),
   };
 };

@@ -54,16 +54,18 @@ class SignUpScreen extends React.Component {
     });
   };
 
-  onSnackbarDismiss = () => {
-    this.props.clearErrorMessage();
-    this.setState({ errorMessage: null });
-  };
-
   render() {
-    const { colors } = this.props.theme;
+    const {
+      clearErrorMessage,
+      errorMessage,
+      isProcessing,
+      theme: { colors },
+      type,
+      unloadAuthScreen,
+    } = this.props;
     return (
       <SafeAreaView forceInset={{ top: 'always' }} style={styles.container}>
-        <NavigationEvents onWillBlur={this.props.unloadAuthScreen} />
+        <NavigationEvents onWillBlur={unloadAuthScreen} />
         <StatusBar barStyle="dark-content" />
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : null}
@@ -89,7 +91,8 @@ class SignUpScreen extends React.Component {
                 autoCorrect={false}
                 onChangeText={(username) => this.setState({ username })}
                 onSubmitEditing={this.onEmailRegister}
-                disabled={this.props.isSigning}
+                onFocus={clearErrorMessage}
+                disabled={isProcessing}
               />
               <Spacer />
               <TextInput
@@ -102,7 +105,8 @@ class SignUpScreen extends React.Component {
                 keyboardType="email-address"
                 onChangeText={(email) => this.setState({ email })}
                 onSubmitEditing={this.onEmailRegister}
-                disabled={this.props.isSigning}
+                onFocus={clearErrorMessage}
+                disabled={isProcessing}
               />
               <Spacer />
               <View style={styles.fullName}>
@@ -115,7 +119,8 @@ class SignUpScreen extends React.Component {
                   autoCorrect={false}
                   onChangeText={(firstName) => this.setState({ firstName })}
                   onSubmitEditing={this.onEmailRegister}
-                  disabled={this.props.isSigning}
+                  onFocus={clearErrorMessage}
+                  disabled={isProcessing}
                 />
                 <TextInput
                   label="Last Name"
@@ -126,7 +131,8 @@ class SignUpScreen extends React.Component {
                   autoCorrect={false}
                   onChangeText={(lastName) => this.setState({ lastName })}
                   onSubmitEditing={this.onEmailRegister}
-                  disabled={this.props.isSigning}
+                  onFocus={clearErrorMessage}
+                  disabled={isProcessing}
                 />
               </View>
               <Spacer />
@@ -140,7 +146,8 @@ class SignUpScreen extends React.Component {
                 autoCorrect={false}
                 onChangeText={(password) => this.setState({ password })}
                 onSubmitEditing={this.onEmailRegister}
-                disabled={this.props.isSigning}
+                onFocus={clearErrorMessage}
+                disabled={isProcessing}
               />
               <View style={styles.navLinks}>
                 <NavLink text="Sign in instead!" routeName="SignIn" />
@@ -151,8 +158,8 @@ class SignUpScreen extends React.Component {
                 mode="contained"
                 accessibilityLabel="Sign In"
                 onPress={this.onEmailRegister}
-                loading={this.props.isSigning && this.props.type === 'email'}
-                disabled={this.props.isSigning}
+                loading={isProcessing && type === 'email'}
+                disabled={isProcessing}
               >
                 Sign Up
               </Button>
@@ -165,16 +172,15 @@ class SignUpScreen extends React.Component {
             </Spacer>
           </ScrollView>
           <Snackbar
-            visible={this.props.errorMessage}
-            onDismiss={this.onSnackbarDismiss}
+            visible={errorMessage}
+            onDismiss={clearErrorMessage}
             action={{
               label: 'Dismiss',
               accessibilityLabel: 'Dismiss',
               onPress: () => {},
             }}
-            style={{ backgroundColor: colors.error }}
           >
-            {this.props.errorMessage}
+            {errorMessage}
           </Snackbar>
         </KeyboardAvoidingView>
       </SafeAreaView>
@@ -185,7 +191,7 @@ class SignUpScreen extends React.Component {
 const mapStateToProps = (state) => {
   return {
     errorMessage: getError(state),
-    isSigning: getProcessing(state),
+    isProcessing: getProcessing(state),
     type: getType(state),
   };
 };

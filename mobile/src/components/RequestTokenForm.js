@@ -38,8 +38,14 @@ class RequestTokenForm extends React.Component {
   };
 
   render() {
-    const { title, errorMessage, isProcessing } = this.props;
-    const { colors } = this.props.theme;
+    const {
+      clearErrorMessage,
+      errorMessage,
+      isProcessing,
+      navigation,
+      title,
+      theme: { colors },
+    } = this.props;
     return (
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : null}
@@ -51,10 +57,10 @@ class RequestTokenForm extends React.Component {
         >
           <IconButton
             icon="chevron-left"
-            color={this.props.theme.colors.primary}
+            color={colors.primary}
             size={30}
             accessibilityLabel="Back to sign in"
-            onPress={() => this.props.navigation.goBack()}
+            onPress={() => navigation.goBack()}
           />
           <Logo />
           <Spacer>
@@ -73,6 +79,7 @@ class RequestTokenForm extends React.Component {
               keyboardType="email-address"
               onChangeText={(email) => this.setState({ email })}
               onSubmitEditing={this.onSubmit}
+              onFocus={clearErrorMessage}
               disabled={isProcessing || !!this.state.message}
             />
           </Spacer>
@@ -90,19 +97,18 @@ class RequestTokenForm extends React.Component {
         </ScrollView>
         <Snackbar
           visible={errorMessage}
-          onDismiss={this.props.clearErrorMessage}
+          onDismiss={clearErrorMessage}
           action={{
             label: 'Dismiss',
             accessibilityLabel: 'Dismiss',
             onPress: () => {},
           }}
-          style={{ backgroundColor: colors.error }}
         >
           {errorMessage}
         </Snackbar>
         <Snackbar
           visible={this.state.message}
-          onDismiss={() => this.props.navigation.goBack()}
+          onDismiss={() => navigation.goBack()}
           action={{
             label: 'Go Back',
             accessibilityLabel: 'Go Back',
