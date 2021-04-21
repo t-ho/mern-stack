@@ -60,7 +60,7 @@ const jwtStrategy = new JwtStrategy(
           return done(null, false, { message: 'Invalid credentials' });
         }
 
-        if (user.subId !== jwtPayload.sub) {
+        if (!jwtPayload.sub || user.subId !== jwtPayload.sub) {
           return done(null, false, { message: 'Invalid JWT token' });
         }
 
