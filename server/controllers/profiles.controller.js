@@ -22,7 +22,6 @@ module.exports.getProfile = (req, res, next) => {
  */
 const updatePasswordSchema = Joi.object({
   currentPassword: Joi.string()
-    .min(8)
     .messages(constants.ERROR_MESSAGE_CURRENT_PASSWORD)
     .required(),
   password: Joi.string()
