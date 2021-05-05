@@ -4,7 +4,7 @@ upstream client-cluster {
 }
 
 upstream api-server-cluster {
-  server api-server:PLACEHOLDER_1;
+  server api-server:NGINX_LE_PLACEHOLDER_1;
 }
 
 server {

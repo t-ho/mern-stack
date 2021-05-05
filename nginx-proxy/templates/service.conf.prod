@@ -11,16 +11,16 @@ upstream client-cluster {
 }
 
 upstream api-server-cluster {
-  server api-server:PLACEHOLDER_1;
+  server api-server:NGINX_LE_PLACEHOLDER_1;
 }
 
 server {
   listen 80;
   listen [::]:80;
   
-  server_name PLACEHOLDER_2;
+  server_name NGINX_LE_PLACEHOLDER_2;
 
-  return 301 https://CN_DOMAIN$request_uri;
+  return 301 https://NGINX_LE_CN_DOMAIN$request_uri;
 }
 
 # default config for ssl server
@@ -42,21 +42,21 @@ server {
   listen 443 ssl http2;
   listen [::]:443 ssl http2;
   
-  server_name PLACEHOLDER_2;
+  server_name NGINX_LE_PLACEHOLDER_2;
   
   include h5bp/ssl/ssl_engine.conf;
   include h5bp/ssl/certificate_files.conf;
   include h5bp/ssl/ocsp_stapling.conf;  
   include h5bp/ssl/policy_intermediate.conf;
 
-  return 301 https://CN_DOMAIN$request_uri;
+  return 301 https://NGINX_LE_CN_DOMAIN$request_uri;
 }
 
 server {
   listen 443 ssl http2;
   listen [::]:443 ssl http2;
   
-  server_name LE_FQDN;
+  server_name NGINX_LE_FQDN;
   
   include h5bp/ssl/ssl_engine.conf;
   include h5bp/ssl/certificate_files.conf;

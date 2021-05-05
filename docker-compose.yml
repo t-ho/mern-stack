@@ -40,10 +40,10 @@ services:
     ports:
       - '${NGINX_PROXY_PORT}:${NGINX_PROXY_PORT}'
     environment:
-      - PLACEHOLDER_1=${PORT}
-      - PLACEHOLDER_2=${SERVER_PORT}
-      - PLACEHOLDER_3=${NGINX_PROXY_PORT}
-      - TZ
+      - NGINX_LE_PLACEHOLDER_1=${PORT}
+      - NGINX_LE_PLACEHOLDER_2=${SERVER_PORT}
+      - NGINX_LE_PLACEHOLDER_3=${NGINX_PROXY_PORT}
+      - NGINX_LE_TZ
     depends_on:
       - api-server
       - client

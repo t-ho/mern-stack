@@ -1,16 +1,16 @@
 
 upstream client-cluster {
-  server client:PLACEHOLDER_1;
+  server client:NGINX_LE_PLACEHOLDER_1;
 }
 
 upstream api-server-cluster {
-  server api-server:PLACEHOLDER_2;
+  server api-server:NGINX_LE_PLACEHOLDER_2;
 }
 
 log_format dev '[$time_local] $request $status $request_time s - $body_bytes_sent';
 
 server {
-  listen PLACEHOLDER_3;
+  listen NGINX_LE_PLACEHOLDER_3;
 
   access_log /var/log/nginx/access.log dev;
 

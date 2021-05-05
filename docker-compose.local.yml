@@ -40,12 +40,12 @@ services:
       - '80:80'
       - '443:443'
     environment:
-      - LETSENCRYPT
-      - LE_EMAIL
-      - LE_FQDN
-      - PLACEHOLDER_1=${SERVER_PORT}
-      - PLACEHOLDER_2=${PUBLIC_IP_ADDRESS}
-      - TZ
+      - NGINX_LE_EMAIL
+      - NGINX_LE_FQDN
+      - NGINX_LE_LETSENCRYPT
+      - NGINX_LE_PLACEHOLDER_1=${SERVER_PORT}
+      - NGINX_LE_PLACEHOLDER_2=${PUBLIC_IP_ADDRESS}
+      - NGINX_LE_TZ
     depends_on:
       - api-server
       - client
