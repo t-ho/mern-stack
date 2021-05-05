@@ -172,7 +172,7 @@ let testConfig = {
       },
       {
         username: 'user',
-        email: 'user@tdev.app',
+        email: 'tester.hmt4@gmail.com',
         password: 'password',
         firstName: 'User',
         lastName: 'Account',

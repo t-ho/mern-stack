@@ -106,7 +106,7 @@ describe('ENDPOINT: POST /api/auth/signup', function () {
     const User = mongoose.model('User');
     const payload = {
       username: 'john',
-      email: 'john@tdev.app',
+      email: 'tester.hmt3@gmail.com',
       password: 'qweasdzxc',
     };
 
@@ -162,7 +162,7 @@ describe('ENDPOINT: POST /api/auth/signup', function () {
         existingUser = u;
         const payload = {
           username: 'this-username-willbe-ignored',
-          email: 'user@tdev.app',
+          email: 'tester.hmt4@gmail.com',
           password: 'qweasdzxc',
         };
 
