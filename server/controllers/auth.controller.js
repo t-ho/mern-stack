@@ -470,6 +470,11 @@ const sendPasswordResetToken = (req, res, next) => {
       if (!user) {
         throw createError(422, 'Email not associated with any acount');
       }
+
+      if (user.token && user.tokenPurpose === req.body.tokenPurpose) {
+        return user;
+      }
+
       user.setToken(req.body.tokenPurpose);
       return user.save();
     })
@@ -512,6 +517,11 @@ const sendVerificationEmailToken = (req, res, next) => {
       if (user.status !== constants.STATUS_UNVERIFIED_EMAIL) {
         throw createError(422, 'Email already verified');
       }
+
+      if (user.token && user.tokenPurpose === req.body.tokenPurpose) {
+        return user;
+      }
+
       user.setToken(req.body.tokenPurpose);
       return user.save();
     })
