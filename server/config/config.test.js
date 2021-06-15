@@ -21,6 +21,9 @@ let testConfig = {
     testUri: `mongodb://localhost:27017/${defaultConfig.app.name}_test`,
   },
   oauth: {},
+  rateLimit: {
+    enabled: false,
+  },
   seed: {
     logging: false,
     users: [

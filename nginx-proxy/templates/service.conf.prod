@@ -7,8 +7,6 @@
 include h5bp/web_performance/cache_expiration.conf;
 
 limit_req_zone $binary_remote_addr zone=generallimit:10m rate=10r/s;
-limit_req_zone $binary_remote_addr zone=signinlimit:10m rate=1r/s;
-limit_req_zone $binary_remote_addr zone=signuplimit:10m rate=1r/m;
 
 upstream client-cluster {
   server client:3000;
@@ -79,18 +77,6 @@ server {
 
   location / {
     proxy_pass http://client-cluster;
-  }
-
-  location /api/auth/signin {
-    limit_req zone=signinlimit burst=5 nodelay;
-    limit_req_status 429;
-    proxy_pass http://api-server-cluster;
-  }
-
-  location /api/auth/signup {
-    limit_req zone=signuplimit burst=10 nodelay;
-    limit_req_status 429;
-    proxy_pass http://api-server-cluster;
   }
 
   location /api {

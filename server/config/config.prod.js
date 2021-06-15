@@ -38,6 +38,9 @@ let prodConfig = {
     root: fspath.normalize(`${__dirname}/..`),
   },
   oauth: {},
+  rateLimit: {
+    enabled: true,
+  },
   seed: {
     logging: true,
     users: [

@@ -48,6 +48,7 @@ const displayConfigurationStatus = () => {
   console.log(chalk.gray(`[*] Cors: ${config.cors.enabled}`));
   console.log(chalk.gray(`[*] Helmet: ${config.helmet.enabled}`));
   console.log(chalk.gray(`[*] Morgan: ${config.morgan.enabled}`));
+  console.log(chalk.gray(`[*] RateLimit: ${config.rateLimit.enabled}`));
 };
 
 displayConfigurationStatus();
