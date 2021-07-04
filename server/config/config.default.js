@@ -58,18 +58,6 @@ let defaultConfig = {
     uri: 'This will be overriden by environment variable MONGO_URI',
     testUri: 'mongodb://localhost:27017/mern_test',
   },
-  sendgrid: {
-    apiKey: 'This will be overriden by environment variable SENDGRID_API_KEY',
-  },
-  server: {
-    host: 'This will be overriden by environment variable SERVER_HOST',
-    port: 'This will be overriden by environment variable SERVER_PORT',
-    publicUrl:
-      'This will be overriden by environment variable SERVER_PUBLIC_URL',
-  },
-  paths: {
-    root: fspath.normalize(`${__dirname}/..`),
-  },
   oauth: {
     google: {
       clientId:
@@ -84,9 +72,29 @@ let defaultConfig = {
         'This will be overriden by environment variable FACEBOOK_APP_SECRET',
     },
   },
+  paths: {
+    root: fspath.normalize(`${__dirname}/..`),
+  },
+  rateLimit: {
+    enabled: false,
+  },
   seed: {
     logging: true,
     users: [],
+  },
+  sendgrid: {
+    apiKey: 'This will be overriden by environment variable SENDGRID_API_KEY',
+  },
+  server: {
+    host: 'This will be overriden by environment variable SERVER_HOST',
+    port: 'This will be overriden by environment variable SERVER_PORT',
+    publicUrl:
+      'This will be overriden by environment variable SERVER_PUBLIC_URL',
+  },
+  trustProxy: {
+    enabled: false,
+    // see https://expressjs.com/en/guide/behind-proxies.html
+    value: 0,
   },
 };
 

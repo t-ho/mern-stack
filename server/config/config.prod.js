@@ -38,6 +38,9 @@ let prodConfig = {
     root: fspath.normalize(`${__dirname}/..`),
   },
   oauth: {},
+  rateLimit: {
+    enabled: true,
+  },
   seed: {
     logging: true,
     users: [
@@ -58,6 +61,11 @@ let prodConfig = {
         role: constants.ROLE_ADMIN,
       },
     ],
+  },
+  trustProxy: {
+    enabled: true,
+    // see https://expressjs.com/en/guide/behind-proxies.html
+    value: 1,
   },
 };
 

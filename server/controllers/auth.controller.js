@@ -585,7 +585,6 @@ const sendEmailHelperAsync = (
     templatePath: `${config.paths.root}/templates/email.html`,
     dynamicTemplateData: {
       boxTitle: title,
-      firstName: user.firstName,
       content,
       buttonText,
       url,

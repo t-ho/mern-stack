@@ -6,6 +6,8 @@
 # Specify file cache expiration.
 include h5bp/web_performance/cache_expiration.conf;
 
+limit_req_zone $binary_remote_addr zone=generallimit:10m rate=10r/s;
+
 upstream client-cluster {
   server client:3000;
 }
@@ -78,6 +80,8 @@ server {
   }
 
   location /api {
+    limit_req zone=generallimit burst=20 nodelay;
+    limit_req_status 429;
     proxy_pass http://api-server-cluster;
   }
 

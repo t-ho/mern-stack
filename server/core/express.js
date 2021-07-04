@@ -14,6 +14,10 @@ const constants = require('./constants');
 // App Setup
 const app = express();
 
+if (config.trustProxy.enabled) {
+  app.set('trust proxy', config.trustProxy.value);
+}
+
 // Logger
 if (config.morgan.enabled) {
   app.use(morgan(config.morgan.format, config.morgan.options));
@@ -62,7 +66,7 @@ app.use((req, res, next) => {
 // and send stacktrace to client
 if (config.env === constants.ENV_DEV) {
   app.use((err, req, res, next) => {
-    console.log(err.stack);
+    console.log('[DEV]', err.stack);
     res
       .status(err.status || 400)
       .json({ error: { message: err.message, details: err.stack } });
