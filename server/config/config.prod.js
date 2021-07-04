@@ -62,6 +62,11 @@ let prodConfig = {
       },
     ],
   },
+  trustProxy: {
+    enabled: true,
+    // see https://expressjs.com/en/guide/behind-proxies.html
+    value: 1,
+  },
 };
 
 prodConfig = _.merge({}, defaultConfig, prodConfig);

@@ -14,10 +14,8 @@ const constants = require('./constants');
 // App Setup
 const app = express();
 
-if (config.rateLimit.enabled) {
-  // As we are behind a nginx-proxy
-  // see https://expressjs.com/en/guide/behind-proxies.html
-  app.set('trust proxy', 1);
+if (config.trustProxy.enabled) {
+  app.set('trust proxy', config.trustProxy.value);
 }
 
 // Logger

@@ -91,6 +91,11 @@ let defaultConfig = {
     publicUrl:
       'This will be overriden by environment variable SERVER_PUBLIC_URL',
   },
+  trustProxy: {
+    enabled: false,
+    // see https://expressjs.com/en/guide/behind-proxies.html
+    value: 0,
+  },
 };
 
 module.exports = defaultConfig;

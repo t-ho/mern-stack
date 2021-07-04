@@ -221,6 +221,11 @@ let testConfig = {
       },
     ],
   },
+  trustProxy: {
+    enabled: false,
+    // see https://expressjs.com/en/guide/behind-proxies.html
+    value: 0,
+  },
 };
 
 testConfig = _.merge({}, defaultConfig, testConfig);
