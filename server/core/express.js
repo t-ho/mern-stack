@@ -38,6 +38,8 @@ if (config.cors.enabled) {
   app.use(cors(config.cors.options));
 }
 
+app.set('etag', config.etag.enabled);
+
 // Support parsing of application/x-www-form-urlencoded post data
 // app.use(express.urlencoded({ extended: true }));
 
