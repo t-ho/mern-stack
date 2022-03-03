@@ -1,4 +1,4 @@
-const concurently = require('concurrently');
+const concurrently = require('concurrently');
 const chalk = require('chalk');
 const figlet = require('figlet');
 const _ = require('lodash');
@@ -92,7 +92,9 @@ const run = () => {
     options.raw = true;
   }
 
-  concurently(commands, options)
+  const { result } = concurrently(commands, options);
+
+  result
     .then((success, failure) => {})
     .catch((err) => {
       if (err) {
