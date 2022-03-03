@@ -7,10 +7,6 @@ require('../models');
 
 mongoose.Promise = global.Promise;
 
-mongoose.set('useCreateIndex', true); // FIXME: fix deprecation warnings
-mongoose.set('useNewUrlParser', true); // FIXME: fix deprecation warnings
-mongoose.set('useUnifiedTopology', true); // FIXME: fix deprecation warnings
-
 if (config.env !== constants.ENV_TEST) {
   mongoose.connect(config.mongo.uri);
   mongoose.connection.once('open', () => {
