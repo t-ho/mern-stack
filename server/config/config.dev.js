@@ -13,6 +13,9 @@ let devConfig = {
     resetPassword: false, // If true, be able to reset password via email
     verifyEmail: false, // If true, require email verification when signing up
   },
+  etag: {
+    enabled: false,
+  },
   morgan: {
     format: constants.MORGAN_FORMAT_DEV, // TODO: possible values: combined, common, dev, short, tiny
   },

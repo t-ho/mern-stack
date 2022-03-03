@@ -40,6 +40,9 @@ let defaultConfig = {
     to: '',
     signature: 'The MERN Team', // TODO
   },
+  etag: {
+    enabled: true,
+  },
   jwt: {
     secret: 'This will be overriden by environment variable JWT_SECRET',
     algorithm: 'HS512',
