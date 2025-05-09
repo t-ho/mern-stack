@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 15.x]
+        node-version: [20.x]
 
     services:
       mongo:
@@ -20,24 +20,25 @@ jobs:
         ports:
           - 27017:27017
 
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - name: Cache Node.js modules
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
-          path: ~/.npm
+          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
           key: ${{ runner.OS }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.OS }}-node-${{ matrix.node-version }}-
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
 
-      - run: npm install
-      - run: npm test
+      - run: yarn install
+      - run: yarn test
     env:
       CI: true
       FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }}
