@@ -123,7 +123,7 @@ cp mobile/.env.example mobile/.env
 In the `root` directory, run:
 
 ```bash
-npm install
+yarn install
 ```
 
 ### 3. Start development servers
@@ -132,7 +132,7 @@ To start `server`, `client`, and `mobile`, run:
 
 ```bash
 # In the root directory (mern):
-npm start
+yarn start
 # Server API is running at http://localhost:SERVER_PORT (http://localhost:8861 by default)
 # Web client is running at http://localhost:PORT (http://localhost:3000 by default)
 # Mobile - Expo DevTools is running at http://localhost:19002
@@ -143,20 +143,20 @@ npm start
 - **For the sake of simplicity, we use free service [ngrok](https://ngrok.com/) to create a public API URL for mobile development. The downside of this approach is that the public URL is only available for 8 hours, so we need to restart the npm process every 8 hours.**
 - **After 8 hours, the `mobile` process will be terminated, and a warning message will be displayed in your terminal to remind you to restart npm process.**
 
-To restart npm process (_If you don't start the mobile development process, ignore this step_):
+To restart yarn process (_If you don't start the mobile development process, ignore this step_):
 
 ```bash
 # In your current terminal, press Ctrl + C to exit. Then run
-npm start # start server, client and mobile dev process
+yarn start # start server, client and mobile dev process
 # or
-npm run server:mobile # start server and mobile dev process
+yarn run server:mobile # start server and mobile dev process
 ```
 
 Or to start `server` and `client` only, run:
 
 ```bash
 # In the root directory (mern):
-npm run server:client
+yarn run server:client
 # Server API is running at http://localhost:SERVER_PORT (http://localhost:8861 by default)
 # Web client is running at http://localhost:PORT (http://localhost:3000 by default)
 ```
@@ -165,7 +165,7 @@ Or to start `server` and `mobile` only, run:
 
 ```bash
 # In the root directory (mern):
-npm run server:mobile
+yarn run server:mobile
 # Server API is running at http://localhost:SERVER_PORT (http://localhost:8861 by default)
 ```
 
