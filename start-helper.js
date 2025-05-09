@@ -11,7 +11,7 @@ const _ = require('lodash');
 dotenv.config();
 
 /**
- * This script provide a cross-platform way for starting npm process in child directory.
+ * This script provide a cross-platform way for starting yarn process in child directory.
  *
  * Usage: node start-helper.js [server|client|mobile|test|install-children]
  *
@@ -20,35 +20,35 @@ dotenv.config();
 const options = [
   {
     name: 'server',
-    command: 'npm',
+    command: 'yarn',
     arguments: ['start'],
     workingDirs: 'server',
     message: 'Starting API server...',
   },
   {
     name: 'client',
-    command: 'npm',
+    command: 'yarn',
     arguments: ['start'],
     workingDirs: 'client',
     message: 'Starting web client...',
   },
   {
     name: 'mobile',
-    command: 'npm',
+    command: 'yarn',
     arguments: ['start'],
     workingDirs: 'mobile',
     message: 'Starting mobile...',
   },
   {
     name: 'test',
-    command: 'npm',
+    command: 'yarn',
     arguments: ['run', 'test'],
     workingDirs: ['server'],
     message: 'Running tests for',
   },
   {
     name: 'install-children',
-    command: 'npm',
+    command: 'yarn',
     arguments: ['install'],
     workingDirs: ['server', 'client', 'mobile'],
     message: 'Installing dependencies for',
@@ -79,7 +79,7 @@ const start = () => {
 const run = (command) => {
   const cmd = command.command;
   if (_.isArray(command.workingDirs)) {
-    status = 0;
+    let status = 0;
     command.workingDirs.forEach((dir) => {
       const opts = { cwd: dir, shell: true, stdio: 'inherit' };
       console.log(chalk.cyan(`\n[*] ${command.message} ${dir}...\n`));
@@ -102,7 +102,12 @@ const runMobile = (command) => {
    * an environment variable
    */
   ngrok
-    .connect({ proto: 'http', addr: process.env.SERVER_PORT, bind_tls: true })
+    .connect({
+      proto: 'http',
+      addr: process.env.SERVER_PORT,
+      scheme: ['https', 'http'],
+      authtoken: process.env.NGROK_AUTH_TOKEN,
+    })
     .then((ngrokUrl) => {
       console.log(
         chalk.greenBright(
@@ -126,6 +131,9 @@ const runMobile = (command) => {
         kill(mobileProcess.pid);
         printExpiredUrlMessage(ngrokUrl);
       }, 8 * 60 * 60 * 1000); // 8 hours
+    })
+    .catch((err) => {
+      console.log(chalk.redBright(`[-] ${err}`, err));
     });
 };
 
@@ -148,7 +156,7 @@ const printExpiredUrlMessage = (ngrokUrl) => {
   console.log(chalk.red(`\n[-] The ngrok URL "${ngrokUrl}" is expired`));
   console.log(chalk.red(`[-] The mobile server is killed`));
   console.log(chalk.cyan('\n[*] Please press Ctrl + C to exit'));
-  console.log(chalk.cyan('[*] Then, run `npm start` or `npm run mobile`\n'));
+  console.log(chalk.cyan('[*] Then, run `yarn start` or `yarn run mobile`\n'));
 };
 
 start();
