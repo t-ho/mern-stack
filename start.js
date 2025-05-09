@@ -4,7 +4,7 @@ const figlet = require('figlet');
 const _ = require('lodash');
 
 /**
- * This script run npm proccesses concurrently
+ * This script run yarn proccesses concurrently
  *
  * Usage: node start [install-children|test|server|client|mobile|server:client:mobile|server:client|server:mobile]
  *
